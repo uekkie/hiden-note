@@ -13,13 +13,7 @@
       </b-col>
       <b-col>
         <h3>プレビュー</h3>
-        <b-form-textarea
-          v-model="formatted_content"
-          placeholder="プレビューされるよ"
-          rows="40"
-          no-resize
-          readonly
-        ></b-form-textarea>
+        <div v-html="formatted_content"></div>
       </b-col>
     </b-row>
   </b-container>
@@ -27,6 +21,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
+const md = require('markdown-it')()
+
 export default Vue.extend({
   data() {
     return {
@@ -35,7 +31,7 @@ export default Vue.extend({
   },
   computed: {
     formatted_content(): string {
-      return this.content.toUpperCase()
+      return md.render(this.content)
     },
   },
 })
