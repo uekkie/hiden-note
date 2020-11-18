@@ -1,25 +1,46 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import firebase from '~/plugins/firebase'
 
+// MEMO 使い方わからん
+// export interface UserData {
+//   uid: string
+//   email: string
+//   displayName: string
+// }
+
 export const state = () => ({
-  user: null as firebase.User | null,
+  uid: '',
+  email: '',
+  displayName: '',
 })
 
 export type RootState = ReturnType<typeof state>
 
 export const getters: GetterTree<RootState, RootState> = {
-  currentUser: () => firebase.auth().currentUser,
+  userSignedIn: (state) => !!state.uid,
+  userUid: (state) => state.uid,
+  userEmail: (state) => state.email,
+  userDisplayName: (state) => state.displayName,
 }
 
 export const mutations: MutationTree<RootState> = {
-  LOGIN_GOOLE(state) {
+  setCurrentUser(state, user) {
+    state.uid = user.uid
+    state.email = user.email
+    state.displayName = user.displayName
+  },
+  clearCurrentUser(state) {
+    state.uid = ''
+    state.email = ''
+    state.displayName = ''
+  },
+  LOGIN_GOOLE() {
     const provider = new firebase.auth.GoogleAuthProvider()
 
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function (result) {
-        state.user = result.user
+      .then(function () {
         console.log('logged in!')
       })
       .catch(function (error) {
@@ -27,14 +48,13 @@ export const mutations: MutationTree<RootState> = {
         console.log('error :' + errorCode)
       })
   },
-  LOGOUT_GOOLE(state) {
+  LOGOUT_GOOLE() {
     firebase
       .auth()
       .signOut()
       .then(
         (_) => {
           // ログイン画面に戻る
-          state.user = null
         },
         (err) => {
           // エラー表示

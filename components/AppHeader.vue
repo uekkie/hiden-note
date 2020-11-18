@@ -7,6 +7,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav v-if="userSignedIn">
+          <b-nav-item>{{ userData.displayName }}</b-nav-item>
           <b-nav-item @click="logout">ログアウト</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav v-else>
@@ -19,11 +20,29 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import firebase from '~/plugins/firebase'
 export default Vue.extend({
   computed: {
     userSignedIn() {
-      return this.$store.getters.currentUser != null
+      return this.$store.getters.userSignedIn
     },
+    userData() {
+      return {
+        uid: this.$store.getters.userUid,
+        email: this.$store.getters.userEmail,
+        displayName: this.$store.getters.userDisplayName,
+      }
+    },
+  },
+  created() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        this.$store.commit('clearCurrentUser')
+        return
+      }
+      const { uid, email, displayName } = user
+      this.$store.commit('setCurrentUser', { uid, email, displayName })
+    })
   },
   methods: {
     login() {
