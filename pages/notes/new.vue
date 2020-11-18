@@ -7,7 +7,7 @@
         <b-form-textarea
           v-model="content"
           placeholder="markdownでかけるよ"
-          rows="40"
+          rows="30"
           no-resize
         ></b-form-textarea>
       </b-col>
@@ -16,6 +16,7 @@
         <div v-html="$sanitize(formatted_content)"></div>
       </b-col>
     </b-row>
+    <b-button variant="primary" @click="saveNote">保存</b-button>
   </b-container>
 </template>
 
@@ -35,6 +36,11 @@ export default Vue.extend({
   computed: {
     formatted_content(): string {
       return md.render(this.content)
+    },
+  },
+  methods: {
+    saveNote() {
+      console.log('saved!')
     },
   },
 })
