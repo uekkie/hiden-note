@@ -13,7 +13,7 @@
       </b-col>
       <b-col>
         <h3>プレビュー</h3>
-        <div v-html="formatted_content"></div>
+        <div v-html="$sanitize(formatted_content)"></div>
       </b-col>
     </b-row>
   </b-container>
@@ -21,7 +21,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import sanitizeHTML from 'sanitize-html'
 const md = require('markdown-it')()
+
+Vue.prototype.$sanitize = sanitizeHTML
 
 export default Vue.extend({
   data() {
