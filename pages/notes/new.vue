@@ -34,6 +34,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import sanitizeHTML from 'sanitize-html'
+import firebase from '@/plugins/firebase'
+import { mapGetters } from 'vuex'
 const md = require('markdown-it')()
 
 Vue.prototype.$sanitize = sanitizeHTML
@@ -48,11 +50,23 @@ export default Vue.extend({
   computed: {
     formatted_content(): string {
       return md.render(this.content)
-    },
+    }, // VuexからPostsデータを取得
+    ...mapGetters(['notes']),
+  },
+  created() {
+    this.$store.dispatch(
+      'setNotesRef',
+      firebase.firestore().collection('notes')
+    )
   },
   methods: {
     saveNote() {
-      console.log('saved!')
+      const note = {
+        userId: this.$store.getters.userUid,
+        title: this.title,
+        content: this.content,
+      }
+      firebase.firestore().collection('notes').add(note)
     },
   },
 })
