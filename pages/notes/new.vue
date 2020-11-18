@@ -3,12 +3,23 @@
     <h1>新規ノート</h1>
     <b-row>
       <b-col>
+        <h3>タイトル</h3>
+        <b-form-input
+          v-model="title"
+          required
+          placeholder="タイトルをいれてね"
+        ></b-form-input>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
         <h3>内容</h3>
         <b-form-textarea
           v-model="content"
           placeholder="markdownでかけるよ"
           rows="30"
           no-resize
+          required
         ></b-form-textarea>
       </b-col>
       <b-col>
@@ -30,6 +41,7 @@ Vue.prototype.$sanitize = sanitizeHTML
 export default Vue.extend({
   data() {
     return {
+      title: '',
       content: '',
     }
   },
