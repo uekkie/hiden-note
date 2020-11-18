@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: yarn generate
+      - uses: nuxt/actions-yarn@master
+        with:
+          args: install
+      - uses: nuxt/actions-yarn@master
+        with:
+          args: generate
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
