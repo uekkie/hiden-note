@@ -9,6 +9,9 @@
         <b-navbar-nav v-if="userSignedIn">
           <b-nav-item>{{ userData.displayName }}</b-nav-item>
           <b-nav-item @click="logout">ログアウト</b-nav-item>
+          <b-nav-item to="/notes/new" exact exact-active-class="active"
+            >新規ノート作成</b-nav-item
+          >
         </b-navbar-nav>
         <b-navbar-nav v-else>
           <b-nav-item @click="login">ログイン</b-nav-item>
