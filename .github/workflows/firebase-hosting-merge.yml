@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: nuxt/actions-yarn@node-12
+      - uses: nuxt/actions-yarn@node-11
         with:
           args: install
-      - uses: nuxt/actions-yarn@node-12
+      - uses: nuxt/actions-yarn@node-11
         with:
           args: generate
       - uses: FirebaseExtended/action-hosting-deploy@v0
