@@ -63,7 +63,12 @@ export default Vue.extend({
         title: this.title,
         content: this.content,
       }
-      db.collection('notes').add(note)
+      const vue = this
+      db.collection('notes')
+        .add(note)
+        .then(function (docRef) {
+          vue.$router.push('/notes/' + docRef.id)
+        })
     },
   },
 })
