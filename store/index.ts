@@ -1,5 +1,9 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
-import firebase from '~/plugins/firebase'
+import firebase from '@/plugins/firebase'
+import { vuexfireMutations, firestoreAction } from 'vuexfire'
+
+const db = firebase.firestore()
+const notesRef = db.collection('hiden').doc('notes')
 
 // MEMO 使い方わからん
 // export interface UserData {
@@ -12,6 +16,7 @@ export const state = () => ({
   uid: '',
   email: '',
   displayName: '',
+  notes: [],
 })
 
 export type RootState = ReturnType<typeof state>
@@ -21,9 +26,12 @@ export const getters: GetterTree<RootState, RootState> = {
   userUid: (state) => state.uid,
   userEmail: (state) => state.email,
   userDisplayName: (state) => state.displayName,
+  notes: (state) => state.notes,
 }
 
 export const mutations: MutationTree<RootState> = {
+  ...vuexfireMutations,
+
   setCurrentUser(state, user) {
     state.uid = user.uid
     state.email = user.email
@@ -71,4 +79,17 @@ export const actions: ActionTree<RootState, RootState> = {
   logout({ commit }) {
     commit('LOGOUT_GOOLE')
   },
+  saveNote: firestoreAction((note) => {
+    notesRef
+      .set(note)
+      .then(() => {
+        // success
+      })
+      .catch(() => {
+        // error
+      })
+  }),
+  setNotesRef: firestoreAction(function (context, ref) {
+    context.bindFirestoreRef('notes', ref)
+  }),
 }
