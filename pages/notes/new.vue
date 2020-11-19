@@ -53,12 +53,7 @@ export default Vue.extend({
     },
     ...mapGetters(['notes']),
   },
-  created() {
-    this.$store.dispatch(
-      'setNotesRef',
-      firebase.firestore().collection('notes')
-    )
-  },
+  created() {},
   methods: {
     saveNote() {
       const note = {

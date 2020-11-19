@@ -89,7 +89,4 @@ export const actions: ActionTree<RootState, RootState> = {
         // error
       })
   }),
-  setNotesRef: firestoreAction(function (context, ref) {
-    context.bindFirestoreRef('notes', ref)
-  }),
 }
