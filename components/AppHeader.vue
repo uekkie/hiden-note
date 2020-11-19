@@ -23,6 +23,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapMutations } from 'vuex'
 import { firebase } from '~/plugins/firebase'
 export default Vue.extend({
   computed: {
@@ -40,11 +41,11 @@ export default Vue.extend({
   created() {
     firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
-        this.$store.commit('clearCurrentUser')
+        this.clearCurrentUser()
         return
       }
       const { uid, email, displayName } = user
-      this.$store.commit('setCurrentUser', { uid, email, displayName })
+      this.setCurrentUser({ uid, email, displayName })
     })
   },
   methods: {
@@ -54,6 +55,12 @@ export default Vue.extend({
     logout() {
       this.$store.dispatch('logout')
     },
+    ...mapMutations([
+      // `this.setCurrentUser(user)` を `this.$store.commit('setCurrentUser', user)` にマッピングする
+      'setCurrentUser',
+      // `this.clearCurrentUser()` を `this.$store.commit('clearCurrentUser')` にマッピングする
+      'clearCurrentUser',
+    ]),
   },
 })
 </script>
