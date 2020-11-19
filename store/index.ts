@@ -1,8 +1,8 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
-import { firebase, db } from '@/plugins/firebase'
-import { vuexfireMutations, firestoreAction } from 'vuexfire'
+import { firebase } from '@/plugins/firebase'
+import { vuexfireMutations } from 'vuexfire'
 
-const notesRef = db.collection('hiden').doc('notes')
+// const notesRef = db.collection('hiden').doc('notes')
 
 // MEMO 使い方わからん
 // export interface UserData {
@@ -26,6 +26,13 @@ export const getters: GetterTree<RootState, RootState> = {
   userEmail: (state) => state.email,
   userDisplayName: (state) => state.displayName,
   notes: (state) => state.notes,
+  currentUser(_, getters) {
+    return {
+      uid: getters.userUid,
+      email: getters.userEmail,
+      displayName: getters.userDisplayName,
+    }
+  },
 }
 
 export const mutations: MutationTree<RootState> = {

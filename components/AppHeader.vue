@@ -7,7 +7,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav v-if="userSignedIn">
-          <b-nav-item>{{ userData.displayName }}</b-nav-item>
+          <b-nav-item>{{ currentUser.displayName }}</b-nav-item>
           <b-nav-item @click="logout">ログアウト</b-nav-item>
           <b-nav-item to="/notes/new" exact exact-active-class="active"
             >新規ノート作成</b-nav-item
@@ -23,20 +23,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { firebase } from '~/plugins/firebase'
 export default Vue.extend({
   computed: {
-    userSignedIn() {
-      return this.$store.getters.userSignedIn
-    },
-    userData() {
-      return {
-        uid: this.$store.getters.userUid,
-        email: this.$store.getters.userEmail,
-        displayName: this.$store.getters.userDisplayName,
-      }
-    },
+    ...mapGetters(['userSignedIn', 'currentUser']),
   },
   created() {
     firebase.auth().onAuthStateChanged((user) => {
