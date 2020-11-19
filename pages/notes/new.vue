@@ -24,7 +24,7 @@
       </b-col>
       <b-col>
         <h3>プレビュー</h3>
-        <div v-html="$sanitize(formatted_content)"></div>
+        <div v-html="formatted_content"></div>
       </b-col>
     </b-row>
     <b-button variant="primary" @click="saveNote">保存</b-button>
@@ -38,8 +38,6 @@ import { db } from '@/plugins/firebase'
 import { mapGetters } from 'vuex'
 const md = require('markdown-it')()
 
-Vue.prototype.$sanitize = sanitizeHTML
-
 export default Vue.extend({
   data() {
     return {
@@ -49,7 +47,7 @@ export default Vue.extend({
   },
   computed: {
     formatted_content(): string {
-      return md.render(this.content)
+      return sanitizeHTML(md.render(this.content))
     },
     ...mapGetters(['notes']),
   },

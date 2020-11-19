@@ -2,9 +2,7 @@ import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import { firebase, db } from '@/plugins/firebase'
 import { vuexfireMutations } from 'vuexfire'
 
-// const notesRef = db.collection('hiden').doc('notes')
-
-type Note = {
+export type Note = {
   id: string
   title: string
   content: string
@@ -38,7 +36,6 @@ export const mutations: MutationTree<RootState> = {
   ...vuexfireMutations,
 
   fetchNotes(state) {
-    console.log('fetcch notes -----')
     db.collection('notes')
       .get()
       .then(function (snapshot) {
