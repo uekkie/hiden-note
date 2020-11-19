@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar>
-      <b-navbar-brand href="#">秘伝のタレ</b-navbar-brand>
+      <b-navbar-brand to="/">秘伝のタレ</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
