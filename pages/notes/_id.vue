@@ -8,11 +8,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { db } from '@/plugins/firebase'
-export type Note = {
-  id: string
-  title: string
-  content: string
-}
+import { Note } from '@/models/types'
+
 const md = require('markdown-it')()
 export default Vue.extend({
   data() {
