@@ -24,7 +24,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
-import { firebase } from '~/plugins/firebase'
+import { firebase } from '@/plugins/firebase'
 export default Vue.extend({
   computed: {
     ...mapGetters(['userSignedIn', 'currentUser']),
