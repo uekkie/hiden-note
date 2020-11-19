@@ -2,7 +2,6 @@ import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import { firebase, db } from '@/plugins/firebase'
 import { vuexfireMutations } from 'vuexfire'
 
-// @ts-ignore
 import { Note } from '@/models/types'
 
 export const state = () => ({
