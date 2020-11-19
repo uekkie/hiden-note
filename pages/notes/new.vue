@@ -5,7 +5,7 @@
       <b-col>
         <h3>タイトル</h3>
         <b-form-input
-          v-model="title"
+          v-model.trim="title"
           required
           placeholder="タイトルをいれてね"
         ></b-form-input>
@@ -15,7 +15,7 @@
       <b-col>
         <h3>内容</h3>
         <b-form-textarea
-          v-model="content"
+          v-model.trim="content"
           placeholder="markdownでかけるよ"
           rows="30"
           no-resize
@@ -27,7 +27,9 @@
         <div v-html="formatted_content"></div>
       </b-col>
     </b-row>
-    <b-button variant="primary" @click="saveNote">保存</b-button>
+    <b-button variant="primary" :disabled="!canSubmit" @click="saveNote"
+      >保存</b-button
+    >
   </b-container>
 </template>
 
@@ -41,17 +43,19 @@ const md = require('markdown-it')()
 export default Vue.extend({
   data() {
     return {
-      title: '',
-      content: '',
+      title: '' as string,
+      content: '' as string,
     }
   },
   computed: {
     formatted_content(): string {
       return sanitizeHTML(md.render(this.content))
     },
+    canSubmit() {
+      return this.title.length > 0 && this.content.length > 0
+    },
     ...mapGetters(['notes']),
   },
-  created() {},
   methods: {
     saveNote() {
       const note = {
