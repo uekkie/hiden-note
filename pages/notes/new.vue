@@ -34,7 +34,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import sanitizeHTML from 'sanitize-html'
-import firebase from '@/plugins/firebase'
+import { db } from '@/plugins/firebase'
 import { mapGetters } from 'vuex'
 const md = require('markdown-it')()
 
@@ -61,7 +61,7 @@ export default Vue.extend({
         title: this.title,
         content: this.content,
       }
-      firebase.firestore().collection('notes').add(note)
+      db.collection('notes').add(note)
     },
   },
 })

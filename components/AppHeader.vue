@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import firebase from '~/plugins/firebase'
+import { firebase } from '~/plugins/firebase'
 export default Vue.extend({
   computed: {
     userSignedIn() {

@@ -1,8 +1,7 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
-import firebase from '@/plugins/firebase'
+import { firebase, db } from '@/plugins/firebase'
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
 
-const db = firebase.firestore()
 const notesRef = db.collection('hiden').doc('notes')
 
 // MEMO 使い方わからん
