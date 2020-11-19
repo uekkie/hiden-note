@@ -43,15 +43,15 @@ const md = require('markdown-it')()
 export default Vue.extend({
   data() {
     return {
-      title: '' as string,
-      content: '' as string,
+      title: '',
+      content: '',
     }
   },
   computed: {
     formatted_content(): string {
       return sanitizeHTML(md.render(this.content))
     },
-    canSubmit() {
+    canSubmit(): boolean {
       return this.title.length > 0 && this.content.length > 0
     },
     ...mapGetters(['notes']),
