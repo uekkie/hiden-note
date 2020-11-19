@@ -78,14 +78,4 @@ export const actions: ActionTree<RootState, RootState> = {
   logout({ commit }) {
     commit('LOGOUT_GOOLE')
   },
-  saveNote: firestoreAction((note) => {
-    notesRef
-      .set(note)
-      .then(() => {
-        // success
-      })
-      .catch(() => {
-        // error
-      })
-  }),
 }

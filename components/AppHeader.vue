@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import { firebase } from '~/plugins/firebase'
 export default Vue.extend({
   computed: {
@@ -49,18 +49,8 @@ export default Vue.extend({
     })
   },
   methods: {
-    login() {
-      this.$store.dispatch('login')
-    },
-    logout() {
-      this.$store.dispatch('logout')
-    },
-    ...mapMutations([
-      // `this.setCurrentUser(user)` を `this.$store.commit('setCurrentUser', user)` にマッピングする
-      'setCurrentUser',
-      // `this.clearCurrentUser()` を `this.$store.commit('clearCurrentUser')` にマッピングする
-      'clearCurrentUser',
-    ]),
+    ...mapActions(['login', 'logout']),
+    ...mapMutations(['setCurrentUser', 'clearCurrentUser']),
   },
 })
 </script>
