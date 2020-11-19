@@ -50,7 +50,7 @@ export default Vue.extend({
   computed: {
     formatted_content(): string {
       return md.render(this.content)
-    }, // VuexからPostsデータを取得
+    },
     ...mapGetters(['notes']),
   },
   created() {
