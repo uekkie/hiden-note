@@ -1,21 +1,20 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
-import { firebase } from '@/plugins/firebase'
+import { firebase, db } from '@/plugins/firebase'
 import { vuexfireMutations } from 'vuexfire'
 
 // const notesRef = db.collection('hiden').doc('notes')
 
-// MEMO 使い方わからん
-// export interface UserData {
-//   uid: string
-//   email: string
-//   displayName: string
-// }
+type Note = {
+  id: string
+  title: string
+  content: string
+}
 
 export const state = () => ({
   uid: '',
   email: '',
   displayName: '',
-  notes: [],
+  notes: [] as Note[],
 })
 
 export type RootState = ReturnType<typeof state>
@@ -38,6 +37,22 @@ export const getters: GetterTree<RootState, RootState> = {
 export const mutations: MutationTree<RootState> = {
   ...vuexfireMutations,
 
+  fetchNotes(state) {
+    console.log('fetcch notes -----')
+    db.collection('notes')
+      .get()
+      .then(function (snapshot) {
+        const fetchNotes: Note[] = []
+        snapshot.forEach((note) => {
+          fetchNotes.push({
+            id: note.id,
+            title: note.get('title'),
+            content: note.get('content'),
+          })
+        })
+        state.notes = fetchNotes
+      })
+  },
   setCurrentUser(state, user) {
     state.uid = user.uid
     state.email = user.email

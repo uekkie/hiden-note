@@ -1,13 +1,19 @@
 <template>
   <b-container>
     <h1 class="title">秘伝のタレ</h1>
+    <note-list v-if="userSignedIn"></note-list>
   </b-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 
-export default Vue.extend({})
+export default Vue.extend({
+  computed: {
+    ...mapGetters(['userSignedIn', 'currentUser']),
+  },
+})
 </script>
 
 <style>
