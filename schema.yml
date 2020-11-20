@@ -1,0 +1,17 @@
+# firestoreのdb設計を書いておく
+
+users:
+  documentID: userID == auth.uid
+
+notes:
+  documentID: auto
+  cratedAt: Date
+  updatedAt: Date
+
+note_histories:
+  documentID: auto
+  title: String
+  content: String
+  cratedAt: Date
+
+
