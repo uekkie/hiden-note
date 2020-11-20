@@ -15,7 +15,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { db } from '@/plugins/firebase'
-import { Note } from '@/models/note'
+import { Note } from '@/models'
 
 const md = require('markdown-it')()
 export default Vue.extend({

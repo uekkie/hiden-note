@@ -9,14 +9,14 @@
         :to="`/notes/${note.id}`"
         class="flex-column align-items-start"
       >
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">{{ note.title }}</h5>
-          <small>3 days ago</small>
-
-          <p class="mb-1">
-            {{ note.content }}
-          </p>
-        </div>
+        <b-row>
+          <b-col
+            ><h5 class="mb-1">{{ note.title }}</h5></b-col
+          >
+          <b-col>
+            <small>{{ note.formatDate() }}</small>
+          </b-col>
+        </b-row>
       </b-list-group-item>
     </b-list-group>
   </div>

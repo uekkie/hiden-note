@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Note } from '@/models/note'
+import { Note } from '@/models'
 import sanitizeHTML from 'sanitize-html'
 import { firebase, db } from '@/plugins/firebase'
 import { mapGetters } from 'vuex'
@@ -67,7 +67,7 @@ export default Vue.extend({
       .get()
       .then(function (snapshot) {
         vue.note.id = snapshot.id
-        vue.note.userId = snapshot.get('userId')
+        vue.note.userRef = snapshot.get('userRef')
         vue.note.title = snapshot.get('title')
         vue.note.content = snapshot.get('content')
       })
