@@ -1,17 +1,42 @@
 # firestoreのdb設計を書いておく
 
-users:
-  documentID: userID == auth.uid
+# ユーザー
+users(c):
+  documentID(userID == auth.uid) :
+    displayName: String
+    email: String
 
-notes:
-  documentID: auto
-  cratedAt: Date
-  updatedAt: Date
+# ノート
+# notes/:note-id/histories/:hist-id
+notes(c):
+  documentID(d):
+    title: String
+    tags: tagRef[]
+    editors: userRef[]
+    createdAt: Timestamp
+    updatedAt: Timestamp
 
-note_histories:
-  documentID: auto
-  title: String
-  content: String
-  cratedAt: Date
+    histories(sub-collection):
+      documentID(d):
+        user:
+          ref: /database/default/documents/users/<uid>,
+          name: String
 
+        note:
+          ref: /database/default/documents/notes/<uid>
 
+        content: String
+        cratedAt: Timestamp
+
+# タグ
+tags(c) :
+  documentID(d):
+    name: String
+
+# コメント
+comments(c) :
+  documentID(d):
+    user: userRef
+    note: noteRef
+    content: String
+    createdAt: Timestamp
