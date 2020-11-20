@@ -39,6 +39,7 @@ export const mutations: MutationTree<RootState> = {
         snapshot.forEach((note) => {
           fetchNotes.push({
             id: note.id,
+            userId: note.get('userId'),
             title: note.get('title'),
             content: note.get('content'),
           })

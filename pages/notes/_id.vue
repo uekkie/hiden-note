@@ -3,7 +3,8 @@
     <h1>{{ note.title }}</h1>
     <div class="content" v-html="formatted_content"></div>
 
-    <b-button @click="modalShow = !modalShow">削除</b-button>
+    <b-button :to="`edit/${note.id}`" variant="primary">編集</b-button>
+    <b-button variant="danger" @click="modalShow = !modalShow">削除</b-button>
 
     <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
       >削除してよろしいですか？</b-modal
@@ -21,6 +22,7 @@ export default Vue.extend({
   data() {
     return {
       note: {
+        id: '',
         title: '',
         content: '',
       } as Note,
@@ -38,6 +40,7 @@ export default Vue.extend({
       .doc(this.$route.params.id)
       .get()
       .then(function (snapshot) {
+        vue.note.id = snapshot.id
         vue.note.title = snapshot.get('title')
         vue.note.content = snapshot.get('content')
       })
