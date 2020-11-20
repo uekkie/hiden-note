@@ -35,6 +35,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Note } from '@/models/note'
 import sanitizeHTML from 'sanitize-html'
 import { db } from '@/plugins/firebase'
 import { mapGetters } from 'vuex'
@@ -58,11 +59,11 @@ export default Vue.extend({
   },
   methods: {
     saveNote() {
-      const note = {
-        userId: this.$store.getters.userUid,
-        title: this.title,
-        content: this.content,
-      }
+      const note = new Note(
+        this.$store.getters.userUid,
+        this.title,
+        this.content
+      )
       const vue = this
       db.collection('notes')
         .add(note)
