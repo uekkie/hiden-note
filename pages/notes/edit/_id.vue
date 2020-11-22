@@ -66,10 +66,14 @@ export default Vue.extend({
       .doc(this.$route.params.id)
       .get()
       .then(function (snapshot) {
-        vue.note.id = snapshot.id
-        vue.note.userRef = snapshot.get('userRef')
-        vue.note.title = snapshot.get('title')
-        vue.note.content = snapshot.get('content')
+        vue.note = new Note(
+          snapshot.id,
+          snapshot.get('userRef'),
+          snapshot.get('title'),
+          snapshot.get('content'),
+          snapshot.get('createdAt'),
+          snapshot.get('updatedAt')
+        )
       })
   },
   methods: {
