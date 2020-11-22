@@ -17,11 +17,11 @@ export default class Note {
   }
 
   formatDate(): string {
-    return this.updatedAt !== undefined
-      ? this.updatedAt.toDateString()
-      : this.createdAt !== undefined
-      ? this.createdAt.toDateString()
-      : '日付なし'
+    return (
+      this.updatedAt?.toDateString() ||
+      this.createdAt?.toDateString() ||
+      '日付なし'
+    )
   }
 }
 
