@@ -2,30 +2,22 @@ import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import { firebase, db } from '@/plugins/firebase'
 import { vuexfireMutations } from 'vuexfire'
 
-import { Note } from '@/models/types'
+import { Note, User } from '@/models'
 
 export const state = () => ({
-  uid: '',
-  email: '',
-  displayName: '',
+  user: null as null | User,
+  loggedIn: false as boolean,
   notes: [] as Note[],
 })
 
 export type RootState = ReturnType<typeof state>
 
 export const getters: GetterTree<RootState, RootState> = {
-  userSignedIn: (state) => !!state.uid,
-  userUid: (state) => state.uid,
-  userEmail: (state) => state.email,
-  userDisplayName: (state) => state.displayName,
+  userSignedIn: (state) => state.loggedIn,
+  userDisplayName: (state) => state.user?.displayName,
   notes: (state) => state.notes,
-  currentUser(_, getters) {
-    return {
-      uid: getters.userUid,
-      email: getters.userEmail,
-      displayName: getters.userDisplayName,
-    }
-  },
+  currentUser: (state) => state.user,
+  userRef: (state) => db.collection('users').doc(state.user?.uid),
 }
 
 export const mutations: MutationTree<RootState> = {
@@ -37,24 +29,39 @@ export const mutations: MutationTree<RootState> = {
       .then(function (snapshot) {
         const fetchNotes: Note[] = []
         snapshot.forEach((note) => {
-          fetchNotes.push({
-            id: note.id,
-            title: note.get('title'),
-            content: note.get('content'),
-          })
+          fetchNotes.push(
+            new Note(
+              note.id,
+              note.get('userRef'),
+              note.get('title'),
+              note.get('content'),
+              note.get('createdAt')?.toDate(),
+              note.get('updatedAt')?.toDate()
+            )
+          )
         })
         state.notes = fetchNotes
       })
   },
-  setCurrentUser(state, user) {
-    state.uid = user.uid
-    state.email = user.email
-    state.displayName = user.displayName
+  setCurrentUser(state, user: User) {
+    state.user = user
+    const userRef = db.collection('users').doc(user.uid)
+
+    userRef
+      .get()
+      .then(function (doc) {
+        // Userがdbに保存されてなかったら保存
+        if (!doc.exists) {
+          db.collection('users').add(user)
+        }
+      })
+      .catch(function (error) {
+        console.log('Error getting document:', error)
+      })
+    state.loggedIn = true
   },
   clearCurrentUser(state) {
-    state.uid = ''
-    state.email = ''
-    state.displayName = ''
+    state.loggedIn = false
   },
   LOGIN_GOOLE() {
     const provider = new firebase.auth.GoogleAuthProvider()

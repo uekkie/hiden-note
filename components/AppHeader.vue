@@ -25,6 +25,7 @@
 import Vue from 'vue'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { firebase } from '@/plugins/firebase'
+import { User } from '@/models'
 export default Vue.extend({
   computed: {
     ...mapGetters(['userSignedIn', 'currentUser']),
@@ -35,8 +36,10 @@ export default Vue.extend({
         this.clearCurrentUser()
         return
       }
+
       const { uid, email, displayName } = user
-      this.setCurrentUser({ uid, email, displayName })
+
+      this.setCurrentUser(new User(uid, email!, displayName!))
     })
   },
   methods: {

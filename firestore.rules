@@ -1,9 +1,31 @@
 rules_version = '2';
+
 service cloud.firestore {
+
+  // firebaseの認証ユーザーかどうか
+  function isAnyAuthenticated() {
+    return request.auth != null;
+  }
+
+  function isUserAuthenticated(uid) {
+    return isAnyAuthenticated() && request.auth.uid == uid;
+  }
+
+  function isApprovedEmails() {
+    return request.auth.token.email.matches('.*@sonicgarden[.]jp');
+  }
+
   match /databases/{database}/documents {
     match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2020, 12, 18);
+      allow read, write: if isAnyAuthenticated() && isApprovedEmails();
+    }
+
+    match /notes/{docId} {
+      allow read, write: if isAnyAuthenticated() && isApprovedEmails()
+    }
+
+    match /users/{userId} {
+      allow write: if isUserAuthenticated(userId);
     }
   }
 }
