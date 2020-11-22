@@ -23,18 +23,17 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default Vue.extend({
   computed: {
-    ...mapGetters(['notes']),
+    ...mapGetters('notes', ['notes']),
   },
   created() {
-    console.log('notelist created!')
     this.fetchNotes()
   },
   methods: {
-    ...mapMutations(['fetchNotes']),
+    ...mapActions('notes', ['fetchNotes']),
   },
 })
 </script>

@@ -35,11 +35,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Note } from '@/models'
-import { noteConverter } from '@/models/note'
 import sanitizeHTML from 'sanitize-html'
-import { db } from '@/plugins/firebase'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 const md = require('markdown-it')()
 
 export default Vue.extend({
@@ -56,18 +53,18 @@ export default Vue.extend({
     canSubmit(): boolean {
       return this.title.length > 0 && this.content.length > 0
     },
-    ...mapGetters(['notes', 'userRef']),
+    ...mapGetters(['notes']),
+    ...mapGetters('users', ['currentUserRef']),
   },
   methods: {
-    saveNote() {
-      const note = new Note('', this.userRef, this.title, this.content)
-      const vue = this
-      db.collection('notes')
-        .withConverter(noteConverter)
-        .add(note)
-        .then(function (docRef) {
-          vue.$router.push('/notes/' + docRef.id)
-        })
+    ...mapActions('notes', ['createNote']),
+    async saveNote() {
+      const noteRef = await this.createNote({
+        userRef: this.currentUserRef,
+        title: this.title,
+        content: this.content,
+      })
+      this.$router.push('/notes/' + noteRef.id)
     },
   },
 })

@@ -11,7 +11,7 @@ import { mapGetters } from 'vuex'
 
 export default Vue.extend({
   computed: {
-    ...mapGetters(['userSignedIn', 'currentUser']),
+    ...mapGetters('users', ['userSignedIn', 'currentUser']),
   },
 })
 </script>

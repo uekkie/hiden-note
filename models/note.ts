@@ -1,5 +1,5 @@
 import firebase from 'firebase'
-export default class Note {
+export class Note {
   constructor(
     public id: string,
     public userRef: firebase.firestore.DocumentReference,
