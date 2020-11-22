@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container v-if="!loading">
     <h1>編集</h1>
     <b-row>
       <b-col>
@@ -27,7 +27,7 @@
         <div v-html="formatted_content"></div>
       </b-col>
     </b-row>
-    <b-button variant="primary" :disabled="!canSubmit" @click="updateNote"
+    <b-button variant="primary" :disabled="!canSubmit" @click="onUpdate"
       >保存</b-button
     >
   </b-container>
@@ -35,60 +35,35 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Note } from '@/models'
+
 import sanitizeHTML from 'sanitize-html'
-import { firebase, db } from '@/plugins/firebase'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 const md = require('markdown-it')()
 
 export default Vue.extend({
-  data() {
-    return {
-      note: {
-        id: '',
-        title: '',
-        content: '',
-      } as Note,
-    }
-  },
   computed: {
+    loading(): boolean {
+      return !this.note
+    },
     formatted_content(): string {
       return sanitizeHTML(md.render(this.note.content))
     },
     canSubmit(): boolean {
       return this.note.title.length > 0 && this.note.content.length > 0
     },
-    ...mapGetters(['notes']),
+    ...mapGetters('notes', ['note']),
   },
   created() {
-    const vue = this
-    db.collection('notes')
-      .doc(this.$route.params.id)
-      .get()
-      .then(function (snapshot) {
-        vue.note = new Note(
-          snapshot.id,
-          snapshot.get('userRef'),
-          snapshot.get('title'),
-          snapshot.get('content'),
-          snapshot.get('createdAt'),
-          snapshot.get('updatedAt')
-        )
-      })
+    this.fetchNote(this.$route.params.id)
   },
   methods: {
-    updateNote() {
-      const vue = this
-      db.collection('notes')
-        .doc(this.note.id)
-        .update({
-          title: vue.note.title,
-          content: vue.note.content,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        })
-        .then(function () {
-          vue.$router.push('/notes/' + vue.note.id)
-        })
+    ...mapActions('notes', ['fetchNote', 'updateNote']),
+    onUpdate() {
+      const noteId = this.$route.params.id
+      this.updateNote({
+        noteId,
+        note: this.note,
+      })
     },
   },
 })

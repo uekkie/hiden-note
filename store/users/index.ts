@@ -22,26 +22,6 @@ export const getters: GetterTree<RootState, RootState> = {
 
 export const mutations: MutationTree<RootState> = {
   ...vuexfireMutations,
-  setCurrentUser(state, user: User) {
-    state.user = user
-    const currentUserRef = userRef.doc(user.uid)
-
-    currentUserRef
-      .get()
-      .then(function (doc) {
-        // Userがdbに保存されてなかったら保存
-        if (!doc.exists) {
-          userRef.add(user)
-        }
-      })
-      .catch(function (error) {
-        console.log('Error getting document:', error)
-      })
-    state.loggedIn = true
-  },
-  clearCurrentUser(state) {
-    state.loggedIn = false
-  },
   SET_USER(state, user: User) {
     state.loggedIn = user !== null
     state.user = user
@@ -57,6 +37,20 @@ export const actions: ActionTree<RootState, RootState> = {
       }
       const { uid, email, displayName } = user
       commit('SET_USER', new User(uid, email!, displayName!))
+
+      const currentUserRef = userRef.doc(user.uid)
+
+      currentUserRef
+        .get()
+        .then(function (doc) {
+          // Userがdbに保存されてなかったら保存
+          if (!doc.exists) {
+            userRef.add(user)
+          }
+        })
+        .catch(function (error) {
+          console.log('Error getting document:', error)
+        })
     })
   },
   login() {
@@ -86,22 +80,5 @@ export const actions: ActionTree<RootState, RootState> = {
           console.log(err)
         }
       )
-  },
-  setCurrentUser({ commit }, user: User) {
-    commit('SET_USER', user)
-
-    const currentUserRef = userRef.doc(user.uid)
-
-    currentUserRef
-      .get()
-      .then(function (doc) {
-        // Userがdbに保存されてなかったら保存
-        if (!doc.exists) {
-          userRef.add(user)
-        }
-      })
-      .catch(function (error) {
-        console.log('Error getting document:', error)
-      })
   },
 }

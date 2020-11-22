@@ -37,6 +37,7 @@
 import Vue from 'vue'
 import sanitizeHTML from 'sanitize-html'
 import { mapGetters, mapActions } from 'vuex'
+import { Note } from '@/models/note'
 const md = require('markdown-it')()
 
 export default Vue.extend({
@@ -58,13 +59,8 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('notes', ['createNote']),
-    async saveNote() {
-      const noteRef = await this.createNote({
-        userRef: this.currentUserRef,
-        title: this.title,
-        content: this.content,
-      })
-      this.$router.push('/notes/' + noteRef.id)
+    saveNote() {
+      this.createNote(new Note(this.currentUserRef, this.title, this.content))
     },
   },
 })

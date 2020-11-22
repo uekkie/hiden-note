@@ -4,9 +4,9 @@
     <p>ノート総数：{{ notes.length }}</p>
     <b-list-group>
       <b-list-group-item
-        v-for="note in notes"
-        :key="note.id"
-        :to="`/notes/${note.id}`"
+        v-for="(note, index) in notes"
+        :key="index"
+        :to="`/notes/${note.noteId}`"
         class="flex-column align-items-start"
       >
         <b-row>
@@ -14,7 +14,7 @@
             ><h5 class="mb-1">{{ note.title }}</h5></b-col
           >
           <b-col>
-            <small>{{ note.formatDate() }}</small>
+            <small>{{ note.createdAt }}</small>
           </b-col>
         </b-row>
       </b-list-group-item>

@@ -1,9 +1,9 @@
 <template>
-  <b-container>
+  <b-container v-if="!loading">
     <h1>{{ note.title }}</h1>
     <div class="content" v-html="formatted_content"></div>
 
-    <b-button :to="`edit/${note.id}`" variant="primary">編集</b-button>
+    <b-button :to="`edit/${noteId()}`" variant="primary">編集</b-button>
     <b-button variant="danger" @click="modalShow = !modalShow">削除</b-button>
 
     <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
@@ -14,52 +14,38 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { db } from '@/plugins/firebase'
-import { Note } from '@/models'
+import { mapActions, mapGetters } from 'vuex'
 
 const md = require('markdown-it')()
+
 export default Vue.extend({
   data() {
     return {
-      note: {
-        id: '',
-        title: '',
-        content: '',
-      } as Note,
       modalShow: false,
     }
   },
   computed: {
+    ...mapGetters('notes', ['note']),
+
+    loading(): boolean {
+      return !this.note
+    },
     formatted_content(): string {
       return md.render(this.note.content)
     },
   },
   created() {
-    const vue = this
-    db.collection('notes')
-      .doc(this.$route.params.id)
-      .get()
-      .then(function (snapshot) {
-        vue.note.id = snapshot.id
-        vue.note.title = snapshot.get('title')
-        vue.note.content = snapshot.get('content')
-      })
+    this.fetchNote(this.$route.params.id)
   },
   methods: {
+    ...mapActions('notes', ['fetchNote', 'deleteNote']),
+    noteId() {
+      return this.$route.params.id
+    },
     handleDeleteNote(bvModalEvt: any) {
       bvModalEvt.preventDefault()
-      const vue = this
-
-      db.collection('notes')
-        .doc(this.$route.params.id)
-        .delete()
-        .then(function () {
-          console.log('Note successfully deleted!')
-          vue.$router.push('/')
-        })
-        .catch(function (error) {
-          console.error('Error removing note: ', error)
-        })
+      this.deleteNote(this.$route.params.id)
+      this.$router.push('/')
     },
   },
 })

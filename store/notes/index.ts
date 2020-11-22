@@ -1,45 +1,108 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
-import { db } from '@/plugins/firebase'
+import { db, firebase } from '@/plugins/firebase'
 import { Note, noteConverter } from '@/models/note'
 
 const notesRef = db.collection('notes')
+const recentNotesRef = db.collection('recentNotes')
+
+const getNote = async (id: string) => {
+  const noteQuery = await notesRef
+    .doc(id)
+    .collection('histories')
+    .orderBy('createdAt', 'desc')
+    .limit(1)
+    .get()
+
+  const noteDoc = noteQuery.docs[0]
+
+  const note = { ...noteDoc.data() }
+  return note as Note
+}
 
 export const state = () => ({
+  note: null as Note | null,
   notes: [] as Note[],
 })
 
 export type RootState = ReturnType<typeof state>
 
 export const getters: GetterTree<RootState, RootState> = {
+  note: (state) => state.note,
   notes: (state) => state.notes,
 }
 
 export const mutations: MutationTree<RootState> = {
+  SET_NOTE(state, note) {
+    state.note = note
+  },
   SET_NOTES(state, notes) {
     state.notes = notes
   },
 }
 export const actions: ActionTree<RootState, RootState> = {
-  createNote(_, payload) {
-    const note = new Note('', payload.userRef, payload.title, payload.content)
-    notesRef.withConverter(noteConverter).add(note)
-  },
-  fetchNotes({ commit }) {
-    notesRef.get().then(function (snapshot) {
-      const fetchNotes: Note[] = []
-      snapshot.forEach((note) => {
-        fetchNotes.push(
-          new Note(
-            note.id,
-            note.get('userRef'),
-            note.get('title'),
-            note.get('content'),
-            note.get('createdAt')?.toDate(),
-            note.get('updatedAt')?.toDate()
-          )
-        )
-      })
-      commit('SET_NOTES', fetchNotes)
+  async createNote({ dispatch }, note) {
+    const noteRef = await notesRef.add({
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
+
+    const historyRef = await notesRef
+      .doc(noteRef.id)
+      .collection('histories')
+      .withConverter(noteConverter)
+      .add(note)
+
+    const historyDoc = await historyRef.get()
+    dispatch('createRecentNote', { noteId: noteRef.id, historyDoc })
+    this.$router.replace({ path: '/notes/' + noteRef.id })
+  },
+  async fetchNote({ commit }, noteId) {
+    const note = await getNote(noteId)
+    commit('SET_NOTE', note)
+  },
+  async createRecentNote({ dispatch }, payload) {
+    const noteId = payload.noteId
+    const doc = payload.historyDoc
+    console.log(doc)
+
+    recentNotesRef.doc(noteId).set({
+      noteId,
+      title: doc.get('title'),
+      createdAt: doc.get('createdAt'),
+    })
+    dispatch('fetchNotes')
+  },
+  async updateNote({ dispatch }, payload) {
+    const historyRef = await notesRef
+      .doc(payload.noteId)
+      .collection('histories')
+      .withConverter(noteConverter)
+      .add(payload.note)
+
+    const historyDoc = await historyRef.get()
+    dispatch('createRecentNote', {
+      noteId: payload.noteId,
+      historyDoc,
+    })
+    this.$router.replace({ path: '/notes/' + payload.noteId })
+  },
+  async fetchNotes({ commit }, limit = 5) {
+    const fetchNotes = [] as any
+    const ref = await recentNotesRef
+      .orderBy('createdAt', 'desc')
+      .limit(limit)
+      .get()
+
+    ref.docs.forEach((data) => {
+      fetchNotes.push({
+        ...data.data(),
+      })
+    })
+    commit('SET_NOTES', fetchNotes)
+  },
+  async deleteNote({ commit, dispatch }, noteId) {
+    await notesRef.doc(noteId).delete()
+    await recentNotesRef.doc(noteId).delete()
+    dispatch('fetchNotes')
+    commit('SET_NOTE', null)
   },
 }
