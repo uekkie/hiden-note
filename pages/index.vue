@@ -1,25 +1,22 @@
 <template>
-  <div class="container">
+  <b-container>
     <h1 class="title">秘伝のタレ</h1>
-  </div>
+    <note-list v-if="userSignedIn"></note-list>
+  </b-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 
-export default Vue.extend({})
+export default Vue.extend({
+  computed: {
+    ...mapGetters(['userSignedIn', 'currentUser']),
+  },
+})
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
 .title {
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;

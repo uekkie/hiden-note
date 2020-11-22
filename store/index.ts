@@ -1,22 +1,14 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
-import firebase from '@/plugins/firebase'
-import { vuexfireMutations, firestoreAction } from 'vuexfire'
+import { firebase, db } from '@/plugins/firebase'
+import { vuexfireMutations } from 'vuexfire'
 
-const db = firebase.firestore()
-const notesRef = db.collection('hiden').doc('notes')
-
-// MEMO 使い方わからん
-// export interface UserData {
-//   uid: string
-//   email: string
-//   displayName: string
-// }
+import { Note } from '@/models/types'
 
 export const state = () => ({
   uid: '',
   email: '',
   displayName: '',
-  notes: [],
+  notes: [] as Note[],
 })
 
 export type RootState = ReturnType<typeof state>
@@ -27,11 +19,33 @@ export const getters: GetterTree<RootState, RootState> = {
   userEmail: (state) => state.email,
   userDisplayName: (state) => state.displayName,
   notes: (state) => state.notes,
+  currentUser(_, getters) {
+    return {
+      uid: getters.userUid,
+      email: getters.userEmail,
+      displayName: getters.userDisplayName,
+    }
+  },
 }
 
 export const mutations: MutationTree<RootState> = {
   ...vuexfireMutations,
 
+  fetchNotes(state) {
+    db.collection('notes')
+      .get()
+      .then(function (snapshot) {
+        const fetchNotes: Note[] = []
+        snapshot.forEach((note) => {
+          fetchNotes.push({
+            id: note.id,
+            title: note.get('title'),
+            content: note.get('content'),
+          })
+        })
+        state.notes = fetchNotes
+      })
+  },
   setCurrentUser(state, user) {
     state.uid = user.uid
     state.email = user.email
@@ -79,17 +93,4 @@ export const actions: ActionTree<RootState, RootState> = {
   logout({ commit }) {
     commit('LOGOUT_GOOLE')
   },
-  saveNote: firestoreAction((note) => {
-    notesRef
-      .set(note)
-      .then(() => {
-        // success
-      })
-      .catch(() => {
-        // error
-      })
-  }),
-  setNotesRef: firestoreAction(function (context, ref) {
-    context.bindFirestoreRef('notes', ref)
-  }),
 }

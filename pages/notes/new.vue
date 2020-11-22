@@ -5,7 +5,7 @@
       <b-col>
         <h3>タイトル</h3>
         <b-form-input
-          v-model="title"
+          v-model.trim="title"
           required
           placeholder="タイトルをいれてね"
         ></b-form-input>
@@ -15,7 +15,7 @@
       <b-col>
         <h3>内容</h3>
         <b-form-textarea
-          v-model="content"
+          v-model.trim="content"
           placeholder="markdownでかけるよ"
           rows="30"
           no-resize
@@ -24,21 +24,21 @@
       </b-col>
       <b-col>
         <h3>プレビュー</h3>
-        <div v-html="$sanitize(formatted_content)"></div>
+        <div v-html="formatted_content"></div>
       </b-col>
     </b-row>
-    <b-button variant="primary" @click="saveNote">保存</b-button>
+    <b-button variant="primary" :disabled="!canSubmit" @click="saveNote"
+      >保存</b-button
+    >
   </b-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import sanitizeHTML from 'sanitize-html'
-import firebase from '@/plugins/firebase'
+import { db } from '@/plugins/firebase'
 import { mapGetters } from 'vuex'
 const md = require('markdown-it')()
-
-Vue.prototype.$sanitize = sanitizeHTML
 
 export default Vue.extend({
   data() {
@@ -49,15 +49,12 @@ export default Vue.extend({
   },
   computed: {
     formatted_content(): string {
-      return md.render(this.content)
-    }, // VuexからPostsデータを取得
+      return sanitizeHTML(md.render(this.content))
+    },
+    canSubmit(): boolean {
+      return this.title.length > 0 && this.content.length > 0
+    },
     ...mapGetters(['notes']),
-  },
-  created() {
-    this.$store.dispatch(
-      'setNotesRef',
-      firebase.firestore().collection('notes')
-    )
   },
   methods: {
     saveNote() {
@@ -66,7 +63,12 @@ export default Vue.extend({
         title: this.title,
         content: this.content,
       }
-      firebase.firestore().collection('notes').add(note)
+      const vue = this
+      db.collection('notes')
+        .add(note)
+        .then(function (docRef) {
+          vue.$router.push('/notes/' + docRef.id)
+        })
     },
   },
 })
