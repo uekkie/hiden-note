@@ -63,6 +63,8 @@ export default Vue.extend({
       this.updateNote({
         noteId,
         note: this.note,
+      }).then(() => {
+        this.$router.replace({ path: '/notes/' + noteId })
       })
     },
   },

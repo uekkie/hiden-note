@@ -60,7 +60,11 @@ export default Vue.extend({
   methods: {
     ...mapActions('notes', ['createNote']),
     saveNote() {
-      this.createNote(new Note(this.currentUserRef, this.title, this.content))
+      this.createNote(
+        new Note(this.currentUserRef, this.title, this.content)
+      ).then((noteId) => {
+        this.$router.replace({ path: '/notes/' + noteId })
+      })
     },
   },
 })

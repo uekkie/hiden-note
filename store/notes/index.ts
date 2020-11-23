@@ -40,7 +40,7 @@ export const mutations: MutationTree<RootState> = {
   },
 }
 export const actions: ActionTree<RootState, RootState> = {
-  async createNote({ dispatch }, note) {
+  async createNote({ dispatch }, note): Promise<string> {
     const noteRef = await notesRef.add({
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
@@ -53,7 +53,7 @@ export const actions: ActionTree<RootState, RootState> = {
 
     const historyDoc = await historyRef.get()
     dispatch('createRecentNote', { noteId: noteRef.id, historyDoc })
-    this.$router.replace({ path: '/notes/' + noteRef.id })
+    return noteRef.id
   },
   async fetchNote({ commit }, noteId) {
     const note = await getNote(noteId)
@@ -83,7 +83,6 @@ export const actions: ActionTree<RootState, RootState> = {
       noteId: payload.noteId,
       historyDoc,
     })
-    this.$router.replace({ path: '/notes/' + payload.noteId })
   },
   async fetchNotes({ commit }, limit = 5) {
     const fetchNotes = [] as any
