@@ -23,28 +23,16 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
-import { firebase } from '@/plugins/firebase'
-import { User } from '@/models'
+import { mapGetters, mapActions } from 'vuex'
 export default Vue.extend({
   computed: {
-    ...mapGetters(['userSignedIn', 'currentUser']),
+    ...mapGetters('users', ['userSignedIn', 'currentUser']),
   },
   created() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        this.clearCurrentUser()
-        return
-      }
-
-      const { uid, email, displayName } = user
-
-      this.setCurrentUser(new User(uid, email!, displayName!))
-    })
+    this.authStateChanged()
   },
   methods: {
-    ...mapActions(['login', 'logout']),
-    ...mapMutations(['setCurrentUser', 'clearCurrentUser']),
+    ...mapActions('users', ['authStateChanged', 'login', 'logout']),
   },
 })
 </script>

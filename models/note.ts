@@ -1,50 +1,55 @@
 import firebase from 'firebase'
-export default class Note {
+export class Note {
   constructor(
-    public id: string,
     public userRef: firebase.firestore.DocumentReference,
     public title: string,
     public content: string,
-    public createdAt?: Date,
-    public updatedAt?: Date
+    public createdAt?: Date
   ) {
-    this.id = id
     this.userRef = userRef
     this.title = title
     this.content = content
     this.createdAt = createdAt
-    this.updatedAt = updatedAt
   }
 
-  formatDate(): string {
-    return (
-      this.updatedAt?.toDateString() ||
-      this.createdAt?.toDateString() ||
-      '日付なし'
-    )
-  }
+  // MEMO: Note.createdAtを表示する箇所がなくなったのでコメントアウトしているが、
+  // あとあとどこかで使い始めそうなので残してます
+  // formatDate(): string {
+  //   return (
+  //     this.createdAt?.toDateString() || '日付なし'
+  //   )
+  // }
 }
 
-// Firestore data converter
 export const noteConverter = {
-  toFirestore(note: Note) {
+  toFirestore(note: Note): firebase.firestore.DocumentData {
     return {
-      id: note.id,
       userRef: note.userRef,
       title: note.title,
       content: note.content,
-      // createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     }
   },
-  fromFirestore(snapshot: any, options: any) {
+  fromFirestore(
+    snapshot: firebase.firestore.QueryDocumentSnapshot,
+    options: firebase.firestore.SnapshotOptions
+  ): Note {
     const note = snapshot.data(options)
-    return new Note(
-      note.id,
-      note.userRef,
-      note.title,
-      note.content,
-      note.createdAt.toDate(),
-      note.updatedAt.toDate()
-    )
+    if (!isValid(note)) {
+      console.error(note)
+      alert('invalid note')
+      throw new Error('invalid note')
+    }
+    return new Note(note.userRef, note.title, note.content, note.createdAt)
   },
+}
+
+const isValid = (note: any): note is Note => {
+  if (!(note.title && typeof note.title === 'string')) {
+    return false
+  }
+  if (!(note.content && typeof note.content === 'string')) {
+    return false
+  }
+  return true
 }
