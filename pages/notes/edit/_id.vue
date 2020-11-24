@@ -1,32 +1,32 @@
 <template>
   <b-container v-if="!loading">
-    <h1>編集</h1>
-    <b-row>
-      <b-col>
-        <h3>タイトル</h3>
-        <b-form-input
-          v-model.trim="note.title"
-          required
-          placeholder="タイトルをいれてね"
-        ></b-form-input>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <h3>内容</h3>
-        <b-form-textarea
-          v-model.trim="note.content"
-          placeholder="markdownでかけるよ"
-          rows="30"
-          no-resize
-          required
-        ></b-form-textarea>
-      </b-col>
-      <b-col>
-        <h3>プレビュー</h3>
-        <div v-html="formatted_content"></div>
-      </b-col>
-    </b-row>
+    <div class="title">
+      <b-row>
+        <b-col>
+          <b-form-input
+            v-model.trim="note.title"
+            required
+            placeholder="タイトルをいれてね"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+    </div>
+    <div class="content mt-3">
+      <b-row>
+        <b-col>
+          <b-form-textarea
+            v-model.trim="note.content"
+            placeholder="markdownでかけるよ"
+            rows="30"
+            no-resize
+            required
+          ></b-form-textarea>
+        </b-col>
+        <b-col>
+          <div v-html="formatted_content"></div>
+        </b-col>
+      </b-row>
+    </div>
     <b-button variant="primary" :disabled="!canSubmit" @click="onUpdate"
       >保存</b-button
     >

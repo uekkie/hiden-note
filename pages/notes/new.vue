@@ -1,9 +1,7 @@
 <template>
   <b-container>
-    <h1>新規ノート</h1>
-    <b-row>
+    <b-row align-v="start">
       <b-col>
-        <h3>タイトル</h3>
         <b-form-input
           v-model.trim="title"
           required
@@ -11,25 +9,31 @@
         ></b-form-input>
       </b-col>
     </b-row>
-    <b-row>
-      <b-col>
-        <h3>内容</h3>
+
+    <b-row align-v="stretch">
+      <b-col class="pr-0">
         <b-form-textarea
           v-model.trim="content"
           placeholder="markdownでかけるよ"
           rows="30"
-          no-resize
           required
         ></b-form-textarea>
       </b-col>
-      <b-col>
-        <h3>プレビュー</h3>
-        <div v-html="formatted_content"></div>
+      <b-col class="pl-0">
+        <div class="px-2 py-1 border h-100" v-html="formatted_content"></div>
       </b-col>
     </b-row>
-    <b-button variant="primary" :disabled="!canSubmit" @click="saveNote"
-      >保存</b-button
-    >
+
+    <b-row align-v="end">
+      <b-col>
+        <b-button
+          variant="success float-right mt-2"
+          :disabled="!canSubmit"
+          @click="saveNote"
+          >保存</b-button
+        >
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 
