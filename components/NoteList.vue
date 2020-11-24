@@ -6,15 +6,16 @@
       <b-list-group-item
         v-for="(note, index) in notes"
         :key="index"
-        :to="`/notes/${note.noteId}`"
         class="flex-column align-items-start"
       >
         <b-row>
-          <b-col
-            ><h5 class="mb-1">{{ note.title }}</h5></b-col
-          >
           <b-col>
-            <small>{{ note.createdAt }}</small>
+            <nuxt-link :to="`/notes/${note.noteId}`">{{
+              note.title
+            }}</nuxt-link>
+          </b-col>
+          <b-col>
+            <small>{{ formatDate(note.createdAt.toDate()) }}</small>
           </b-col>
         </b-row>
       </b-list-group-item>
@@ -34,6 +35,10 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('notes', ['fetchNotes']),
+    formatDate(date: Date): string {
+      // const date = note.createdAt.toDate()
+      return date?.toDateString() || '日付なし'
+    },
   },
 })
 </script>
