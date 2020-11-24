@@ -55,9 +55,10 @@ export const actions: ActionTree<RootState, RootState> = {
     dispatch('createRecentNote', { noteId: noteRef.id, historyDoc })
     return noteRef.id
   },
-  async fetchNote({ commit }, noteId) {
+  async fetchNote({ commit }, noteId): Promise<any> {
     const note = await getNote(noteId)
     commit('SET_NOTE', note)
+    return note
   },
   createRecentNote({ dispatch }, payload) {
     const noteId = payload.noteId

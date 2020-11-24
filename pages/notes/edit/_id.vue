@@ -1,68 +1,41 @@
 <template>
-  <b-container v-if="!loading">
-    <div class="title">
-      <b-row>
-        <b-col>
-          <b-form-input
-            v-model.trim="note.title"
-            required
-            placeholder="タイトルをいれてね"
-          ></b-form-input>
-        </b-col>
-      </b-row>
-    </div>
-    <div class="content mt-3">
-      <b-row>
-        <b-col>
-          <b-form-textarea
-            v-model.trim="note.content"
-            placeholder="markdownでかけるよ"
-            rows="30"
-            no-resize
-            required
-          ></b-form-textarea>
-        </b-col>
-        <b-col>
-          <div v-html="formatted_content"></div>
-        </b-col>
-      </b-row>
-    </div>
-    <b-button variant="primary" :disabled="!canSubmit" @click="onUpdate"
-      >保存</b-button
-    >
-  </b-container>
+  <note-form
+    :title="title"
+    :content="content"
+    submit-label="更新する"
+    @submit="onUpdate"
+  ></note-form>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-
-import sanitizeHTML from 'sanitize-html'
 import { mapGetters, mapActions } from 'vuex'
-const md = require('markdown-it')()
+import { Note } from '@/models/note'
 
 export default Vue.extend({
+  data() {
+    return {
+      title: '' as string,
+      content: '' as string,
+    }
+  },
   computed: {
-    loading(): boolean {
-      return !this.note
-    },
-    formatted_content(): string {
-      return sanitizeHTML(md.render(this.note.content))
-    },
-    canSubmit(): boolean {
-      return this.note.title.length > 0 && this.note.content.length > 0
-    },
-    ...mapGetters('notes', ['note']),
+    ...mapGetters('users', ['currentUserRef']),
   },
   created() {
-    this.fetchNote(this.$route.params.id)
+    this.fetchNote(this.$route.params.id).then((note) => {
+      this.title = note.title
+      this.content = note.content
+    })
   },
   methods: {
     ...mapActions('notes', ['fetchNote', 'updateNote']),
-    onUpdate() {
+    onUpdate(formData: any) {
       const noteId = this.$route.params.id
+
       this.updateNote({
         noteId,
-        note: this.note,
+        note: new Note(this.currentUserRef, formData.title, formData.content),
       }).then(() => {
         this.$router.replace({ path: '/notes/' + noteId })
       })
