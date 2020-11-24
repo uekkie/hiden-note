@@ -1,10 +1,22 @@
 <template>
   <b-container v-if="!loading">
     <h1>{{ note.title }}</h1>
-    <div class="content" v-html="formatted_content"></div>
+    <div class="d-flex justify-content-end">
+      <div class="edit">
+        <b-icon variant="secondary" icon="pencil"></b-icon>
+        <b-link class="text-secondary" :to="`edit/${noteId()}`"
+          >編集する</b-link
+        >
+      </div>
+      <div class="delete">
+        <b-icon variant="danger" icon="trash"></b-icon>
+        <b-link class="text-danger" @click="modalShow = !modalShow"
+          >削除する</b-link
+        >
+      </div>
+    </div>
 
-    <b-button :to="`edit/${noteId()}`" variant="primary">編集</b-button>
-    <b-button variant="danger" @click="modalShow = !modalShow">削除</b-button>
+    <markdown-preview :content="note.content" />
 
     <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
       >削除してよろしいですか？</b-modal
@@ -14,28 +26,25 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions, mapGetters } from 'vuex'
-
-const md = require('markdown-it')()
+import { mapActions } from 'vuex'
+import { Note } from '@/models/note'
 
 export default Vue.extend({
   data() {
     return {
+      note: null as Note | null,
       modalShow: false,
     }
   },
   computed: {
-    ...mapGetters('notes', ['note']),
-
     loading(): boolean {
       return !this.note
     },
-    formatted_content(): string {
-      return md.render(this.note.content)
-    },
   },
   created() {
-    this.fetchNote(this.$route.params.id)
+    this.fetchNote(this.$route.params.id).then((note) => {
+      this.note = note
+    })
   },
   methods: {
     ...mapActions('notes', ['fetchNote', 'deleteNote']),
@@ -50,5 +59,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style></style>
