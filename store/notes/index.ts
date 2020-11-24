@@ -5,6 +5,11 @@ import { Note, noteConverter } from '@/models/note'
 const notesRef = db.collection('notes')
 const recentNotesRef = db.collection('recentNotes')
 
+export interface RecentNote {
+  title: string
+  noteId: string
+  createdAt: Date
+}
 const getNote = async (id: string) => {
   const noteQuery = await notesRef
     .doc(id)
@@ -21,7 +26,7 @@ const getNote = async (id: string) => {
 
 export const state = () => ({
   note: null as Note | null,
-  notes: [] as Note[],
+  notes: [] as RecentNote[],
 })
 
 export type RootState = ReturnType<typeof state>
@@ -35,8 +40,11 @@ export const mutations: MutationTree<RootState> = {
   SET_NOTE(state, note) {
     state.note = note
   },
-  SET_NOTES(state, notes) {
-    state.notes = notes
+  CLEAR_NOTES(state) {
+    state.notes = []
+  },
+  APPEND_TO_NOTES(state, data) {
+    state.notes.push(data)
   },
 }
 export const actions: ActionTree<RootState, RootState> = {
@@ -85,18 +93,16 @@ export const actions: ActionTree<RootState, RootState> = {
     })
   },
   async fetchNotes({ commit }, limit = 5) {
-    const fetchNotes = [] as any
+    commit('CLEAR_NOTES')
+
     const ref = await recentNotesRef
       .orderBy('createdAt', 'desc')
       .limit(limit)
       .get()
 
     ref.docs.forEach((data) => {
-      fetchNotes.push({
-        ...data.data(),
-      })
+      commit('APPEND_TO_NOTES', { ...data.data() } as RecentNote)
     })
-    commit('SET_NOTES', fetchNotes)
   },
   async deleteNote({ commit, dispatch }, noteId) {
     await notesRef.doc(noteId).delete()
