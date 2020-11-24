@@ -10,7 +10,7 @@ export interface RecentNote {
   noteId: string
   createdAt: Date
 }
-const getNote = async (id: string) => {
+const getNote = async (id: string): Promise<Note> => {
   const noteQuery = await notesRef
     .doc(id)
     .collection('histories')
@@ -63,7 +63,7 @@ export const actions: ActionTree<RootState, RootState> = {
     dispatch('createRecentNote', { noteId: noteRef.id, historyDoc })
     return noteRef.id
   },
-  async fetchNote({ commit }, noteId): Promise<any> {
+  async fetchNote({ commit }, noteId): Promise<Note> {
     const note = await getNote(noteId)
     commit('SET_NOTE', note)
     return note

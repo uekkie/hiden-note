@@ -21,7 +21,9 @@
           ></b-form-textarea>
         </b-col>
         <b-col class="pl-0">
-          <div class="px-2 py-1 border h-100" v-html="formatted_content"></div>
+          <div class="px-2 py-1 border h-100">
+            <markdown-preview :content="content" />
+          </div>
         </b-col>
       </b-row>
 
@@ -41,8 +43,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import sanitizeHTML from 'sanitize-html'
-const md = require('markdown-it')()
 
 export default Vue.extend({
   props: {
@@ -66,9 +66,6 @@ export default Vue.extend({
     return {}
   },
   computed: {
-    formatted_content(): string {
-      return sanitizeHTML(md.render(this.content))
-    },
     canSubmit(): boolean {
       return this.title.length > 0 && this.content.length > 0
     },
