@@ -19,6 +19,7 @@
     "core-js": "^3.6.5",
     "firebase": "^8.0.2",
     "firebaseui": "^4.7.1",
+    "luxon": "^1.25.0",
     "markdown-it": "^12.0.2",
     "nuxt": "^2.14.6",
     "sanitize-html": "^2.1.2",
