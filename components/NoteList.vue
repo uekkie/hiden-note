@@ -2,7 +2,17 @@
   <div class="notes">
     <h3>ノート一覧</h3>
     <p>ノート総数：{{ notes.length }}</p>
+
     <b-list-group>
+      <b-list-group-item
+        variant="primary"
+        class="flex-column align-items-start"
+      >
+        <b-row>
+          <b-col> タイトル </b-col>
+          <b-col> 更新日 </b-col>
+        </b-row>
+      </b-list-group-item>
       <b-list-group-item
         v-for="(note, index) in notes"
         :key="index"
@@ -24,6 +34,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import { DateTime } from 'luxon'
 import { mapGetters, mapActions } from 'vuex'
 
 export default Vue.extend({
@@ -36,8 +47,7 @@ export default Vue.extend({
   methods: {
     ...mapActions('notes', ['fetchNotes']),
     formatDate(date: Date): string {
-      // const date = note.createdAt.toDate()
-      return date?.toDateString() || '日付なし'
+      return DateTime.fromJSDate(date).toISODate()
     },
   },
 })
