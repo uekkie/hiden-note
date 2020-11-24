@@ -20,6 +20,19 @@ export class Note {
   //   )
   // }
 }
+export class NoteHistory {
+  constructor(
+    public userRef: firebase.firestore.DocumentReference,
+    public title: string,
+    public content: string,
+    public createdAt?: Date
+  ) {
+    this.userRef = userRef
+    this.title = title
+    this.content = content
+    this.createdAt = createdAt
+  }
+}
 
 export const noteConverter = {
   toFirestore(note: Note): firebase.firestore.DocumentData {

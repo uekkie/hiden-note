@@ -25,6 +25,7 @@
             }}</nuxt-link>
           </b-col>
           <b-col>
+            <small>{{ note.userName }}</small>
             <small>{{ formatDate(note.createdAt.toDate()) }}</small>
           </b-col>
         </b-row>

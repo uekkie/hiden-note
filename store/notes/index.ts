@@ -9,6 +9,7 @@ export interface RecentNote {
   title: string
   noteId: string
   createdAt: Date
+  userName: string
 }
 const getNote = async (id: string): Promise<Note> => {
   const noteQuery = await notesRef
@@ -76,6 +77,7 @@ export const actions: ActionTree<RootState, RootState> = {
       noteId,
       title: doc.get('title'),
       createdAt: doc.get('createdAt'),
+      userName: payload.userName,
     })
     dispatch('fetchNotes')
   },
@@ -84,11 +86,12 @@ export const actions: ActionTree<RootState, RootState> = {
       .doc(payload.noteId)
       .collection('histories')
       .withConverter(noteConverter)
-      .add(payload.note)
+      .add(payload.noteHistory)
 
     const historyDoc = await historyRef.get()
     dispatch('createRecentNote', {
       noteId: payload.noteId,
+      userName: payload.userName,
       historyDoc,
     })
   },

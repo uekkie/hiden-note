@@ -10,7 +10,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
-import { Note } from '@/models/note'
+import { Note, NoteHistory } from '@/models/note'
 
 export default Vue.extend({
   data() {
@@ -20,7 +20,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters('users', ['currentUserRef']),
+    ...mapGetters('users', ['currentUserRef', 'userDisplayName']),
   },
   created() {
     this.fetchNote(this.$route.params.id).then((note) => {
@@ -35,7 +35,12 @@ export default Vue.extend({
 
       this.updateNote({
         noteId,
-        note: new Note(this.currentUserRef, formData.title, formData.content),
+        noteHistory: new NoteHistory(
+          this.currentUserRef,
+          formData.title,
+          formData.content
+        ),
+        userName: this.userDisplayName,
       }).then(() => {
         this.$router.replace({ path: '/notes/' + noteId })
       })
