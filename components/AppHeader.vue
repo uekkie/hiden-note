@@ -7,7 +7,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav v-if="userSignedIn">
-          <b-nav-item>{{ currentUser.displayName }}</b-nav-item>
+          <b-nav-item>{{ displayName }}</b-nav-item>
           <b-nav-item @click="logout">ログアウト</b-nav-item>
           <b-nav-item to="/notes/new" exact exact-active-class="active"
             >新規ノート作成</b-nav-item
@@ -23,16 +23,34 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapGetters, mapActions } from 'vuex'
+// import { mapGetters, mapActions } from 'vuex'
+import { usersStore } from '../store' // モジュールクラスをインポート
+
 export default Vue.extend({
   computed: {
-    ...mapGetters('users', ['userSignedIn', 'currentUser']),
+    userSignedIn() {
+      console.log(usersStore.userSignedIn)
+      return usersStore.userSignedIn
+    },
+    // ...mapGetters('users', ['userSignedIn', 'currentUser']),
   },
-  mounted() {
+  created() {
     this.authStateChanged()
   },
   methods: {
-    ...mapActions('users', ['authStateChanged', 'login', 'logout']),
+    authStateChanged() {
+      usersStore.authStateChanged()
+    },
+    login() {
+      return usersStore.login()
+    },
+    logout() {
+      return usersStore.logout()
+    },
+    displayName() {
+      return usersStore.userDisplayName
+    },
+    // ...mapActions('users', ['authStateChanged', 'login', 'logout']),
   },
 })
 </script>

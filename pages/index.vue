@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <h1 class="title">秘伝のタレ</h1>
-    <note-list v-if="userSignedIn"></note-list>
+    <!-- <note-list v-if="userSignedIn"></note-list> -->
   </b-container>
 </template>
 

@@ -1,43 +1,54 @@
-import { GetterTree, ActionTree, MutationTree } from 'vuex'
+import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { firebase, db } from '@/plugins/firebase'
 
 import { User } from '@/models'
 
 const userRef = db.collection('users')
 
-const state = () => ({
-  user: null as null | User,
-  loggedIn: false as boolean,
+@Module({
+  name: 'users',
+  stateFactory: true,
+  namespaced: true,
 })
+class Users extends VuexModule {
+  user: null | User = null
+  loggedIn: boolean = false
 
-export type RootState = ReturnType<typeof state>
+  get userSignedIn() {
+    return this.loggedIn
+  }
 
-export const getters: GetterTree<RootState, RootState> = {
-  userSignedIn: (state) => state.loggedIn,
-  userDisplayName: (state) => state.user?.displayName,
-  currentUser: (state) => state.user,
-  currentUserRef: (state) => userRef.doc(state.user?.uid),
-}
+  get userDisplayName() {
+    return this.user?.displayName
+  }
 
-export const mutations: MutationTree<RootState> = {
-  SET_USER(state, user: User) {
-    state.loggedIn = user !== null
-    state.user = user
-  },
-}
+  get currentUser() {
+    return this.user
+  }
 
-export const actions: ActionTree<RootState, RootState> = {
-  authStateChanged({ commit }) {
+  get currentUserRef() {
+    return userRef.doc(this.user?.uid)
+  }
+
+  @Mutation
+  SET_USER(user: User | null) {
+    this.loggedIn = user !== null
+    this.user = user
+  }
+
+  @Action({})
+  authStateChanged() {
     firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
-        commit('SET_USER', null)
+        this.SET_USER(null)
         return
       }
       const { uid, email, displayName } = user
       const userData = new User(uid, email!, displayName!)
-      commit('SET_USER', userData)
+      console.log(userData)
+      this.SET_USER(userData)
 
-      const currentUserRef = userRef.doc(user.uid)
+      const currentUserRef = this.userRef.doc(user.uid)
 
       currentUserRef.get().then(function (doc) {
         // Userがdbに保存されてなかったら保存
@@ -49,7 +60,9 @@ export const actions: ActionTree<RootState, RootState> = {
         }
       })
     })
-  },
+  }
+
+  @Action
   login() {
     const provider = new firebase.auth.GoogleAuthProvider()
 
@@ -57,7 +70,9 @@ export const actions: ActionTree<RootState, RootState> = {
       .auth()
       .signInWithPopup(provider)
       .then(function () {})
-  },
+  }
+
+  @Action
   logout() {
     firebase
       .auth()
@@ -65,5 +80,7 @@ export const actions: ActionTree<RootState, RootState> = {
       .then((_) => {
         // ログイン画面に戻る
       })
-  },
+  }
 }
+
+export default Users
