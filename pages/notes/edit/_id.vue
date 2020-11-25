@@ -1,7 +1,7 @@
 <template>
   <note-form
-    :title="title"
-    :content="content"
+    v-if="note"
+    :note="note"
     submit-label="更新する"
     @submit="onUpdate"
   ></note-form>
@@ -10,11 +10,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
-import { Note, NoteHistory } from '@/models/note'
+import { Note } from '@/models/note'
 
 export default Vue.extend({
   data() {
     return {
+      note: null as Note | null,
       title: '' as string,
       content: '' as string,
     }
@@ -24,6 +25,7 @@ export default Vue.extend({
   },
   created() {
     this.fetchNote(this.$route.params.id).then((note) => {
+      this.note = note
       this.title = note.title
       this.content = note.content
     })
@@ -35,11 +37,10 @@ export default Vue.extend({
 
       this.updateNote({
         noteId,
-        noteHistory: new NoteHistory(
-          this.currentUserRef,
-          formData.title,
-          formData.content
-        ),
+        userRef: this.currentUserRef,
+        title: formData.title,
+        content: formData.content,
+        tags: formData.tags,
         userName: this.userDisplayName,
       }).then(() => {
         this.$router.replace({ path: '/notes/' + noteId })

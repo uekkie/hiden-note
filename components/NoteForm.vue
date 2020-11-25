@@ -1,10 +1,10 @@
 <template>
-  <b-container>
+  <b-container v-if="note">
     <form @submit.prevent="submit">
       <b-row align-v="start">
         <b-col>
           <b-form-input
-            v-model.trim="title"
+            v-model.trim="note.title"
             required
             placeholder="タイトルをいれてね"
           ></b-form-input>
@@ -23,7 +23,7 @@
       <b-row align-v="stretch">
         <b-col class="pr-0">
           <b-form-textarea
-            v-model.trim="content"
+            v-model.trim="note.content"
             placeholder="markdownでかけるよ"
             rows="30"
             required
@@ -31,7 +31,7 @@
         </b-col>
         <b-col class="pl-0">
           <div class="px-2 py-1 border h-100">
-            <markdown-preview :content="content" />
+            <markdown-preview :content="note.content" />
           </div>
         </b-col>
       </b-row>
@@ -51,7 +51,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropType } from 'vue'
+import { Note } from '@/models/note'
 
 export default Vue.extend({
   props: {
@@ -60,33 +61,35 @@ export default Vue.extend({
       required: true,
       default: '保存する',
     },
-    title: {
-      type: String,
-      required: false,
-      default: '',
-    },
-    content: {
-      type: String,
-      required: false,
-      default: '',
-    },
-    tags: {
-      type: String,
-      required: false,
-      default: '',
+    note: {
+      type: Object as PropType<Note>,
+      required: true,
     },
   },
   data() {
-    return {}
+    return {
+      tags: '' as string,
+    }
   },
   computed: {
     canSubmit(): boolean {
-      return this.title.length > 0 && this.content.length > 0
+      if (!this.note) return false
+      return this.note.title.length > 0 && this.note.content.length > 0
     },
   },
+  created() {
+    this.tags = this.note.tags.join(',')
+  },
   methods: {
+    tagsToArray(): string[] {
+      return this.tags.split(',')
+    },
     submit() {
-      this.$emit('submit', { title: this.title, content: this.content, tags: this.tags })
+      this.$emit('submit', {
+        title: this.note?.title,
+        content: this.note?.content,
+        tags: this.tagsToArray(),
+      })
     },
   },
 })

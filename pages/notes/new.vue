@@ -1,10 +1,5 @@
 <template>
-  <note-form
-    :title="title"
-    :content="content"
-    submit-label="保存する"
-    @submit="onSubmit"
-  />
+  <note-form :note="note" submit-label="保存する" @submit="onSubmit" />
 </template>
 
 <script lang="ts">
@@ -15,9 +10,13 @@ import { Note } from '@/models/note'
 export default Vue.extend({
   data() {
     return {
+      note: null as Note | null,
       title: '',
       content: '',
     }
+  },
+  created() {
+    this.note = new Note('', '', [''])
   },
   computed: {
     ...mapGetters('users', ['currentUserRef']),
@@ -26,7 +25,12 @@ export default Vue.extend({
     ...mapActions('notes', ['createNote']),
     onSubmit(formData: any) {
       this.createNote(
-        new Note(this.currentUserRef, formData.title, formData.content, formData.tags)
+        new Note(
+          formData.title,
+          formData.content,
+          formData.tags,
+          this.currentUserRef
+        )
       ).then((noteId) => {
         this.$router.replace({ path: '/notes/' + noteId })
       })
