@@ -1,12 +1,11 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import { firebase, db } from '@/plugins/firebase'
-import { vuexfireMutations } from 'vuexfire'
 
 import { User } from '@/models'
 
 const userRef = db.collection('users')
 
-export const state = () => ({
+const state = () => ({
   user: null as null | User,
   loggedIn: false as boolean,
 })
@@ -21,7 +20,6 @@ export const getters: GetterTree<RootState, RootState> = {
 }
 
 export const mutations: MutationTree<RootState> = {
-  ...vuexfireMutations,
   SET_USER(state, user: User) {
     state.loggedIn = user !== null
     state.user = user
@@ -36,21 +34,20 @@ export const actions: ActionTree<RootState, RootState> = {
         return
       }
       const { uid, email, displayName } = user
-      commit('SET_USER', new User(uid, email!, displayName!))
+      const userData = new User(uid, email!, displayName!)
+      commit('SET_USER', userData)
 
       const currentUserRef = userRef.doc(user.uid)
 
-      currentUserRef
-        .get()
-        .then(function (doc) {
-          // Userがdbに保存されてなかったら保存
-          if (!doc.exists) {
-            userRef.add(user)
-          }
-        })
-        .catch(function (error) {
-          console.log('Error getting document:', error)
-        })
+      currentUserRef.get().then(function (doc) {
+        // Userがdbに保存されてなかったら保存
+        if (!doc.exists) {
+          currentUserRef.set({
+            email: userData.email,
+            displayName: userData.displayName,
+          })
+        }
+      })
     })
   },
   login() {
@@ -59,26 +56,14 @@ export const actions: ActionTree<RootState, RootState> = {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function () {
-        console.log('logged in!')
-      })
-      .catch(function (error) {
-        const errorCode = error.errorCode
-        console.log('error :' + errorCode)
-      })
+      .then(function () {})
   },
   logout() {
     firebase
       .auth()
       .signOut()
-      .then(
-        (_) => {
-          // ログイン画面に戻る
-        },
-        (err) => {
-          // エラー表示
-          console.log(err)
-        }
-      )
+      .then((_) => {
+        // ログイン画面に戻る
+      })
   },
 }

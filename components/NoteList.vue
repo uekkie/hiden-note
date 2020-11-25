@@ -20,13 +20,11 @@
       >
         <b-row>
           <b-col>
-            <nuxt-link :to="`/notes/${note.noteId}`">{{
-              note.title
-            }}</nuxt-link>
+            <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
           </b-col>
           <b-col>
-            <small>{{ note.userName }}</small>
-            <small>{{ formatDate(note.createdAt.toDate()) }}</small>
+            <!-- <small>{{ note.userName }}</small> -->
+            <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
           </b-col>
         </b-row>
       </b-list-group-item>

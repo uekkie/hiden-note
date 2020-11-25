@@ -1,39 +1,22 @@
 import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import { db, firebase } from '@/plugins/firebase'
-import { Note, noteConverter } from '@/models/note'
+import { Note } from '@/models/note'
 
 const notesRef = db.collection('notes')
-const tagsRef  = db.collection('tags')
-const recentNotesRef = db.collection('recentNotes')
 
-export interface RecentNote {
-  title: string
-  noteId: string
-  createdAt: Date
-  userName: string
-}
-// const getNote = async (id: string): Promise<Note> => {
-//   const noteQuery = await notesRef
-//     .doc(id)
-//     .collection('histories')
-//     .orderBy('createdAt', 'desc')
-//     .limit(1)
-//     .get()
-
-//   const noteDoc = noteQuery.docs[0]
-
-//   const note = { ...noteDoc.data() }
-//   return note as Note
-// }
 const getNote = async (id: string): Promise<Note> => {
   const noteRef = await notesRef.doc(id).get()
-  const note = { ...noteRef.data() }
+  const note = {
+    title: noteRef.get('title'),
+    content: noteRef.get('content'),
+    tags: noteRef.get('tags'),
+  }
   return note as Note
 }
 
-export const state = () => ({
+const state = () => ({
   note: null as Note | null,
-  notes: [] as RecentNote[],
+  notes: [] as any[],
 })
 
 export type RootState = ReturnType<typeof state>
@@ -54,24 +37,19 @@ export const mutations: MutationTree<RootState> = {
     state.notes.push(data)
   },
 }
+
 export const actions: ActionTree<RootState, RootState> = {
-  async createNote({ dispatch }, note): Promise<string> {
+  async createNote(_, note): Promise<string> {
     const noteRef = await notesRef.add({
       title: note.title,
       content: note.content,
-      tags: firebase.firestore.FieldValue.arrayUnion(note.tags),
+      tags:
+        note.tags.length > 0
+          ? firebase.firestore.FieldValue.arrayUnion(...note.tags)
+          : [],
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
-
-    const historyRef = await notesRef
-      .doc(noteRef.id)
-      .collection('histories')
-      .withConverter(noteConverter)
-      .add(note)
-
-    const historyDoc = await historyRef.get()
-    dispatch('createRecentNote', { noteId: noteRef.id, historyDoc, userName: 'hoge' })
-
     return noteRef.id
   },
   async fetchNote({ commit }, noteId): Promise<Note> {
@@ -79,47 +57,33 @@ export const actions: ActionTree<RootState, RootState> = {
     commit('SET_NOTE', note)
     return note
   },
-  createRecentNote({ dispatch }, payload) {
-    const noteId = payload.noteId
-    const doc = payload.historyDoc
+  async updateNote({ rootGetters }, payload) {
+    const noteRef = notesRef.doc(payload.noteId)
 
-    recentNotesRef.doc(noteId).set({
-      noteId,
-      title: doc.get('title'),
-      createdAt: doc.get('createdAt'),
-      userName: 'hoge',
+    noteRef.update({
+      title: payload.title,
+      content: payload.content,
+      tags: payload.tags,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
-    dispatch('fetchNotes')
-  },
-  async updateNote({ dispatch }, payload) {
-    const historyRef = await notesRef
-      .doc(payload.noteId)
-      .collection('histories')
-      .withConverter(noteConverter)
-      .add(payload.noteHistory)
 
-    const historyDoc = await historyRef.get()
-    dispatch('createRecentNote', {
-      noteId: payload.noteId,
-      userName: payload.userName,
-      historyDoc,
+    await noteRef.collection('histories').add({
+      content: payload.content,
+      userRef: rootGetters['users/currentUserRef'],
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
   },
   async fetchNotes({ commit }, limit = 5) {
     commit('CLEAR_NOTES')
 
-    const ref = await recentNotesRef
-      .orderBy('createdAt', 'desc')
-      .limit(limit)
-      .get()
+    const ref = await notesRef.orderBy('updatedAt', 'desc').limit(limit).get()
 
     ref.docs.forEach((data) => {
-      commit('APPEND_TO_NOTES', { ...data.data() } as RecentNote)
+      commit('APPEND_TO_NOTES', { id: data.id, ...data.data() })
     })
   },
   async deleteNote({ commit, dispatch }, noteId) {
     await notesRef.doc(noteId).delete()
-    await recentNotesRef.doc(noteId).delete()
     dispatch('fetchNotes')
     commit('SET_NOTE', null)
   },

@@ -1,10 +1,10 @@
 import firebase from 'firebase'
 export class Note {
   constructor(
-    public userRef: firebase.firestore.DocumentReference,
     public title: string,
     public content: string,
-    public tags: string,
+    public tags: string[],
+    public userRef?: firebase.firestore.DocumentReference,
     public createdAt?: Date
   ) {
     this.userRef = userRef
@@ -13,14 +13,6 @@ export class Note {
     this.tags = tags
     this.createdAt = createdAt
   }
-
-  // MEMO: Note.createdAtを表示する箇所がなくなったのでコメントアウトしているが、
-  // あとあとどこかで使い始めそうなので残してます
-  // formatDate(): string {
-  //   return (
-  //     this.createdAt?.toDateString() || '日付なし'
-  //   )
-  // }
 }
 export class NoteHistory {
   constructor(
@@ -55,7 +47,13 @@ export const noteConverter = {
       alert('invalid note')
       throw new Error('invalid note')
     }
-    return new Note(note.userRef, note.title, note.content, note.tags, note.createdAt)
+    return new Note(
+      note.title,
+      note.content,
+      note.tags,
+      note.userRef,
+      note.createdAt
+    )
   },
 }
 
