@@ -11,6 +11,15 @@
         </b-col>
       </b-row>
 
+      <b-row align-v="start">
+        <b-col>
+          <b-form-input
+            v-model.trim="tags"
+            placeholder="タグ 例）firestoreのつかいかた"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+
       <b-row align-v="stretch">
         <b-col class="pr-0">
           <b-form-textarea
@@ -61,6 +70,11 @@ export default Vue.extend({
       required: false,
       default: '',
     },
+    tags: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
   data() {
     return {}
@@ -72,7 +86,7 @@ export default Vue.extend({
   },
   methods: {
     submit() {
-      this.$emit('submit', { title: this.title, content: this.content })
+      this.$emit('submit', { title: this.title, content: this.content, tags: this.tags })
     },
   },
 })
