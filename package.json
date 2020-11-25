@@ -23,6 +23,7 @@
     "luxon": "^1.25.0",
     "nuxt": "^2.14.6",
     "sanitize-html": "^2.1.2",
+    "vuex-module-decorators": "^1.0.1",
     "vuexfire": "^3.2.4"
   },
   "devDependencies": {
