@@ -15,7 +15,8 @@
         >
       </div>
     </div>
-
+    <tag-list :tags="note.tags"/>
+  
     <markdown-preview :content="note.content" />
 
     <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
@@ -28,8 +29,10 @@
 import Vue from 'vue'
 import { mapActions } from 'vuex'
 import { Note } from '@/models/note'
+import TagList from '~/components/tags/TagList.vue'
 
 export default Vue.extend({
+  components: { TagList },
   data() {
     return {
       note: null as Note | null,

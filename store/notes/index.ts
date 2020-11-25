@@ -3,6 +3,7 @@ import { db, firebase } from '@/plugins/firebase'
 import { Note, noteConverter } from '@/models/note'
 
 const notesRef = db.collection('notes')
+const tagsRef  = db.collection('tags')
 const recentNotesRef = db.collection('recentNotes')
 
 export interface RecentNote {
@@ -11,17 +12,22 @@ export interface RecentNote {
   createdAt: Date
   userName: string
 }
+// const getNote = async (id: string): Promise<Note> => {
+//   const noteQuery = await notesRef
+//     .doc(id)
+//     .collection('histories')
+//     .orderBy('createdAt', 'desc')
+//     .limit(1)
+//     .get()
+
+//   const noteDoc = noteQuery.docs[0]
+
+//   const note = { ...noteDoc.data() }
+//   return note as Note
+// }
 const getNote = async (id: string): Promise<Note> => {
-  const noteQuery = await notesRef
-    .doc(id)
-    .collection('histories')
-    .orderBy('createdAt', 'desc')
-    .limit(1)
-    .get()
-
-  const noteDoc = noteQuery.docs[0]
-
-  const note = { ...noteDoc.data() }
+  const noteRef = await notesRef.doc(id).get()
+  const note = { ...noteRef.data() }
   return note as Note
 }
 
@@ -51,6 +57,9 @@ export const mutations: MutationTree<RootState> = {
 export const actions: ActionTree<RootState, RootState> = {
   async createNote({ dispatch }, note): Promise<string> {
     const noteRef = await notesRef.add({
+      title: note.title,
+      content: note.content,
+      tags: firebase.firestore.FieldValue.arrayUnion(note.tags),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
 
@@ -61,7 +70,8 @@ export const actions: ActionTree<RootState, RootState> = {
       .add(note)
 
     const historyDoc = await historyRef.get()
-    dispatch('createRecentNote', { noteId: noteRef.id, historyDoc })
+    dispatch('createRecentNote', { noteId: noteRef.id, historyDoc, userName: 'hoge' })
+
     return noteRef.id
   },
   async fetchNote({ commit }, noteId): Promise<Note> {
@@ -77,7 +87,7 @@ export const actions: ActionTree<RootState, RootState> = {
       noteId,
       title: doc.get('title'),
       createdAt: doc.get('createdAt'),
-      userName: payload.userName,
+      userName: 'hoge',
     })
     dispatch('fetchNotes')
   },

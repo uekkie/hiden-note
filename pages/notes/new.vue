@@ -26,7 +26,7 @@ export default Vue.extend({
     ...mapActions('notes', ['createNote']),
     onSubmit(formData: any) {
       this.createNote(
-        new Note(this.currentUserRef, formData.title, formData.content)
+        new Note(this.currentUserRef, formData.title, formData.content, formData.tags)
       ).then((noteId) => {
         this.$router.replace({ path: '/notes/' + noteId })
       })

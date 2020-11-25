@@ -4,11 +4,13 @@ export class Note {
     public userRef: firebase.firestore.DocumentReference,
     public title: string,
     public content: string,
+    public tags: string,
     public createdAt?: Date
   ) {
     this.userRef = userRef
     this.title = title
     this.content = content
+    this.tags = tags
     this.createdAt = createdAt
   }
 
@@ -53,7 +55,7 @@ export const noteConverter = {
       alert('invalid note')
       throw new Error('invalid note')
     }
-    return new Note(note.userRef, note.title, note.content, note.createdAt)
+    return new Note(note.userRef, note.title, note.content, note.tags, note.createdAt)
   },
 }
 
