@@ -15,8 +15,8 @@
         >
       </div>
     </div>
-    <tag-list :tags="note.tags"/>
-  
+    <tag-list :tags="note.tags" />
+
     <markdown-preview :content="note.content" />
 
     <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
