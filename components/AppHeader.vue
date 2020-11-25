@@ -23,34 +23,25 @@
 
 <script lang="ts">
 import Vue from 'vue'
-// import { mapGetters, mapActions } from 'vuex'
-import { usersStore } from '../store' // モジュールクラスをインポート
+import { authStore } from '../store' // モジュールクラスをインポート
 
 export default Vue.extend({
   computed: {
     userSignedIn() {
-      console.log(usersStore.userSignedIn)
-      return usersStore.userSignedIn
-    },
-    // ...mapGetters('users', ['userSignedIn', 'currentUser']),
-  },
-  created() {
-    this.authStateChanged()
-  },
-  methods: {
-    authStateChanged() {
-      usersStore.authStateChanged()
-    },
-    login() {
-      return usersStore.login()
-    },
-    logout() {
-      return usersStore.logout()
+      return authStore.userSignedIn
     },
     displayName() {
-      return usersStore.userDisplayName
+      return authStore.userDisplayName
     },
-    // ...mapActions('users', ['authStateChanged', 'login', 'logout']),
+  },
+  created() {},
+  methods: {
+    login() {
+      return authStore.login()
+    },
+    logout() {
+      return authStore.logout()
+    },
   },
 })
 </script>

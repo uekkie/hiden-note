@@ -1,17 +1,20 @@
 <template>
   <b-container>
     <h1 class="title">秘伝のタレ</h1>
-    <!-- <note-list v-if="userSignedIn"></note-list> -->
+    <note-list v-if="userSignedIn"></note-list>
+    <div v-else>ログインしてください</div>
   </b-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapGetters } from 'vuex'
+import { authStore } from '@/store'
 
 export default Vue.extend({
   computed: {
-    ...mapGetters('users', ['userSignedIn', 'currentUser']),
+    userSignedIn() {
+      return authStore.userSignedIn
+    },
   },
 })
 </script>

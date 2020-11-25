@@ -7,11 +7,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-export default Vue.extend({
-  // FIXME: ここを有効にすると、ノート詳細でページリロード（F5）したときにトップページにリダイレクトされてしまう
-  // userSignedInの状態のタイミングがまずいのかも？
-  // middleware: 'auth',
-})
+
+export default Vue.extend({})
 </script>
 <style>
 html {

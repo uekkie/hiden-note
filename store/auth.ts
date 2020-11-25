@@ -6,11 +6,11 @@ import { User } from '@/models'
 const userRef = db.collection('users')
 
 @Module({
-  name: 'users',
+  name: 'auth',
   stateFactory: true,
   namespaced: true,
 })
-class Users extends VuexModule {
+class Auth extends VuexModule {
   user: null | User = null
   loggedIn: boolean = false
 
@@ -36,30 +36,13 @@ class Users extends VuexModule {
     this.user = user
   }
 
-  @Action({})
-  authStateChanged() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        this.SET_USER(null)
-        return
-      }
-      const { uid, email, displayName } = user
-      const userData = new User(uid, email!, displayName!)
-      console.log(userData)
-      this.SET_USER(userData)
-
-      const currentUserRef = this.userRef.doc(user.uid)
-
-      currentUserRef.get().then(function (doc) {
-        // Userがdbに保存されてなかったら保存
-        if (!doc.exists) {
-          currentUserRef.set({
-            email: userData.email,
-            displayName: userData.displayName,
-          })
-        }
-      })
-    })
+  @Action({ rawError: true })
+  public doSignIn(firebaseUser: firebase.User) {
+    this.SET_USER({
+      uid: firebaseUser.uid,
+      email: firebaseUser.email!,
+      displayName: firebaseUser.displayName!,
+    } as User)
   }
 
   @Action
@@ -83,4 +66,4 @@ class Users extends VuexModule {
   }
 }
 
-export default Users
+export default Auth
