@@ -28,7 +28,7 @@ export default Vue.extend({
   computed: {
     ...mapGetters('users', ['userSignedIn', 'currentUser']),
   },
-  created() {
+  mounted() {
     this.authStateChanged()
   },
   methods: {
