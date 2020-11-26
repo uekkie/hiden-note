@@ -4,7 +4,7 @@
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
 import { notesStore } from '@/store'
-import { Diff, Change } from 'Diff'
+import { Diff as KlsDiff, Change } from 'Diff'
 
 @Component
 class NoteDiff extends Vue {
@@ -25,7 +25,7 @@ class NoteDiff extends Vue {
   }
 
   renderDiff(oldString: string, newString: string) {
-    const diff = new Diff()
+    const diff = new KlsDiff()
 
     const changes = diff.diff(oldString, newString)
 
