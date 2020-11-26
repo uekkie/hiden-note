@@ -40,6 +40,7 @@ class Notes extends VuexModule {
   @Action
   async createNote(note: Note): Promise<string> {
     const noteRef = await notesRef.add({
+      userId: authStore.userId,
       title: note.title,
       content: note.content,
       tags: note.tags.length > 0 ? FieldValue.arrayUnion(...note.tags) : [],

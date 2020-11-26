@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Note } from '@/models/note'
-import { notesStore, authStore } from '@/store'
+import { notesStore } from '@/store'
 
 export default Vue.extend({
   data() {
@@ -24,7 +24,6 @@ export default Vue.extend({
             title: formData.title,
             content: formData.content,
             tags: formData.tags,
-            userId: authStore.userId,
           })
         )
         .then((noteId) => {
