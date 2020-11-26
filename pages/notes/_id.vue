@@ -50,9 +50,9 @@ class NoteShow extends Vue {
     return this.$route.params.id
   }
 
-  handleDeleteNote(bvModalEvt: any) {
+  async handleDeleteNote(bvModalEvt: any) {
     bvModalEvt.preventDefault()
-    notesStore.deleteNote(this.$route.params.id)
+    await notesStore.deleteNote(this.$route.params.id)
     this.$router.push('/')
   }
 }
