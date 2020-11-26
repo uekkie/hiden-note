@@ -5,7 +5,6 @@
 import { Vue, Component } from 'nuxt-property-decorator'
 import { notesStore } from '@/store'
 import { Diff, Change } from 'Diff'
-const diff = new Diff()
 
 @Component
 class NoteDiff extends Vue {
@@ -26,6 +25,8 @@ class NoteDiff extends Vue {
   }
 
   renderDiff(oldString: string, newString: string) {
+    const diff = new Diff()
+
     const changes = diff.diff(oldString, newString)
 
     const fragment = document.createDocumentFragment()
