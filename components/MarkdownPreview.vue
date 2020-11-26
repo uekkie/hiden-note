@@ -1,10 +1,10 @@
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div v-html="formatted_content"></div>
+  <div v-html="formattedContent"></div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { Vue, Component, Prop } from 'nuxt-property-decorator'
 
 import sanitizeHTML from 'sanitize-html'
 const md = require('markdown-it')({
@@ -12,20 +12,15 @@ const md = require('markdown-it')({
   linkify: true,
   breaks: true,
 })
-export default Vue.extend({
-  props: {
-    content: {
-      type: String,
-      required: true,
-    },
-  },
-  data() {
-    return {}
-  },
-  computed: {
-    formatted_content(): string {
-      return sanitizeHTML(md.render(this.content))
-    },
-  },
-})
+
+@Component
+class MarkdownPreview extends Vue {
+  @Prop({ default: false })
+  content!: string
+
+  get formattedContent(): string {
+    return sanitizeHTML(md.render(this.content))
+  }
+}
+export default MarkdownPreview
 </script>

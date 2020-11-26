@@ -22,6 +22,7 @@
     "firebaseui": "^4.7.1",
     "luxon": "^1.25.0",
     "nuxt": "^2.14.6",
+    "nuxt-property-decorator": "^2.8.8",
     "sanitize-html": "^2.1.2",
     "vuex-module-decorators": "^1.0.1",
     "vuexfire": "^3.2.4"

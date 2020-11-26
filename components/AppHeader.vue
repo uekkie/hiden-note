@@ -22,27 +22,26 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { Vue, Component } from 'nuxt-property-decorator'
 import { authStore } from '../store' // モジュールクラスをインポート
 
-export default Vue.extend({
-  computed: {
-    userSignedIn() {
-      return authStore.userSignedIn
-    },
-    displayName() {
-      return authStore.userDisplayName
-    },
-  },
-  created() {},
-  methods: {
-    login() {
-      return authStore.login()
-    },
-    logout() {
-      return authStore.logout()
-    },
-  },
-})
+@Component
+class AppHeader extends Vue {
+  get userSignedIn() {
+    return authStore.userSignedIn
+  }
+
+  get displayName() {
+    return authStore.userDisplayName
+  }
+
+  login() {
+    return authStore.login()
+  }
+
+  logout() {
+    return authStore.logout()
+  }
+}
+export default AppHeader
 </script>
-<style></style>

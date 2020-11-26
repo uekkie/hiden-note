@@ -3,34 +3,31 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
 import { notesStore } from '@/store'
 
-export default Vue.extend({
-  data() {
-    return {
-      note: null as Note | null,
-    }
-  },
+@Component
+class NoteNew extends Vue {
+  note: Note | null = null
+
   created() {
     this.note = new Note({})
-  },
-  methods: {
-    onSubmit(formData: any) {
-      notesStore
-        .createNote(
-          new Note({
-            title: formData.title,
-            content: formData.content,
-            tags: formData.tags,
-          })
-        )
-        .then((noteId) => {
-          this.$router.replace({ path: '/notes/' + noteId })
+  }
+
+  onSubmit(formData: any) {
+    notesStore
+      .createNote(
+        new Note({
+          title: formData.title,
+          content: formData.content,
+          tags: formData.tags,
         })
-    },
-  },
-})
+      )
+      .then((noteId) => {
+        this.$router.replace({ path: '/notes/' + noteId })
+      })
+  }
+}
+export default NoteNew
 </script>
-<style></style>
