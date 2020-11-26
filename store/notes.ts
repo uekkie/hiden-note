@@ -63,7 +63,7 @@ class Notes extends VuexModule {
 
     await noteRef.collection('histories').add({
       content: note.content,
-      userRef: authStore.currentUserRef,
+      userId: authStore.userId,
       createdAt: FieldValue.serverTimestamp(),
     })
   }
