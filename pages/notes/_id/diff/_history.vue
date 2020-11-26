@@ -4,7 +4,7 @@
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
 import { notesStore } from '@/store'
-import { Diff } from 'Diff'
+import { Diff, Change } from 'Diff'
 const diff = new Diff()
 
 @Component
@@ -31,7 +31,7 @@ class NoteDiff extends Vue {
     const fragment = document.createDocumentFragment()
 
     let span = null
-    changes.forEach((part) => {
+    changes.forEach((part: Change) => {
       const color = part.added ? 'green' : part.removed ? 'red' : 'grey'
       span = document.createElement('span')
       span.style.color = color
