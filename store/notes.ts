@@ -23,6 +23,25 @@ class Notes extends VuexModule {
     return note as Note
   }
 
+  @Action
+  async getNoteHistory({
+    id,
+    historyId,
+  }: {
+    id: string
+    historyId: string
+  }): Promise<NoteHistory> {
+    const noteHistoryRef = await notesRef
+      .doc(id)
+      .collection('histories')
+      .doc(historyId)
+      .get()
+    return new NoteHistory({
+      id: noteHistoryRef.id,
+      ...noteHistoryRef.data(),
+    })
+  }
+
   get getNotes() {
     return this.storedNotes
   }
