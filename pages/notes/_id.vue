@@ -1,27 +1,44 @@
 <template>
   <b-container v-if="!loading">
-    <h1>{{ note.title }}</h1>
-    <div class="d-flex justify-content-end">
-      <div class="edit">
-        <b-icon variant="secondary" icon="pencil"></b-icon>
-        <b-link class="text-secondary" :to="`edit/${noteId()}`"
-          >編集する</b-link
-        >
-      </div>
-      <div class="delete">
-        <b-icon variant="danger" icon="trash"></b-icon>
-        <b-link class="text-danger" @click="modalShow = !modalShow"
-          >削除する</b-link
-        >
-      </div>
-    </div>
-    <tag-list :tags="note.tags" />
+    <b-row>
+      <b-col cols="8">
+        <h1>{{ note.title }}</h1>
+        <div class="d-flex justify-content-end">
+          <div class="edit">
+            <b-icon variant="secondary" icon="pencil"></b-icon>
+            <b-link class="text-secondary" :to="`edit/${noteId()}`"
+              >編集する</b-link
+            >
+          </div>
+          <div class="delete">
+            <b-icon variant="danger" icon="trash"></b-icon>
+            <b-link class="text-danger" @click="modalShow = !modalShow"
+              >削除する</b-link
+            >
+          </div>
+        </div>
+        <tag-list :tags="note.tags" />
 
-    <markdown-preview :content="note.content" />
+        <markdown-preview :content="note.content" />
 
-    <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
-      >削除してよろしいですか？</b-modal
-    >
+        <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
+          >削除してよろしいですか？</b-modal
+        >
+      </b-col>
+      <b-col cols="4"
+        ><div class="related">
+          <h3>おなじタグの付いたノート</h3>
+          <b-list-group>
+            <b-list-group-item
+              v-for="(note, index) in relatedNotes"
+              :key="index"
+            >
+              <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
+            </b-list-group-item>
+          </b-list-group>
+        </div></b-col
+      >
+    </b-row>
   </b-container>
 </template>
 
@@ -38,11 +55,20 @@ class NoteShow extends Vue {
   note: Note | null = null
   modalShow: boolean = false
   loading: boolean = true
+  relatedNotes: Note[] = []
 
   created() {
     notesStore.getNote(this.$route.params.id).then((note) => {
       this.note = note
       this.loading = false
+      if (note.tags.length > 0) {
+        const tagName = note.tags[0]
+        notesStore.getNotesByTagName(tagName).then((notes) => {
+          this.relatedNotes = notes.filter((note) => {
+            return note.id !== this.note!.id
+          })
+        })
+      }
     })
   }
 

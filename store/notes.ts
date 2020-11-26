@@ -83,5 +83,23 @@ class Notes extends VuexModule {
   async deleteNote(noteId: string) {
     await notesRef.doc(noteId).delete()
   }
+
+  @Action
+  async getNotesByTagName(tagName: string) {
+    const querySnapshot = await notesRef
+      .where('tags', 'array-contains', tagName)
+      .get()
+
+    const notes: Note[] = []
+    for (const doc of querySnapshot.docs) {
+      notes.push(
+        new Note({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return notes
+  }
 }
 export default Notes
