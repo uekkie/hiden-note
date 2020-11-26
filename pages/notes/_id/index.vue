@@ -6,9 +6,7 @@
         <div class="d-flex justify-content-end">
           <div class="edit">
             <b-icon variant="secondary" icon="pencil"></b-icon>
-            <b-link class="text-secondary" :to="`edit/${noteId()}`"
-              >編集する</b-link
-            >
+            <b-link class="text-secondary" :to="editPath()">編集する</b-link>
           </div>
           <div class="delete">
             <b-icon variant="danger" icon="trash"></b-icon>
@@ -92,8 +90,8 @@ class NoteShow extends Vue {
     })
   }
 
-  noteId() {
-    return this.$route.params.id
+  editPath() {
+    return this.note!.id + '/edit'
   }
 
   async handleDeleteNote(bvModalEvt: any) {
