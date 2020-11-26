@@ -25,8 +25,19 @@
           >削除してよろしいですか？</b-modal
         >
       </b-col>
-      <b-col cols="4"
-        ><div class="related">
+      <b-col cols="4">
+        <div class="histories">
+          <h3>更新した人たち</h3>
+          <b-list-group>
+            <b-list-group-item
+              v-for="(history, index) in noteHistories"
+              :key="index"
+            >
+              {{ history.createdAtString() }}に{{ history.creatorName() }}が更新
+            </b-list-group-item>
+          </b-list-group>
+        </div>
+        <div class="related">
           <h3>おなじタグの付いたノート</h3>
           <b-list-group>
             <b-list-group-item
@@ -36,15 +47,15 @@
               <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
             </b-list-group-item>
           </b-list-group>
-        </div></b-col
-      >
+        </div>
+      </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
-import { Note } from '@/models/note'
+import { Note, NoteHistory } from '@/models/note'
 import { notesStore } from '@/store'
 import TagList from '~/components/tags/TagList.vue'
 
@@ -56,6 +67,7 @@ class NoteShow extends Vue {
   modalShow: boolean = false
   loading: boolean = true
   relatedNotes: Note[] = []
+  noteHistories: NoteHistory[] = []
 
   created() {
     notesStore.getNote(this.$route.params.id).then((note) => {
@@ -69,6 +81,10 @@ class NoteShow extends Vue {
           })
         })
       }
+
+      notesStore.getNoteHistories(note.id).then((histories) => {
+        this.noteHistories = histories
+      })
     })
   }
 

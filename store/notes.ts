@@ -1,7 +1,7 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 
 import { db, FieldValue } from '@/plugins/firebase'
-import { Note } from '@/models/note'
+import { Note, NoteHistory } from '@/models/note'
 import { authStore } from '@/store'
 const notesRef = db.collection('notes')
 
@@ -100,6 +100,24 @@ class Notes extends VuexModule {
       )
     }
     return notes
+  }
+
+  @Action
+  async getNoteHistories(noteId: string) {
+    const querySnapshot = await notesRef
+      .doc(noteId)
+      .collection('histories')
+      .get()
+    const histories: NoteHistory[] = []
+    for (const doc of querySnapshot.docs) {
+      histories.push(
+        new NoteHistory({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return histories
   }
 }
 export default Notes

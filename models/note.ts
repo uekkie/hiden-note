@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import { FieldValue } from '@/plugins/firebase'
+import { DateTime } from 'luxon'
 
 export interface INote {
   id: string
@@ -39,17 +40,42 @@ export class Note implements INote {
     })
   }
 }
-export class NoteHistory {
-  constructor(
-    public userRef: firebase.firestore.DocumentReference,
-    public title: string,
-    public content: string,
-    public createdAt?: Date
-  ) {
-    this.userRef = userRef
-    this.title = title
-    this.content = content
-    this.createdAt = createdAt
+export interface INoteHistory {
+  id: string
+  title: string
+  content: string
+  userId: string
+  createdAt: firebase.firestore.Timestamp
+}
+export class NoteHistory implements INoteHistory {
+  id: string = ''
+  title: string = ''
+  content: string = ''
+  userId: string = ''
+  createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
+
+  constructor({
+    id = '',
+    title = '',
+    content = '',
+    userId = '',
+    createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
+  }: Partial<INoteHistory>) {
+    Object.assign(this, {
+      id,
+      title,
+      content,
+      userId,
+      createdAt,
+    })
+  }
+
+  creatorName() {
+    return 'hoge'
+  }
+
+  createdAtString() {
+    return DateTime.fromJSDate(this.createdAt.toDate()).toISODate()
   }
 }
 
