@@ -11,7 +11,7 @@ import { authStore } from '@/store'
 import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component({})
-export class Index extends Vue {
+class Index extends Vue {
   get userSignedIn() {
     return authStore.userSignedIn
   }
