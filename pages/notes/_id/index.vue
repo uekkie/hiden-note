@@ -33,7 +33,7 @@
               v-for="(history, index) in noteHistories"
               :key="index"
             >
-              <nuxt-link :to="`diff/${history.id}`">
+              <nuxt-link :to="`${note.id}/diff/${history.id}`">
                 {{ history.createdAtString() }}に{{
                   history.creatorName()
                 }}が更新
