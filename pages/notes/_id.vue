@@ -26,38 +26,35 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
 import { notesStore } from '@/store'
 import TagList from '~/components/tags/TagList.vue'
 
-export default Vue.extend({
+@Component({
   components: { TagList },
-  data() {
-    return {
-      note: null as Note | null,
-      modalShow: false,
-    }
-  },
-  computed: {
-    loading(): boolean {
-      return !this.note
-    },
-  },
+})
+class NoteShow extends Vue {
+  note: Note | null = null
+  modalShow: boolean = false
+  loading: boolean = true
+
   created() {
     notesStore.getNote(this.$route.params.id).then((note) => {
       this.note = note
+      this.loading = false
     })
-  },
-  methods: {
-    noteId() {
-      return this.$route.params.id
-    },
-    handleDeleteNote(bvModalEvt: any) {
-      bvModalEvt.preventDefault()
-      notesStore.deleteNote(this.$route.params.id)
-      this.$router.push('/')
-    },
-  },
-})
+  }
+
+  noteId() {
+    return this.$route.params.id
+  }
+
+  handleDeleteNote(bvModalEvt: any) {
+    bvModalEvt.preventDefault()
+    notesStore.deleteNote(this.$route.params.id)
+    this.$router.push('/')
+  }
+}
+export default NoteShow
 </script>
