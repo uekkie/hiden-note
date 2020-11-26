@@ -34,7 +34,12 @@ export default {
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
-  build: {},
+  build: {
+    babel: {
+      babelrc: false,
+      compact: false,
+    },
+  },
   router: {
     middleware: 'auth',
   },

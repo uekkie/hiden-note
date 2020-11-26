@@ -2,6 +2,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { firebase, db } from '@/plugins/firebase'
 
 import { User } from '@/models'
+import { authStore } from '~/utils/store-accessor'
 
 const userRef = db.collection('users')
 
@@ -50,23 +51,34 @@ class Auth extends VuexModule {
   }
 
   @Action
-  login() {
-    const provider = new firebase.auth.GoogleAuthProvider()
+  public clear() {
+    this.SET_USER(null)
+  }
 
-    firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(function () {})
+  @Action
+  public login(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const provider = new firebase.auth.GoogleAuthProvider()
+
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then((value: firebase.auth.UserCredential) => {
+          if (value.user) {
+            this.doSignIn(value.user)
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        })
+    })
   }
 
   @Action
   logout() {
-    firebase
-      .auth()
-      .signOut()
-      .then((_) => {
-        // ログイン画面に戻る
-      })
+    firebase.auth().signOut()
+    authStore.clear()
+    return true
   }
 }
 

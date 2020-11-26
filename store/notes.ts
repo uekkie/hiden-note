@@ -1,7 +1,7 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 
 import { db, FieldValue } from '@/plugins/firebase'
-import { Note } from '@/models/note'
+import { Note, NoteHistory } from '@/models/note'
 import { authStore } from '@/store'
 const notesRef = db.collection('notes')
 
@@ -21,6 +21,25 @@ class Notes extends VuexModule {
       ...noteRef.data(),
     }
     return note as Note
+  }
+
+  @Action
+  async getNoteHistory({
+    id,
+    historyId,
+  }: {
+    id: string
+    historyId: string
+  }): Promise<NoteHistory> {
+    const noteHistoryRef = await notesRef
+      .doc(id)
+      .collection('histories')
+      .doc(historyId)
+      .get()
+    return new NoteHistory({
+      id: noteHistoryRef.id,
+      ...noteHistoryRef.data(),
+    })
   }
 
   get getNotes() {
@@ -53,18 +72,23 @@ class Notes extends VuexModule {
   @Action
   async updateNote(note: Note) {
     const noteRef = notesRef.doc(note.id)
+    const beforeNote = await noteRef.get()
+    const beforeContent = beforeNote.get('content')
+
+    // NOTE: 内容（content）に変更がないときは履歴に残さない
+    if (beforeContent !== note.content) {
+      await noteRef.collection('histories').add({
+        content: beforeContent,
+        userId: authStore.userId,
+        createdAt: FieldValue.serverTimestamp(),
+      })
+    }
 
     noteRef.update({
       title: note.title,
       content: note.content,
       tags: note.tags,
       updatedAt: FieldValue.serverTimestamp(),
-    })
-
-    await noteRef.collection('histories').add({
-      content: note.content,
-      userId: authStore.userId,
-      createdAt: FieldValue.serverTimestamp(),
     })
   }
 
@@ -82,6 +106,42 @@ class Notes extends VuexModule {
   @Action
   async deleteNote(noteId: string) {
     await notesRef.doc(noteId).delete()
+  }
+
+  @Action
+  async getNotesByTagName(tagName: string) {
+    const querySnapshot = await notesRef
+      .where('tags', 'array-contains', tagName)
+      .get()
+
+    const notes: Note[] = []
+    for (const doc of querySnapshot.docs) {
+      notes.push(
+        new Note({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return notes
+  }
+
+  @Action
+  async getNoteHistories(noteId: string) {
+    const querySnapshot = await notesRef
+      .doc(noteId)
+      .collection('histories')
+      .get()
+    const histories: NoteHistory[] = []
+    for (const doc of querySnapshot.docs) {
+      histories.push(
+        new NoteHistory({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return histories
   }
 }
 export default Notes
