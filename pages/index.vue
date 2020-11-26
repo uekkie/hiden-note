@@ -7,16 +7,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import { authStore } from '@/store'
+import { Component, Vue } from 'nuxt-property-decorator'
 
-export default Vue.extend({
-  computed: {
-    userSignedIn() {
-      return authStore.userSignedIn
-    },
-  },
-})
+@Component({})
+export class Index extends Vue {
+  get userSignedIn() {
+    return authStore.userSignedIn
+  }
+}
+export default Index
 </script>
 
 <style>
