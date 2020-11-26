@@ -32,24 +32,23 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { Component, Vue } from 'nuxt-property-decorator'
 import { DateTime } from 'luxon'
 import { notesStore } from '@/store'
 
-export default Vue.extend({
-  computed: {
-    notes() {
-      return notesStore.getNotes
-    },
-  },
+@Component
+class NoteList extends Vue {
+  get notes() {
+    return notesStore.getNotes
+  }
+
   created() {
     notesStore.fetchNotes()
-  },
-  methods: {
-    formatDate(date: Date): string {
-      return DateTime.fromJSDate(date).toISODate()
-    },
-  },
-})
+  }
+
+  formatDate(date: Date): string {
+    return DateTime.fromJSDate(date).toISODate()
+  }
+}
+export default NoteList
 </script>
-<style></style>
