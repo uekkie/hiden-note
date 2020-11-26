@@ -56,7 +56,7 @@ import { Component, Vue, Prop } from 'nuxt-property-decorator'
 
 @Component({})
 class NoteForm extends Vue {
-  tags = '' as string
+  tags = ''
 
   @Prop({ default: false })
   submitLabel!: string
