@@ -22,8 +22,12 @@ class Auth extends VuexModule {
     return this.user?.displayName
   }
 
-  get currentUser() {
-    return this.user
+  get currentUser(): User {
+    return this.user!
+  }
+
+  get userId(): string {
+    return this.user ? this.user.uid : ''
   }
 
   get currentUserRef() {

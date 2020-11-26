@@ -27,8 +27,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions } from 'vuex'
 import { Note } from '@/models/note'
+import { notesStore } from '@/store'
 import TagList from '~/components/tags/TagList.vue'
 
 export default Vue.extend({
@@ -45,18 +45,17 @@ export default Vue.extend({
     },
   },
   created() {
-    this.fetchNote(this.$route.params.id).then((note) => {
+    notesStore.getNote(this.$route.params.id).then((note) => {
       this.note = note
     })
   },
   methods: {
-    ...mapActions('notes', ['fetchNote', 'deleteNote']),
     noteId() {
       return this.$route.params.id
     },
     handleDeleteNote(bvModalEvt: any) {
       bvModalEvt.preventDefault()
-      this.deleteNote(this.$route.params.id)
+      notesStore.deleteNote(this.$route.params.id)
       this.$router.push('/')
     },
   },

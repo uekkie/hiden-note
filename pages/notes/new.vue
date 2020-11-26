@@ -4,36 +4,32 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapGetters, mapActions } from 'vuex'
 import { Note } from '@/models/note'
+import { notesStore, authStore } from '@/store'
 
 export default Vue.extend({
   data() {
     return {
       note: null as Note | null,
-      title: '',
-      content: '',
     }
   },
   created() {
-    this.note = new Note('', '', [''])
-  },
-  computed: {
-    ...mapGetters('users', ['currentUserRef']),
+    this.note = new Note({})
   },
   methods: {
-    ...mapActions('notes', ['createNote']),
     onSubmit(formData: any) {
-      this.createNote(
-        new Note(
-          formData.title,
-          formData.content,
-          formData.tags,
-          this.currentUserRef
+      notesStore
+        .createNote(
+          new Note({
+            title: formData.title,
+            content: formData.content,
+            tags: formData.tags,
+            userId: authStore.userId,
+          })
         )
-      ).then((noteId) => {
-        this.$router.replace({ path: '/notes/' + noteId })
-      })
+        .then((noteId) => {
+          this.$router.replace({ path: '/notes/' + noteId })
+        })
     },
   },
 })

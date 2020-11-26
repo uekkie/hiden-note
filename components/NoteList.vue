@@ -34,17 +34,18 @@
 <script lang="ts">
 import Vue from 'vue'
 import { DateTime } from 'luxon'
-import { mapGetters, mapActions } from 'vuex'
+import { notesStore } from '@/store'
 
 export default Vue.extend({
   computed: {
-    ...mapGetters('notes', ['notes']),
+    notes() {
+      return notesStore.getNotes
+    },
   },
   created() {
-    this.fetchNotes()
+    notesStore.fetchNotes()
   },
   methods: {
-    ...mapActions('notes', ['fetchNotes']),
     formatDate(date: Date): string {
       return DateTime.fromJSDate(date).toISODate()
     },
