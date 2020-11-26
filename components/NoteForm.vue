@@ -51,47 +51,43 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue'
 import { Note } from '@/models/note'
+import { Component, Vue, Prop } from 'nuxt-property-decorator'
 
-export default Vue.extend({
-  props: {
-    submitLabel: {
-      type: String,
-      required: true,
-      default: '保存する',
-    },
-    note: {
-      type: Object as PropType<Note>,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      tags: '' as string,
-    }
-  },
-  computed: {
-    canSubmit(): boolean {
-      if (!this.note) return false
-      return this.note.title.length > 0 && this.note.content.length > 0
-    },
-  },
+@Component({})
+class NoteForm extends Vue {
+  tags = '' as string
+
+  @Prop({ default: false })
+  submitLabel!: string
+
+  @Prop({
+    default: false,
+    required: true,
+  })
+  note!: Note
+
+  get canSubmit(): boolean {
+    if (!this.note) return false
+    return this.note.title.length > 0 && this.note.content.length > 0
+  }
+
   created() {
     this.tags = this.note.tags.join(',')
-  },
-  methods: {
-    tagsToArray(): string[] {
-      return this.tags.split(',')
-    },
-    submit() {
-      this.$emit('submit', {
-        title: this.note?.title,
-        content: this.note?.content,
-        tags: this.tagsToArray(),
-      })
-    },
-  },
-})
+  }
+
+  tagsToArray(): string[] {
+    return this.tags.split(',')
+  }
+
+  submit() {
+    this.$emit('submit', {
+      title: this.note?.title,
+      content: this.note?.content,
+      tags: this.tagsToArray(),
+    })
+  }
+}
+export default NoteForm
 </script>
 <style></style>
