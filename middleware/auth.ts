@@ -22,7 +22,7 @@ export default async function ({ route, redirect }: Context) {
 
     if (!isRootPath) {
       return redirect({
-        name: 'index',
+        name: '/',
       })
     }
   }
