@@ -12,13 +12,11 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue'
-export default Vue.extend({
-  props: {
-    tags: {
-      type: Array as PropType<string[]>,
-      default: [],
-    },
-  },
-})
+import { Vue, Component, Prop } from 'nuxt-property-decorator'
+@Component
+class TagList extends Vue {
+  @Prop({ default: false })
+  tags!: string[]
+}
+export default TagList
 </script>
