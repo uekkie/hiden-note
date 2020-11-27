@@ -1,8 +1,8 @@
 <template lang="pug">
-  b-container
-    h1.title 秘伝のタレ
-    note-list(v-if="userSignedIn")
-    div(v-else) ログインしてください
+b-container
+  h1.title 秘伝のタレ
+  note-list(v-if='userSignedIn')
+  div(v-else) ログインしてください
 </template>
 
 <script lang="ts">
@@ -18,14 +18,13 @@ class Index extends Vue {
 export default Index
 </script>
 
-<style>
-.title {
+<style lang="sass">
+.title
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif
+  display: block
+  font-weight: 300
+  font-size: 100px
+  color: #35495e
+  letter-spacing: 1px
 </style>

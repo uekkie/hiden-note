@@ -75,4 +75,3 @@ class NoteForm extends Vue {
 }
 export default NoteForm
 </script>
-<style></style>
