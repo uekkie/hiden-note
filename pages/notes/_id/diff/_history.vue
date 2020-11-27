@@ -1,5 +1,5 @@
-<template>
-  <b-container></b-container>
+<template lang="pug">
+  b-container
 </template>
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'

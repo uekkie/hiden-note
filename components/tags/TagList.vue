@@ -1,14 +1,6 @@
-<template>
-  <div class="tags d-flex justify-content-start">
-    <b-button
-      v-for="(tag, index) in tags"
-      :key="index"
-      variant="primary"
-      class="mx-1"
-    >
-      {{ tag }}
-    </b-button>
-  </div>
+<template lang="pug">
+  .tags.d-flex.justify-content-start
+    b-button(v-for="(tag, index) in tags" :key="index" variant="primary" class="mx-1") {{ tag }}
 </template>
 
 <script lang="ts">
