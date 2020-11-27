@@ -61,8 +61,8 @@ class NoteForm extends Vue {
     this.tags = this.note.tags.join(',')
   }
 
-  tagsToArray(): string[] {
-    return this.tags.split(',')
+  tagsToArray() {
+    return this.tags.split(',').map((tag) => tag.trim())
   }
 
   submit() {
