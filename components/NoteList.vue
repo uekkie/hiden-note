@@ -32,10 +32,6 @@ class NoteList extends Vue {
     return notesStore.notes
   }
 
-  created() {
-    // notesStore.fetchNotes()
-  }
-
   formatDate(date: Date): string {
     return DateTime.fromJSDate(date).toISODate()
   }
