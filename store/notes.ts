@@ -143,5 +143,18 @@ class Notes extends VuexModule {
     }
     return histories
   }
+
+  @Action
+  async fetchTags() {
+    const querySnapshot = await notesRef.get()
+    const tags = [] as any[]
+    querySnapshot.forEach(function (noteSnapshot) {
+      tags.push(noteSnapshot.get('tags'))
+    })
+
+    return tags
+      .flat()
+      .filter((elem, index, self) => self.indexOf(elem) === index)
+  }
 }
 export default Notes

@@ -1,6 +1,7 @@
 <template lang="pug">
 b-container
   h1.title 秘伝のタレ
+  tag-index(v-if='userSignedIn')
   note-list(v-if='userSignedIn')
   div(v-else) ログインしてください
 </template>
