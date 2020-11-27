@@ -7,7 +7,9 @@
 
       b-collapse#nav-collapse(is-nav)
         b-navbar-nav(v-if="userSignedIn")
-          b-nav-item {{ displayName }}
+          b-nav-item
+            b-img(v-bind="photoProps" rounded="circle")
+            span {{ displayName }}
           b-nav-item(@click="logout") ログアウト
           b-nav-item(to="/notes/new" exact exact-active-class="active") 新規ノート作成
         b-navbar-nav(v-else)
@@ -26,6 +28,15 @@ class AppHeader extends Vue {
 
   get displayName() {
     return authStore.userDisplayName
+  }
+
+  get photoProps() {
+    return {
+      width: 32,
+      height: 32,
+      class: 'm1',
+      src: authStore.user!.photoURL,
+    }
   }
 
   login() {
