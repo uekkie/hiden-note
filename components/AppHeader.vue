@@ -44,9 +44,11 @@ class AppHeader extends Vue {
   }
 
   logout() {
-    if (authStore.logout()) {
-      this.$router.push('/')
-    }
+    authStore.logout().then((result) => {
+      if (result) {
+        this.$router.push('/')
+      }
+    })
   }
 }
 export default AppHeader

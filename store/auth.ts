@@ -2,7 +2,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { firebase, db } from '@/plugins/firebase'
 
 import { User, userConverter } from '@/models'
-import { authStore } from '~/utils/store-accessor'
+import { authStore, notesStore } from '~/utils/store-accessor'
 
 const userRef = db.collection('users')
 
@@ -31,8 +31,10 @@ class Auth extends VuexModule {
     return this.user ? this.user.uid : ''
   }
 
-  get currentUserRef() {
-    return userRef.doc(this.user?.uid)
+  @Mutation
+  CLEAR_AUTH() {
+    this.loggedIn = false
+    this.user = null
   }
 
   @Mutation
@@ -63,7 +65,7 @@ class Auth extends VuexModule {
 
   @Action
   public clear() {
-    this.SET_USER(null)
+    this.CLEAR_AUTH()
   }
 
   @Action
@@ -86,9 +88,11 @@ class Auth extends VuexModule {
   }
 
   @Action
-  logout() {
-    firebase.auth().signOut()
+  async logout() {
+    await firebase.auth().signOut()
     authStore.clear()
+    notesStore.clear()
+
     return true
   }
 }

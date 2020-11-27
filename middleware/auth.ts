@@ -17,13 +17,17 @@ export default async function ({ route, redirect }: Context) {
     }
   }
 
-  if (!authStore.userSignedIn) {
-    const isRootPath = route.name === 'index'
-
-    if (!isRootPath) {
+  const isRootPath = route.name === 'index'
+  console.log('route name ', route.name)
+  if (authStore.userSignedIn) {
+    if (isRootPath) {
       return redirect({
-        name: '/',
+        name: 'notes',
       })
     }
+  } else if (!isRootPath) {
+    return redirect({
+      name: '/',
+    })
   }
 }

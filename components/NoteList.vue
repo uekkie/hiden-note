@@ -29,11 +29,11 @@ import { notesStore } from '@/store'
 @Component
 class NoteList extends Vue {
   get notes() {
-    return notesStore.getNotes
+    return notesStore.notes
   }
 
   created() {
-    notesStore.fetchNotes()
+    // notesStore.fetchNotes()
   }
 
   formatDate(date: Date): string {
