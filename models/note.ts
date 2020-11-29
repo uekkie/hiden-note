@@ -70,12 +70,9 @@ export class NoteHistory implements INoteHistory {
     })
   }
 
-  creatorName() {
-    return 'hoge'
-  }
-
   createdAtString() {
-    return DateTime.fromJSDate(this.createdAt.toDate()).toISODate()
+    const dt = DateTime.fromJSDate(this.createdAt.toDate())
+    return dt.toFormat('yyyy-MM-dd HH:mm')
   }
 }
 
