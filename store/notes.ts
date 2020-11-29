@@ -20,6 +20,13 @@ class Notes extends VuexModule {
     return this.storedNotes
   }
 
+  get recentNotes() {
+    const dup = this.storedNotes.slice(0)
+    return dup.sort((noteA: Note, noteB: Note) =>
+      noteA.updatedAt > noteB.updatedAt ? -1 : 0
+    )
+  }
+
   @Mutation
   SET_INITIALIZED(value: boolean) {
     this.initialized = value
@@ -44,6 +51,11 @@ class Notes extends VuexModule {
   STORE_NOTE(note: Note) {
     this.storedNotes = this.storedNotes.filter((q) => q.id !== note.id)
     this.storedNotes.push(note)
+  }
+
+  @Mutation
+  CLEAR_NOTES() {
+    this.storedNotes = []
   }
 
   @Mutation
@@ -112,11 +124,6 @@ class Notes extends VuexModule {
       id: noteHistoryRef.id,
       ...noteHistoryRef.data(),
     })
-  }
-
-  @Mutation
-  CLEAR_NOTES() {
-    this.storedNotes = []
   }
 
   @Action

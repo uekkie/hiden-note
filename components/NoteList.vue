@@ -25,14 +25,11 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { DateTime } from 'luxon'
 import { notesStore } from '@/store'
-import { Note } from '@/models'
 
 @Component
 class NoteList extends Vue {
   get notes() {
-    return notesStore.notes.sort((noteA: Note, noteB: Note) =>
-      noteA.updatedAt > noteB.updatedAt ? -1 : 0
-    )
+    return notesStore.recentNotes
   }
 
   formatDate(date: Date): string {
