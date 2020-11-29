@@ -7,7 +7,7 @@ b-container
 </template>
 
 <script lang="ts">
-import { authStore, notesStore } from '@/store'
+import { authStore, notesStore, usersStore } from '@/store'
 import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component({})
@@ -18,6 +18,7 @@ class Index extends Vue {
 
   async created() {
     await notesStore.initialize()
+    await usersStore.initialize()
   }
 }
 export default Index
