@@ -76,7 +76,7 @@ class Notes extends VuexModule {
 
   @Action
   clear() {
-    this.CLEAR_NOTES()
+    this.CLEAR_STATE()
   }
 
   @Action
