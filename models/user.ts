@@ -1,24 +1,24 @@
 import { firebase } from '@/plugins/firebase'
 
 export interface IUser {
-  uid: string
+  id: string
   email: string
   displayName: string
   photoURL: string
 }
 export class User implements IUser {
-  uid: string = ''
+  id: string = ''
   email: string = ''
   displayName: string = ''
   photoURL: string = ''
   constructor({
-    uid = '',
+    id = '',
     email = '',
     displayName = '',
     photoURL = '',
   }: Partial<IUser>) {
     Object.assign(this, {
-      uid,
+      id,
       email,
       displayName,
       photoURL,
@@ -29,7 +29,6 @@ export class User implements IUser {
 export const userConverter = {
   toFirestore(user: User): firebase.firestore.DocumentData {
     return {
-      uid: user.uid,
       email: user.email,
       displayName: user.displayName,
       photoURL: user.photoURL,
@@ -46,7 +45,6 @@ export const userConverter = {
       throw new Error('invalid user')
     }
     return new User({
-      uid: user.uid,
       email: user.email,
       displayName: user.displayName,
       photoURL: user.photoURL,
