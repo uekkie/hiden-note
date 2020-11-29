@@ -16,10 +16,8 @@
 
         b-modal(v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote") 削除してよろしいですか？
       b-col(cols="4")
-        .histories
-          h3 更新した人たち
-          b-list-group-item(v-for="(history, index) in noteHistories" :key="index")
-            nuxt-link(:to="`${note.id}/diff/${history.id}`") {{ history.createdAtString() }}に{{history.creatorName()}}が更新
+        note-editor-list(:noteId='note.id' )
+
         .related
           h3 おなじタグの付いたノート
           b-list-group
@@ -29,7 +27,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
-import { Note, NoteHistory } from '@/models/note'
+import { Note } from '@/models/note'
 import { notesStore } from '@/store'
 import TagList from '~/components/tags/TagList.vue'
 
@@ -41,7 +39,6 @@ class NoteShow extends Vue {
   modalShow: boolean = false
   loading: boolean = true
   relatedNotes: Note[] = []
-  noteHistories: NoteHistory[] = []
 
   created() {
     notesStore.getNote(this.$route.params.id).then((note) => {
@@ -55,10 +52,6 @@ class NoteShow extends Vue {
           })
         })
       }
-
-      notesStore.getNoteHistories(note.id).then((histories) => {
-        this.noteHistories = histories
-      })
     })
   }
 
