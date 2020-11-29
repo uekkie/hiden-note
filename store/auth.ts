@@ -2,7 +2,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { firebase, db } from '@/plugins/firebase'
 
 import { User, userConverter } from '@/models'
-import { authStore, notesStore } from '~/utils/store-accessor'
+import { authStore, notesStore, usersStore } from '~/utils/store-accessor'
 
 const userRef = db.collection('users')
 
@@ -28,7 +28,7 @@ class Auth extends VuexModule {
   }
 
   get userId(): string {
-    return this.user ? this.user.uid : ''
+    return this.user ? this.user.id : ''
   }
 
   @Mutation
@@ -46,7 +46,7 @@ class Auth extends VuexModule {
   @Action({ rawError: true })
   public doSignIn(firebaseUser: firebase.User) {
     const user = new User({
-      uid: firebaseUser.uid,
+      id: firebaseUser.uid,
       email: firebaseUser.email!,
       displayName: firebaseUser.displayName!,
       photoURL: firebaseUser.photoURL!,
@@ -58,7 +58,7 @@ class Auth extends VuexModule {
 
   @Action
   public async saveUser(user: User) {
-    const userDoc = userRef.doc(user.uid)
+    const userDoc = userRef.doc(user.id)
     await userDoc.withConverter(userConverter).set(user)
     console.log('saved user', user)
   }
@@ -92,6 +92,7 @@ class Auth extends VuexModule {
     await firebase.auth().signOut()
     authStore.clear()
     notesStore.clear()
+    usersStore.clear()
 
     return true
   }
