@@ -6,8 +6,8 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
 
-import sanitizeHTML from 'sanitize-html'
-const md = require('markdown-it')({
+const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
+  inline: true,
   html: false,
   linkify: true,
   breaks: true,
@@ -19,7 +19,7 @@ class MarkdownPreview extends Vue {
   content!: string
 
   get formattedContent(): string {
-    return sanitizeHTML(md.render(this.content))
+    return md.render(this.content)
   }
 }
 export default MarkdownPreview
