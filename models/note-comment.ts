@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import { FieldValue } from '@/plugins/firebase'
+import { DateTime } from 'luxon'
 
 export interface INoteComment {
   id: string
@@ -25,6 +26,11 @@ export class NoteComment implements INoteComment {
       userId,
       createdAt,
     })
+  }
+
+  createdAtString() {
+    const dt = DateTime.fromJSDate(this.createdAt.toDate())
+    return dt.toFormat('yyyy-MM-dd HH:mm')
   }
 }
 
