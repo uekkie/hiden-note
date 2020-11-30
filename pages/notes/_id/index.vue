@@ -14,6 +14,8 @@
 
         markdown-preview(:content="note.content")
 
+        comment-form(:noteId="note.id")
+
         b-modal(v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote") 削除してよろしいですか？
       b-col(cols="4")
         note-editor-list(:noteId='note.id' )
