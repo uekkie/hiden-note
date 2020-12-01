@@ -10,7 +10,7 @@
           .delete
             b-icon(variant="danger" icon="trash")
             b-link.text-danger(@click="modalShow = !modalShow") 削除する
-        tag-list(:tags="note.tags")
+        tag-list(:tags="tags(note)")
 
         markdown-preview(:content="note.content")
 
@@ -55,6 +55,12 @@ class NoteShow extends Vue {
           })
         })
       }
+    })
+  }
+
+  tags(note: Note) {
+    return note.tags.map((tag) => {
+      return { tagName: tag, noteCount: 0 }
     })
   }
 
