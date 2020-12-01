@@ -16,7 +16,7 @@
 
         b-modal(v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote") 削除してよろしいですか？
       b-col(cols="4")
-        note-editor-list(:noteId='note.id' )
+        note-editor-list(:noteId='note.id')
 
         .related
           h3 おなじタグの付いたノート
