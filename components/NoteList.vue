@@ -3,45 +3,41 @@
     <h3>ノート一覧</h3>
     <p>ノート総数：{{ notes.length }}</p>
 
-    <b-list-group>
-      <b-list-group-item
-        variant="primary"
-        class="flex-column align-items-start"
-      >
-        <b-row>
-          <b-col>タイトル</b-col>
-          <b-col>作成者</b-col>
-          <b-col>更新日</b-col>
-        </b-row>
-      </b-list-group-item>
-      <b-list-group-item
-        v-for="(note, index) in notes"
-        :key="index"
-        class="flex-column align-items-start"
-      >
-        <b-row>
-          <b-col>
-            <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
-          </b-col>
-          <b-col>
-            <span>
-              <NuxtLink :to="`/users/${note.userId}`">{{
-                userName(note.userId)
-              }}</NuxtLink>
-            </span>
-          </b-col>
-          <b-col>
-            <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
-          </b-col>
-        </b-row>
-      </b-list-group-item>
-    </b-list-group>
+    <div
+      v-for="(note, index) in notes"
+      :key="index"
+      class="flex-column align-items-start"
+    >
+      <h3>
+        <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
+      </h3>
+      <div>
+        <small>
+          <b-img v-bind="photoProps(note.userId)" rounded="circle"></b-img>
+          <NuxtLink :to="`/users/${note.userId}`">{{
+            userName(note.userId)
+          }}</NuxtLink></small
+        >
+      </div>
+      <div class="content" v-html="formattedContent(note.content)" />
+      <div class="text-right">
+        <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
+      </div>
+      <hr />
+    </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { DateTime } from 'luxon'
 import { notesStore, usersStore } from '@/store'
+
+const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
+  inline: true,
+  html: false,
+  linkify: true,
+  breaks: true,
+})
 
 @Component
 class NoteList extends Vue {
@@ -53,8 +49,25 @@ class NoteList extends Vue {
     return usersStore.users
   }
 
+  formattedContent(content: string): string {
+    return md.render(content)
+  }
+
   userName(userId: string) {
     return this.users.find((user) => user.id === userId)?.displayName
+  }
+
+  userPhotoURL(userId: string) {
+    return this.users.find((user) => user.id === userId)?.photoURL
+  }
+
+  photoProps(userId: string) {
+    return {
+      width: 32,
+      height: 32,
+      class: 'm1',
+      src: this.userPhotoURL(userId),
+    }
   }
 
   formatDate(date: Date): string {
