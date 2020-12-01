@@ -200,6 +200,15 @@ class Notes extends VuexModule {
   }
 
   @Action({ rawError: true })
+  async getNotesCountByTagName(tagName: string) {
+    const querySnapshot = await notesRef
+      .where('tags', 'array-contains', tagName)
+      .get()
+
+    return querySnapshot.docs.length
+  }
+
+  @Action({ rawError: true })
   async recentNoteHistories({
     noteId,
     limit = 5,

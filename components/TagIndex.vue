@@ -1,6 +1,6 @@
 <template lang="pug">
   .tag-index
-    tag-list(:tags='tags')
+    tag-list(:tags='tagInfos')
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
@@ -9,10 +9,16 @@ import { notesStore } from '@/store'
 
 @Component
 class TagIndex extends Vue {
-  tags: string[] = []
+  tagInfos: { tagName: string; noteCount: number }[] = []
 
   async created() {
-    this.tags = await notesStore.fetchTags({ limit: 5 })
+    const tags = await notesStore.fetchTags({ limit: 5 })
+    await tags.forEach(async (tag) => {
+      this.tagInfos.push({
+        tagName: tag,
+        noteCount: await notesStore.getNotesCountByTagName(tag),
+      })
+    })
   }
 
   formatDate(date: Date): string {
