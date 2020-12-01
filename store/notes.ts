@@ -44,7 +44,7 @@ class Notes extends VuexModule {
     }
     this.storedUnsubscribed = undefined
     this.initialized = false
-    this.storedNotes.length = 0
+    this.storedNotes = []
   }
 
   @Mutation
@@ -66,7 +66,7 @@ class Notes extends VuexModule {
   @Action
   async initialize() {
     if (this.initialized) {
-      return true
+      return
     }
     await this.storeNotes()
     this.watchNotes()
@@ -200,10 +200,18 @@ class Notes extends VuexModule {
   }
 
   @Action
-  async getNoteHistories(noteId: string) {
+  async recentNoteHistories({
+    noteId,
+    limit = 5,
+  }: {
+    noteId: string
+    limit: number
+  }) {
     const querySnapshot = await notesRef
       .doc(noteId)
       .collection('histories')
+      .orderBy('createdAt', 'desc')
+      .limit(limit)
       .get()
     const histories: NoteHistory[] = []
     for (const doc of querySnapshot.docs) {
