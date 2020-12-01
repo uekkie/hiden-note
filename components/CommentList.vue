@@ -6,9 +6,7 @@
         <div>
           <div class="text-muted mb-1">
             <span>
-              <NuxtLink
-                :to="{ name: 'users-id', params: { id: comment.userId } }"
-              >
+              <NuxtLink :to="{ path: `/users/${comment.userId}` }">
                 {{ getUser(comment.userId).displayName }}
               </NuxtLink>
             </span>
