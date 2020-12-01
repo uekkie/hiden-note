@@ -99,5 +99,10 @@ class Users extends VuexModule {
       this.STORE_USER(new User(Object.assign({ id: doc.id }, doc.data())))
     })
   }
+
+  @Action
+  getUserById(userId: string) {
+    return this.users.find((user) => user.id === userId)
+  }
 }
 export default Users

@@ -18,7 +18,8 @@
           b-col
             nuxt-link(:to="`/notes/${note.id}`") {{ note.title }}
           b-col
-            span {{ userName(note.userId) }}
+            span
+              NuxtLink(:to="`/users/${note.userId}`") {{ userName(note.userId) }}
           b-col
             small {{ formatDate(note.updatedAt.toDate()) }}
 </template>

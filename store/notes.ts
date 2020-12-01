@@ -237,5 +237,29 @@ class Notes extends VuexModule {
       .flat()
       .filter((elem, index, self) => self.indexOf(elem) === index)
   }
+
+  @Action({ rawError: true })
+  async getNotesByUserId(userId: string) {
+    if (!userId) {
+      console.error('error undefined [userId] !!')
+
+      return []
+    }
+    const querySnapshot = await notesRef
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .get()
+
+    const usersNotes: Note[] = []
+    for (const doc of querySnapshot.docs) {
+      usersNotes.push(
+        new Note({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return usersNotes
+  }
 }
 export default Notes
