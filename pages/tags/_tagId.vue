@@ -7,8 +7,8 @@
         class="flex-column align-items-start"
       >
         <b-row>
-          <b-col> タイトル</b-col>
-          <b-col> 更新日</b-col>
+          <b-col>タイトル</b-col>
+          <b-col>更新日</b-col>
         </b-row>
       </b-list-group-item>
       <b-list-group-item
