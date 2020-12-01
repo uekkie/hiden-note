@@ -39,14 +39,9 @@ class NoteEditorList extends Vue {
     await notesStore.initialize()
     await usersStore.initialize()
 
-    notesStore.getNote(this.noteId).then((note) => {
-      notesStore.getNoteHistories(note.id).then((histories) => {
-        this.noteHistories = histories
-          .sort((value1: NoteHistory, value2: NoteHistory) =>
-            value1.createdAt > value2.createdAt ? -1 : 0
-          )
-          .slice(0, 5)
-      })
+    this.noteHistories = await notesStore.recentNoteHistories({
+      noteId: this.noteId,
+      limit: 5,
     })
     this.users = usersStore.users
   }

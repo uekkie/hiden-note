@@ -200,10 +200,18 @@ class Notes extends VuexModule {
   }
 
   @Action
-  async getNoteHistories(noteId: string) {
+  async recentNoteHistories({
+    noteId,
+    limit = 5,
+  }: {
+    noteId: string
+    limit: number
+  }) {
     const querySnapshot = await notesRef
       .doc(noteId)
       .collection('histories')
+      .orderBy('createdAt', 'desc')
+      .limit(limit)
       .get()
     const histories: NoteHistory[] = []
     for (const doc of querySnapshot.docs) {
