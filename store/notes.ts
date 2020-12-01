@@ -44,7 +44,7 @@ class Notes extends VuexModule {
     }
     this.storedUnsubscribed = undefined
     this.initialized = false
-    this.storedNotes.length = 0
+    this.storedNotes = []
   }
 
   @Mutation

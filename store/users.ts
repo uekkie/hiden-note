@@ -36,7 +36,7 @@ class Users extends VuexModule {
     }
     this.storedUnsubscribed = undefined
     this.initialized = false
-    this.storedUsers.length = 0
+    this.storedUsers = []
   }
 
   @Mutation
