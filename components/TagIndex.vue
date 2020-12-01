@@ -12,7 +12,7 @@ class TagIndex extends Vue {
   tags: string[] = []
 
   async created() {
-    this.tags = await notesStore.fetchTags()
+    this.tags = await notesStore.fetchTags({ limit: 5 })
   }
 
   formatDate(date: Date): string {

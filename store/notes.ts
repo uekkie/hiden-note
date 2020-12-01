@@ -226,7 +226,7 @@ class Notes extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async fetchTags() {
+  async fetchTags({ limit = 5 }: { limit: number }) {
     const querySnapshot = await notesRef.get()
     const tags = [] as any[]
     querySnapshot.forEach(function (noteSnapshot) {
@@ -236,6 +236,7 @@ class Notes extends VuexModule {
     return tags
       .flat()
       .filter((elem, index, self) => self.indexOf(elem) === index)
+      .slice(0, limit)
   }
 
   @Action({ rawError: true })
