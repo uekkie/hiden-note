@@ -66,7 +66,7 @@ class Notes extends VuexModule {
   @Action
   async initialize() {
     if (this.initialized) {
-      return true
+      return
     }
     await this.storeNotes()
     this.watchNotes()

@@ -58,7 +58,7 @@ class Users extends VuexModule {
   @Action
   async initialize() {
     if (this.initialized) {
-      return true
+      return
     }
     await this.storeUsers()
     this.watchUsers()
