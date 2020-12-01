@@ -55,12 +55,10 @@ class NoteEditorList extends Vue {
     }
   }
 
-  getUser(userId: string): User | null {
-    const matchUsers = this.users.filter((user) => {
+  getUser(userId: string): User | undefined {
+    return this.users.find((user) => {
       return user.id === userId
     })
-
-    return matchUsers.length === 0 ? null : matchUsers[0]
   }
 
   getUserName(userId: string): string {
