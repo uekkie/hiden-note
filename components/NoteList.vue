@@ -8,6 +8,7 @@
         class="flex-column align-items-start")
         b-row
           b-col タイトル
+          b-col 作成者
           b-col 更新日
 
       b-list-group-item(v-for="(note, index) in notes"
@@ -16,20 +17,28 @@
         b-row
           b-col
             nuxt-link(:to="`/notes/${note.id}`") {{ note.title }}
-
           b-col
-            //- small {{ note.userName }}
+            span {{ userName(note.userId) }}
+          b-col
             small {{ formatDate(note.updatedAt.toDate()) }}
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { DateTime } from 'luxon'
-import { notesStore } from '@/store'
+import { notesStore, usersStore } from '@/store'
 
 @Component
 class NoteList extends Vue {
   get notes() {
     return notesStore.recentNotes
+  }
+
+  get users() {
+    return usersStore.users
+  }
+
+  userName(userId: string) {
+    return this.users.find((user) => user.id === userId)?.displayName
   }
 
   formatDate(date: Date): string {
