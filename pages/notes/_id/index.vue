@@ -1,58 +1,30 @@
-<template>
-  <b-container v-if="!loading">
-    <b-row>
-      <b-col cols="8">
-        <h1>{{ note.title }}</h1>
-        <div class="d-flex justify-content-end">
-          <div class="edit">
-            <b-icon variant="secondary" icon="pencil"></b-icon>
-            <b-link class="text-secondary" :to="editPath()">編集する</b-link>
-          </div>
-          <div class="delete">
-            <b-icon variant="danger" icon="trash"></b-icon>
-            <b-link class="text-danger" @click="modalShow = !modalShow"
-              >削除する</b-link
-            >
-          </div>
-        </div>
-        <tag-list :tags="note.tags" />
+<template lang="pug">
+  b-container(v-if="!loading")
+    b-row
+      b-col(cols="8")
+        h1 {{ note.title }}
+        .d-flex.justify-content-end
+          .edit
+            b-icon(variant="secondary" icon="pencil")
+            b-link.text-secondary(:to="editPath()") 編集する
+          .delete
+            b-icon(variant="danger" icon="trash")
+            b-link.text-danger(@click="modalShow = !modalShow") 削除する
+        tag-list(:tags="note.tags")
 
-        <markdown-preview :content="note.content" />
+        markdown-preview(:content="note.content")
 
-        <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
-          >削除してよろしいですか？</b-modal
-        >
-      </b-col>
-      <b-col cols="4">
-        <div class="histories">
-          <h3>更新した人たち</h3>
-          <b-list-group>
-            <b-list-group-item
-              v-for="(history, index) in noteHistories"
-              :key="index"
-            >
-              <nuxt-link :to="`${note.id}/diff/${history.id}`">
-                {{ history.createdAtString() }}に{{
-                  history.creatorName()
-                }}が更新
-              </nuxt-link>
-            </b-list-group-item>
-          </b-list-group>
-        </div>
-        <div class="related">
-          <h3>おなじタグの付いたノート</h3>
-          <b-list-group>
-            <b-list-group-item
-              v-for="(note, index) in relatedNotes"
-              :key="index"
-            >
-              <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
-            </b-list-group-item>
-          </b-list-group>
-        </div>
-      </b-col>
-    </b-row>
-  </b-container>
+        b-modal(v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote") 削除してよろしいですか？
+      b-col(cols="4")
+        .histories
+          h3 更新した人たち
+          b-list-group-item(v-for="(history, index) in noteHistories" :key="index")
+            nuxt-link(:to="`${note.id}/diff/${history.id}`") {{ history.createdAtString() }}に{{history.creatorName()}}が更新
+        .related
+          h3 おなじタグの付いたノート
+          b-list-group
+            b-list-group-item(v-for="(note, index) in relatedNotes" :key="index")
+              nuxt-link(:to="`/notes/${note.id}`") {{ note.title }}
 </template>
 
 <script lang="ts">

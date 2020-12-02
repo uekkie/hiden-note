@@ -1,11 +1,71 @@
-export default class User {
-  constructor(
-    public uid: string,
-    public email: string,
-    public displayName: string
-  ) {
-    this.uid = uid
-    this.email = email
-    this.displayName = displayName
+import { firebase } from '@/plugins/firebase'
+
+export interface IUser {
+  uid: string
+  email: string
+  displayName: string
+  photoURL: string
+}
+export class User implements IUser {
+  uid: string = ''
+  email: string = ''
+  displayName: string = ''
+  photoURL: string = ''
+  constructor({
+    uid = '',
+    email = '',
+    displayName = '',
+    photoURL = '',
+  }: Partial<IUser>) {
+    Object.assign(this, {
+      uid,
+      email,
+      displayName,
+      photoURL,
+    })
   }
+}
+
+export const userConverter = {
+  toFirestore(user: User): firebase.firestore.DocumentData {
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    }
+  },
+  fromFirestore(
+    snapshot: firebase.firestore.QueryDocumentSnapshot,
+    options: firebase.firestore.SnapshotOptions
+  ): User {
+    const user = snapshot.data(options)
+    if (!isValid(user)) {
+      console.error(user)
+      alert('invalid user')
+      throw new Error('invalid user')
+    }
+    return new User({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    })
+  },
+}
+
+const isValid = (user: any): user is User => {
+  if (!(user.uid && typeof user.uid === 'string')) {
+    return false
+  }
+  if (!(user.email && typeof user.email === 'string')) {
+    return false
+  }
+  if (!(user.displayName && typeof user.displayName === 'string')) {
+    return false
+  }
+  if (!(user.photoURL && typeof user.photoURL === 'string')) {
+    return false
+  }
+  return true
 }

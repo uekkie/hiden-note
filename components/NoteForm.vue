@@ -1,53 +1,38 @@
-<template>
-  <b-container v-if="note">
-    <form @submit.prevent="submit">
-      <b-row align-v="start">
-        <b-col>
-          <b-form-input
+<template lang="pug">
+  b-container(v-if="note")
+    form(@submit.prevent="submit")
+      b-row(align-v="start")
+        b-col
+          b-form-input(
             v-model.trim="note.title"
             required
             placeholder="タイトルをいれてね"
-          ></b-form-input>
-        </b-col>
-      </b-row>
+          )
 
-      <b-row align-v="start">
-        <b-col>
-          <b-form-input
+      b-row(align-v="start")
+        b-col
+          b-form-input(
             v-model.trim="tags"
             placeholder="タグ 例）firestoreのつかいかた"
-          ></b-form-input>
-        </b-col>
-      </b-row>
+          )
 
-      <b-row align-v="stretch">
-        <b-col class="pr-0">
-          <b-form-textarea
-            v-model.trim="note.content"
+      b-row(align-v="stretch")
+        b-col.pr-0
+          b-form-textarea(v-model.trim="note.content"
             placeholder="markdownでかけるよ"
             rows="30"
-            required
-          ></b-form-textarea>
-        </b-col>
-        <b-col class="pl-0">
-          <div class="px-2 py-1 border h-100">
-            <markdown-preview :content="note.content" />
-          </div>
-        </b-col>
-      </b-row>
+            required)
+        b-col.pl-0
+          .px-2.py-1.border.h-100
+            markdown-preview(:content="note.content")
 
-      <b-row align-v="end">
-        <b-col>
-          <b-button
+      b-row(align-v="end")
+        b-col
+          b-button(
             variant="success float-right mt-2"
             :disabled="!canSubmit"
             type="submit"
-            >{{ submitLabel }}</b-button
-          >
-        </b-col>
-      </b-row>
-    </form>
-  </b-container>
+          ) {{ submitLabel }}
 </template>
 
 <script lang="ts">
@@ -76,8 +61,8 @@ class NoteForm extends Vue {
     this.tags = this.note.tags.join(',')
   }
 
-  tagsToArray(): string[] {
-    return this.tags.split(',')
+  tagsToArray() {
+    return this.tags.split(',').map((tag) => tag.trim())
   }
 
   submit() {
@@ -90,4 +75,3 @@ class NoteForm extends Vue {
 }
 export default NoteForm
 </script>
-<style></style>

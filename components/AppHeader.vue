@@ -1,24 +1,19 @@
-<template>
-  <div>
-    <b-navbar>
-      <b-navbar-brand to="/">秘伝のタレ</b-navbar-brand>
+<template lang="pug">
+  div
+    b-navbar
+      b-navbar-brand(to="/") 秘伝のタレ
 
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      b-navbar-toggle(target="nav-collapse")
 
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav v-if="userSignedIn">
-          <b-nav-item>{{ displayName }}</b-nav-item>
-          <b-nav-item @click="logout">ログアウト</b-nav-item>
-          <b-nav-item to="/notes/new" exact exact-active-class="active"
-            >新規ノート作成</b-nav-item
-          >
-        </b-navbar-nav>
-        <b-navbar-nav v-else>
-          <b-nav-item @click="login">ログイン</b-nav-item>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-  </div>
+      b-collapse#nav-collapse(is-nav)
+        b-navbar-nav(v-if="userSignedIn")
+          b-nav-item
+            b-img(v-bind="photoProps" rounded="circle")
+            span {{ displayName }}
+          b-nav-item(@click="logout") ログアウト
+          b-nav-item(to="/notes/new" exact exact-active-class="active") 新規ノート作成
+        b-navbar-nav(v-else)
+          b-nav-item(@click="login") ログイン
 </template>
 
 <script lang="ts">
@@ -35,14 +30,25 @@ class AppHeader extends Vue {
     return authStore.userDisplayName
   }
 
+  get photoProps() {
+    return {
+      width: 32,
+      height: 32,
+      class: 'm1',
+      src: authStore.user!.photoURL,
+    }
+  }
+
   login() {
     authStore.login()
   }
 
   logout() {
-    if (authStore.logout()) {
-      this.$router.push('/')
-    }
+    authStore.logout().then((result) => {
+      if (result) {
+        this.$router.push('/')
+      }
+    })
   }
 }
 export default AppHeader

@@ -3,6 +3,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { db, FieldValue } from '@/plugins/firebase'
 import { Note, NoteHistory } from '@/models/note'
 import { authStore } from '@/store'
+
 const notesRef = db.collection('notes')
 
 @Module({
@@ -12,6 +13,77 @@ const notesRef = db.collection('notes')
 })
 class Notes extends VuexModule {
   storedNotes: Note[] = []
+  initialized: boolean = false
+  storedUnsubscribed?: () => void = undefined
+
+  get notes() {
+    return this.storedNotes
+  }
+
+  @Mutation
+  SET_INITIALIZED(value: boolean) {
+    this.initialized = value
+  }
+
+  @Mutation
+  SET_UNSUBSCRIBE(value?: () => void) {
+    this.storedUnsubscribed = value
+  }
+
+  @Mutation
+  CLEAR_STATE() {
+    if (this.storedUnsubscribed) {
+      this.storedUnsubscribed()
+    }
+    this.storedUnsubscribed = undefined
+    this.initialized = false
+    this.storedNotes.length = 0
+  }
+
+  @Mutation
+  STORE_NOTE(note: Note) {
+    this.storedNotes = this.storedNotes.filter((q) => q.id !== note.id)
+    this.storedNotes.push(note)
+  }
+
+  @Mutation
+  REMOVE_NOTE(note: Note) {
+    this.storedNotes = this.storedNotes.filter((q) => q.id !== note.id)
+  }
+
+  @Action
+  async initialize() {
+    if (this.initialized) {
+      return true
+    }
+    await this.storeNotes()
+    this.watchNotes()
+
+    this.SET_INITIALIZED(true)
+  }
+
+  @Action
+  clear() {
+    this.CLEAR_NOTES()
+  }
+
+  @Action
+  private watchNotes() {
+    const unsubscribe = notesRef.onSnapshot((querySnapshot) => {
+      querySnapshot.docChanges().forEach((change) => {
+        const note = new Note(
+          Object.assign({ id: change.doc.id }, change.doc.data())
+        )
+
+        if (change.type === 'added' || change.type === 'modified') {
+          this.STORE_NOTE(note)
+        } else if (change.type === 'removed') {
+          this.REMOVE_NOTE(note)
+        }
+      })
+    })
+    this.SET_UNSUBSCRIBE(unsubscribe)
+  }
 
   @Action
   async getNote(id: string): Promise<Note> {
@@ -42,18 +114,9 @@ class Notes extends VuexModule {
     })
   }
 
-  get getNotes() {
-    return this.storedNotes
-  }
-
   @Mutation
   CLEAR_NOTES() {
     this.storedNotes = []
-  }
-
-  @Mutation
-  APPEND_TO_NOTES(data: any) {
-    this.storedNotes.push(data)
   }
 
   @Action
@@ -93,13 +156,16 @@ class Notes extends VuexModule {
   }
 
   @Action
-  async fetchNotes(limit = 5) {
+  async storeNotes(limit = 10) {
     this.CLEAR_NOTES()
 
-    const ref = await notesRef.orderBy('updatedAt', 'desc').limit(limit).get()
+    const querySnapshot = await notesRef
+      .orderBy('updatedAt', 'desc')
+      .limit(limit)
+      .get()
 
-    ref.docs.forEach((data) => {
-      this.APPEND_TO_NOTES({ id: data.id, ...data.data() })
+    querySnapshot.forEach((doc) => {
+      this.STORE_NOTE(new Note(Object.assign({ id: doc.id }, doc.data())))
     })
   }
 
@@ -142,6 +208,19 @@ class Notes extends VuexModule {
       )
     }
     return histories
+  }
+
+  @Action
+  async fetchTags() {
+    const querySnapshot = await notesRef.get()
+    const tags = [] as any[]
+    querySnapshot.forEach(function (noteSnapshot) {
+      tags.push(noteSnapshot.get('tags'))
+    })
+
+    return tags
+      .flat()
+      .filter((elem, index, self) => self.indexOf(elem) === index)
   }
 }
 export default Notes
