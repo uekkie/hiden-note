@@ -1,9 +1,10 @@
-<template lang="pug">
-  note-form(
+<template>
+  <note-form
     v-if="note"
     :note="note"
     submit-label="更新する"
-    @submit="onUpdate")
+    @submit="onUpdate"
+  />
 </template>
 
 <script lang="ts">
