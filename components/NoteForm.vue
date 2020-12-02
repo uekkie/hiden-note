@@ -11,7 +11,7 @@
 
       b-row(align-v="start")
         b-col
-          b-form-input(
+          b-form-tags(
             v-model.trim="tags"
             placeholder="タグ 例）firestoreのつかいかた"
           )
@@ -41,7 +41,7 @@ import { Component, Vue, Prop } from 'nuxt-property-decorator'
 
 @Component({})
 class NoteForm extends Vue {
-  tags = ''
+  tags: string[] = []
 
   @Prop({ default: false })
   submitLabel!: string
@@ -58,18 +58,14 @@ class NoteForm extends Vue {
   }
 
   created() {
-    this.tags = this.note.tags.join(',')
-  }
-
-  tagsToArray() {
-    return this.tags.split(',').map((tag) => tag.trim())
+    this.tags = this.note.tags
   }
 
   submit() {
     this.$emit('submit', {
       title: this.note?.title,
       content: this.note?.content,
-      tags: this.tagsToArray(),
+      tags: this.tags,
     })
   }
 }
