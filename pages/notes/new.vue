@@ -1,37 +1,33 @@
 <template>
-  <note-form
-    :title="title"
-    :content="content"
-    submit-label="保存する"
-    @submit="onSubmit"
-  />
+  <note-form :note="note" submit-label="保存する" @submit="onSubmit" />
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { mapGetters, mapActions } from 'vuex'
+import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
+import { notesStore } from '@/store'
 
-export default Vue.extend({
-  data() {
-    return {
-      title: '',
-      content: '',
-    }
-  },
-  computed: {
-    ...mapGetters('users', ['currentUserRef']),
-  },
-  methods: {
-    ...mapActions('notes', ['createNote']),
-    onSubmit(formData: any) {
-      this.createNote(
-        new Note(this.currentUserRef, formData.title, formData.content)
-      ).then((noteId) => {
+@Component
+class NoteNew extends Vue {
+  note: Note | null = null
+
+  created() {
+    this.note = new Note({})
+  }
+
+  onSubmit(formData: any) {
+    notesStore
+      .createNote(
+        new Note({
+          title: formData.title,
+          content: formData.content,
+          tags: formData.tags,
+        })
+      )
+      .then((noteId) => {
         this.$router.replace({ path: '/notes/' + noteId })
       })
-    },
-  },
-})
+  }
+}
+export default NoteNew
 </script>
-<style></style>

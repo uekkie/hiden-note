@@ -7,7 +7,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav v-if="userSignedIn">
-          <b-nav-item>{{ currentUser.displayName }}</b-nav-item>
+          <b-nav-item>{{ displayName }}</b-nav-item>
           <b-nav-item @click="logout">ログアウト</b-nav-item>
           <b-nav-item to="/notes/new" exact exact-active-class="active"
             >新規ノート作成</b-nav-item
@@ -22,18 +22,28 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { mapGetters, mapActions } from 'vuex'
-export default Vue.extend({
-  computed: {
-    ...mapGetters('users', ['userSignedIn', 'currentUser']),
-  },
-  created() {
-    this.authStateChanged()
-  },
-  methods: {
-    ...mapActions('users', ['authStateChanged', 'login', 'logout']),
-  },
-})
+import { Vue, Component } from 'nuxt-property-decorator'
+import { authStore } from '../store' // モジュールクラスをインポート
+
+@Component
+class AppHeader extends Vue {
+  get userSignedIn() {
+    return authStore.userSignedIn
+  }
+
+  get displayName() {
+    return authStore.userDisplayName
+  }
+
+  login() {
+    authStore.login()
+  }
+
+  logout() {
+    if (authStore.logout()) {
+      this.$router.push('/')
+    }
+  }
+}
+export default AppHeader
 </script>
-<style></style>

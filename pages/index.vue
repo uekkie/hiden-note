@@ -2,18 +2,21 @@
   <b-container>
     <h1 class="title">秘伝のタレ</h1>
     <note-list v-if="userSignedIn"></note-list>
+    <div v-else>ログインしてください</div>
   </b-container>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { mapGetters } from 'vuex'
+import { authStore } from '@/store'
+import { Component, Vue } from 'nuxt-property-decorator'
 
-export default Vue.extend({
-  computed: {
-    ...mapGetters('users', ['userSignedIn', 'currentUser']),
-  },
-})
+@Component({})
+class Index extends Vue {
+  get userSignedIn() {
+    return authStore.userSignedIn
+  }
+}
+export default Index
 </script>
 
 <style>

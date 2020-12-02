@@ -1,43 +1,88 @@
 import firebase from 'firebase'
-export class Note {
-  constructor(
-    public userRef: firebase.firestore.DocumentReference,
-    public title: string,
-    public content: string,
-    public createdAt?: Date
-  ) {
-    this.userRef = userRef
-    this.title = title
-    this.content = content
-    this.createdAt = createdAt
+import { FieldValue } from '@/plugins/firebase'
+import { DateTime } from 'luxon'
+
+export interface INote {
+  id: string
+  title: string
+  content: string
+  tags: string[]
+  userId: string
+  createdAt: firebase.firestore.Timestamp
+  updatedAt: firebase.firestore.Timestamp
+}
+export class Note implements INote {
+  id: string = ''
+  title: string = ''
+  content: string = ''
+  tags: string[] = []
+  userId: string = ''
+  createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
+  updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
+
+  constructor({
+    id = '',
+    title = '',
+    content = '',
+    tags = [],
+    userId = '',
+    createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
+    updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
+  }: Partial<INote>) {
+    Object.assign(this, {
+      id,
+      title,
+      content,
+      tags,
+      userId,
+      createdAt,
+      updatedAt,
+    })
+  }
+}
+export interface INoteHistory {
+  id: string
+  title: string
+  content: string
+  userId: string
+  createdAt: firebase.firestore.Timestamp
+}
+export class NoteHistory implements INoteHistory {
+  id: string = ''
+  title: string = ''
+  content: string = ''
+  userId: string = ''
+  createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
+
+  constructor({
+    id = '',
+    title = '',
+    content = '',
+    userId = '',
+    createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
+  }: Partial<INoteHistory>) {
+    Object.assign(this, {
+      id,
+      title,
+      content,
+      userId,
+      createdAt,
+    })
   }
 
-  // MEMO: Note.createdAtを表示する箇所がなくなったのでコメントアウトしているが、
-  // あとあとどこかで使い始めそうなので残してます
-  // formatDate(): string {
-  //   return (
-  //     this.createdAt?.toDateString() || '日付なし'
-  //   )
-  // }
-}
-export class NoteHistory {
-  constructor(
-    public userRef: firebase.firestore.DocumentReference,
-    public title: string,
-    public content: string,
-    public createdAt?: Date
-  ) {
-    this.userRef = userRef
-    this.title = title
-    this.content = content
-    this.createdAt = createdAt
+  creatorName() {
+    return 'hoge'
+  }
+
+  createdAtString() {
+    return DateTime.fromJSDate(this.createdAt.toDate()).toISODate()
   }
 }
 
 export const noteConverter = {
   toFirestore(note: Note): firebase.firestore.DocumentData {
     return {
-      userRef: note.userRef,
+      userId: note.userId,
       title: note.title,
       content: note.content,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -53,7 +98,14 @@ export const noteConverter = {
       alert('invalid note')
       throw new Error('invalid note')
     }
-    return new Note(note.userRef, note.title, note.content, note.createdAt)
+    return new Note({
+      title: note.title,
+      content: note.content,
+      tags: note.tags,
+      userId: note.userId,
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt,
+    })
   },
 }
 

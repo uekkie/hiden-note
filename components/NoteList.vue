@@ -20,13 +20,11 @@
       >
         <b-row>
           <b-col>
-            <nuxt-link :to="`/notes/${note.noteId}`">{{
-              note.title
-            }}</nuxt-link>
+            <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
           </b-col>
           <b-col>
-            <small>{{ note.userName }}</small>
-            <small>{{ formatDate(note.createdAt.toDate()) }}</small>
+            <!-- <small>{{ note.userName }}</small> -->
+            <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
           </b-col>
         </b-row>
       </b-list-group-item>
@@ -34,23 +32,23 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import { Component, Vue } from 'nuxt-property-decorator'
 import { DateTime } from 'luxon'
-import { mapGetters, mapActions } from 'vuex'
+import { notesStore } from '@/store'
 
-export default Vue.extend({
-  computed: {
-    ...mapGetters('notes', ['notes']),
-  },
+@Component
+class NoteList extends Vue {
+  get notes() {
+    return notesStore.getNotes
+  }
+
   created() {
-    this.fetchNotes()
-  },
-  methods: {
-    ...mapActions('notes', ['fetchNotes']),
-    formatDate(date: Date): string {
-      return DateTime.fromJSDate(date).toISODate()
-    },
-  },
-})
+    notesStore.fetchNotes()
+  }
+
+  formatDate(date: Date): string {
+    return DateTime.fromJSDate(date).toISODate()
+  }
+}
+export default NoteList
 </script>
-<style></style>

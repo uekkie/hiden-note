@@ -5,14 +5,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  // FIXME: ここを有効にすると、ノート詳細でページリロード（F5）したときにトップページにリダイレクトされてしまう
-  // userSignedInの状態のタイミングがまずいのかも？
-  // middleware: 'auth',
-})
-</script>
 <style>
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
