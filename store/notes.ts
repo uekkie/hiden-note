@@ -20,6 +20,13 @@ class Notes extends VuexModule {
     return this.storedNotes
   }
 
+  get recentNotes() {
+    const dup = this.storedNotes.slice(0)
+    return dup.sort((noteA: Note, noteB: Note) =>
+      noteA.updatedAt > noteB.updatedAt ? -1 : 0
+    )
+  }
+
   @Mutation
   SET_INITIALIZED(value: boolean) {
     this.initialized = value
@@ -37,13 +44,18 @@ class Notes extends VuexModule {
     }
     this.storedUnsubscribed = undefined
     this.initialized = false
-    this.storedNotes.length = 0
+    this.storedNotes = []
   }
 
   @Mutation
   STORE_NOTE(note: Note) {
     this.storedNotes = this.storedNotes.filter((q) => q.id !== note.id)
     this.storedNotes.push(note)
+  }
+
+  @Mutation
+  CLEAR_NOTES() {
+    this.storedNotes = []
   }
 
   @Mutation
@@ -54,7 +66,7 @@ class Notes extends VuexModule {
   @Action
   async initialize() {
     if (this.initialized) {
-      return true
+      return
     }
     await this.storeNotes()
     this.watchNotes()
@@ -64,7 +76,7 @@ class Notes extends VuexModule {
 
   @Action
   clear() {
-    this.CLEAR_NOTES()
+    this.CLEAR_STATE()
   }
 
   @Action
@@ -112,11 +124,6 @@ class Notes extends VuexModule {
       id: noteHistoryRef.id,
       ...noteHistoryRef.data(),
     })
-  }
-
-  @Mutation
-  CLEAR_NOTES() {
-    this.storedNotes = []
   }
 
   @Action
@@ -193,10 +200,18 @@ class Notes extends VuexModule {
   }
 
   @Action
-  async getNoteHistories(noteId: string) {
+  async recentNoteHistories({
+    noteId,
+    limit = 5,
+  }: {
+    noteId: string
+    limit: number
+  }) {
     const querySnapshot = await notesRef
       .doc(noteId)
       .collection('histories')
+      .orderBy('createdAt', 'desc')
+      .limit(limit)
       .get()
     const histories: NoteHistory[] = []
     for (const doc of querySnapshot.docs) {
