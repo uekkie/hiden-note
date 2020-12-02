@@ -43,19 +43,16 @@ class NoteShow extends Vue {
   loading: boolean = true
   relatedNotes: Note[] = []
 
-  created() {
-    notesStore.getNote(this.$route.params.id).then((note) => {
-      this.note = note
-      this.loading = false
-      if (note.tags.length > 0) {
-        const tagName = note.tags[0]
-        notesStore.getNotesByTagName(tagName).then((notes) => {
-          this.relatedNotes = notes.filter((note) => {
-            return note.id !== this.note!.id
-          })
-        })
-      }
-    })
+  async created() {
+    this.note = await notesStore.getNote(this.$route.params.id)
+    this.loading = false
+    if (this.note.tags.length > 0) {
+      const tagName = this.note.tags[0]
+      const notes = await notesStore.getNotesByTagName(tagName)
+      this.relatedNotes = notes.filter((note) => {
+        return note.id !== this.note!.id
+      })
+    }
   }
 
   tags(note: Note) {
