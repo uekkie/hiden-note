@@ -9,7 +9,7 @@
         b-navbar-nav(v-if="userSignedIn")
           b-nav-item
             b-img(v-bind="photoProps" rounded="circle")
-            span {{ displayName }}
+            nuxt-link(:to="{ path: `/users/${userId}` }") {{ displayName }}
           b-nav-item(@click="logout") ログアウト
           b-nav-item(to="/notes/new" exact exact-active-class="active") 新規ノート作成
         b-navbar-nav(v-else)
@@ -24,6 +24,10 @@ import { authStore } from '../store' // モジュールクラスをインポー�
 class AppHeader extends Vue {
   get userSignedIn() {
     return authStore.userSignedIn
+  }
+
+  get userId() {
+    return authStore.user!.id
   }
 
   get displayName() {

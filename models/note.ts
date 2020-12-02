@@ -39,7 +39,13 @@ export class Note implements INote {
       updatedAt,
     })
   }
+
+  createdAtString() {
+    const dt = DateTime.fromJSDate(this.createdAt.toDate())
+    return dt.toFormat('yyyy-MM-dd HH:mm')
+  }
 }
+
 export interface INoteHistory {
   id: string
   title: string

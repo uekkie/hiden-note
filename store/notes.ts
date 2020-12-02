@@ -63,7 +63,7 @@ class Notes extends VuexModule {
     this.storedNotes = this.storedNotes.filter((q) => q.id !== note.id)
   }
 
-  @Action
+  @Action({ rawError: true })
   async initialize() {
     if (this.initialized) {
       return
@@ -74,12 +74,12 @@ class Notes extends VuexModule {
     this.SET_INITIALIZED(true)
   }
 
-  @Action
+  @Action({ rawError: true })
   clear() {
     this.CLEAR_STATE()
   }
 
-  @Action
+  @Action({ rawError: true })
   private watchNotes() {
     const unsubscribe = notesRef.onSnapshot((querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
@@ -97,7 +97,7 @@ class Notes extends VuexModule {
     this.SET_UNSUBSCRIBE(unsubscribe)
   }
 
-  @Action
+  @Action({ rawError: true })
   async getNote(id: string): Promise<Note> {
     const noteRef = await notesRef.doc(id).get()
     const note = {
@@ -107,7 +107,7 @@ class Notes extends VuexModule {
     return note as Note
   }
 
-  @Action
+  @Action({ rawError: true })
   async getNoteHistory({
     id,
     historyId,
@@ -126,7 +126,7 @@ class Notes extends VuexModule {
     })
   }
 
-  @Action
+  @Action({ rawError: true })
   async createNote(note: Note): Promise<string> {
     const noteRef = await notesRef.add({
       userId: authStore.userId,
@@ -139,7 +139,7 @@ class Notes extends VuexModule {
     return noteRef.id
   }
 
-  @Action
+  @Action({ rawError: true })
   async updateNote(note: Note) {
     const noteRef = notesRef.doc(note.id)
     const beforeNote = await noteRef.get()
@@ -162,7 +162,7 @@ class Notes extends VuexModule {
     })
   }
 
-  @Action
+  @Action({ rawError: true })
   async storeNotes(limit = 10) {
     this.CLEAR_NOTES()
 
@@ -176,12 +176,12 @@ class Notes extends VuexModule {
     })
   }
 
-  @Action
+  @Action({ rawError: true })
   async deleteNote(noteId: string) {
     await notesRef.doc(noteId).delete()
   }
 
-  @Action
+  @Action({ rawError: true })
   async getNotesByTagName(tagName: string) {
     const querySnapshot = await notesRef
       .where('tags', 'array-contains', tagName)
@@ -199,7 +199,16 @@ class Notes extends VuexModule {
     return notes
   }
 
-  @Action
+  @Action({ rawError: true })
+  async getNotesCountByTagName(tagName: string) {
+    const querySnapshot = await notesRef
+      .where('tags', 'array-contains', tagName)
+      .get()
+
+    return querySnapshot.docs.length
+  }
+
+  @Action({ rawError: true })
   async recentNoteHistories({
     noteId,
     limit = 5,
@@ -225,8 +234,8 @@ class Notes extends VuexModule {
     return histories
   }
 
-  @Action
-  async fetchTags() {
+  @Action({ rawError: true })
+  async fetchTags({ limit = 5 }: { limit: number }) {
     const querySnapshot = await notesRef.get()
     const tags = [] as any[]
     querySnapshot.forEach(function (noteSnapshot) {
@@ -236,6 +245,31 @@ class Notes extends VuexModule {
     return tags
       .flat()
       .filter((elem, index, self) => self.indexOf(elem) === index)
+      .slice(0, limit)
+  }
+
+  @Action({ rawError: true })
+  async getNotesByUserId(userId: string) {
+    if (!userId) {
+      console.error('error undefined [userId] !!')
+
+      return []
+    }
+    const querySnapshot = await notesRef
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .get()
+
+    const usersNotes: Note[] = []
+    for (const doc of querySnapshot.docs) {
+      usersNotes.push(
+        new Note({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return usersNotes
   }
 }
 export default Notes

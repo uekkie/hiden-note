@@ -56,19 +56,19 @@ class Auth extends VuexModule {
     this.saveUser(user)
   }
 
-  @Action
+  @Action({ rawError: true })
   public async saveUser(user: User) {
     const userDoc = userRef.doc(user.id)
     await userDoc.withConverter(userConverter).set(user)
     console.log('saved user', user)
   }
 
-  @Action
+  @Action({ rawError: true })
   public clear() {
     this.CLEAR_AUTH()
   }
 
-  @Action
+  @Action({ rawError: true })
   public login(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
       const provider = new firebase.auth.GoogleAuthProvider()
@@ -87,7 +87,7 @@ class Auth extends VuexModule {
     })
   }
 
-  @Action
+  @Action({ rawError: true })
   async logout() {
     await firebase.auth().signOut()
     authStore.clear()

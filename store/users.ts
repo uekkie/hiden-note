@@ -55,7 +55,7 @@ class Users extends VuexModule {
     this.storedUsers = this.storedUsers.filter((q) => q.id !== user.id)
   }
 
-  @Action
+  @Action({ rawError: true })
   async initialize() {
     if (this.initialized) {
       return
@@ -66,12 +66,12 @@ class Users extends VuexModule {
     this.SET_INITIALIZED(true)
   }
 
-  @Action
+  @Action({ rawError: true })
   clear() {
     this.CLEAR_STATE()
   }
 
-  @Action
+  @Action({ rawError: true })
   private watchUsers() {
     const unsubscribe = usersRef.onSnapshot((querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
@@ -89,7 +89,7 @@ class Users extends VuexModule {
     this.SET_UNSUBSCRIBE(unsubscribe)
   }
 
-  @Action
+  @Action({ rawError: true })
   async storeUsers() {
     this.CLEAR_USERS()
 
@@ -98,6 +98,11 @@ class Users extends VuexModule {
     querySnapshot.forEach((doc) => {
       this.STORE_USER(new User(Object.assign({ id: doc.id }, doc.data())))
     })
+  }
+
+  @Action({ rawError: true })
+  getUserById(userId: string) {
+    return this.users.find((user) => user.id === userId)
   }
 }
 export default Users
