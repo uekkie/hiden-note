@@ -23,51 +23,30 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { db } from '@/plugins/firebase'
 import { User, NoteComment } from '@/models'
-import { usersStore } from '@/store'
+import { usersStore, commentsStore } from '@/store'
 
 @Component
-class CommentForm extends Vue {
+class CommentList extends Vue {
   @Prop({ default: false })
   noteId!: string
 
-  users: User[] = []
   noteComments: NoteComment[] = []
 
   async created() {
     usersStore.initialize()
-    this.noteComments = await this.getNoteComments(this.noteId)
-    this.users = usersStore.users
+    this.noteComments = await commentsStore.getNoteComments(this.noteId)
   }
 
   get comments() {
     return this.noteComments
   }
 
-  getUser(userId: string): User | null {
-    const matchUsers = this.users.filter((user) => {
-      return user.id === userId
-    })
-
-    return matchUsers.length === 0 ? null : matchUsers[0]
-  }
-
-  private async getNoteComments(noteId: string): Promise<NoteComment[]> {
-    const commentsRef = db
-      .collection('notes')
-      .doc(noteId)
-      .collection('comments')
-    const querySnapshot = await commentsRef.orderBy('createdAt', 'desc').get()
-
-    const comments: NoteComment[] = []
-    querySnapshot.forEach((doc) => {
-      comments.push(new NoteComment(Object.assign({ id: doc.id }, doc.data())))
-    })
-    return comments
+  getUser(userId: string): User | undefined {
+    return usersStore.storedUsers.find((user) => user.id === userId)
   }
 }
-export default CommentForm
+export default CommentList
 </script>
 
 <style></style>

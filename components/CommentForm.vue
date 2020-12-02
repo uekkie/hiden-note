@@ -16,8 +16,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { db, FieldValue } from '@/plugins/firebase'
-import { authStore } from '@/store'
+import { commentsStore } from '@/store'
 import { NoteComment } from '@/models'
 
 @Component
@@ -31,37 +30,13 @@ class CommentForm extends Vue {
   }
 
   async onSubmitComment() {
-    console.log(
-      new NoteComment({
-        content: this.commentContent,
-      })
-    )
-
-    const result = await this.createComment(
+    await commentsStore.createComment(
       this.noteId,
       new NoteComment({
         content: this.commentContent,
       })
     )
-    console.log(result)
-
     this.commentContent = ''
-  }
-
-  private async createComment(
-    noteId: string,
-    comment: NoteComment
-  ): Promise<boolean> {
-    const commentDocRef = await db
-      .collection('notes')
-      .doc(noteId)
-      .collection('comments')
-      .add({
-        userId: authStore.userId,
-        content: comment.content,
-        createdAt: FieldValue.serverTimestamp(),
-      })
-    return commentDocRef.id !== ''
   }
 }
 export default CommentForm
