@@ -16,8 +16,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { commentsStore } from '@/store'
-import { NoteComment } from '@/models'
+import { notesStore } from '@/store'
 
 @Component
 class CommentForm extends Vue {
@@ -30,12 +29,10 @@ class CommentForm extends Vue {
   }
 
   async onSubmitComment() {
-    await commentsStore.createComment(
-      this.noteId,
-      new NoteComment({
-        content: this.commentContent,
-      })
-    )
+    await notesStore.createComment({
+      noteId: this.noteId,
+      content: this.commentContent,
+    })
     this.commentContent = ''
   }
 }

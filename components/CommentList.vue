@@ -7,7 +7,7 @@
           <div class="text-muted mb-1">
             <span>
               <NuxtLink :to="{ path: `/users/${comment.userId}` }">
-                {{ getUser(comment.userId).displayName }}
+                {{ getUserName(comment.userId) }}
               </NuxtLink>
             </span>
             <span class="float-right">{{
@@ -23,27 +23,31 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { User, NoteComment } from '@/models'
-import { usersStore, commentsStore } from '@/store'
+import { User } from '@/models'
+import { usersStore, notesStore } from '@/store'
 
 @Component
 class CommentList extends Vue {
   @Prop({ default: false })
   noteId!: string
 
-  noteComments: NoteComment[] = []
-
   async created() {
     usersStore.initialize()
-    this.noteComments = await commentsStore.getNoteComments(this.noteId)
+    notesStore.watchNoteComments(this.noteId)
+    await notesStore.storedNoteComments(this.noteId)
   }
 
   get comments() {
-    return this.noteComments
+    return notesStore.storedComments
   }
 
   getUser(userId: string): User | undefined {
     return usersStore.storedUsers.find((user) => user.id === userId)
+  }
+
+  getUserName(userId: string): string | undefined {
+    const user = this.getUser(userId)
+    return user ? user.displayName : 'no name'
   }
 }
 export default CommentList

@@ -1,3 +1,2 @@
-export { Note } from './note'
+export { Note, NoteComment } from './note'
 export { User, userConverter } from './user'
-export { NoteComment } from './note-comment'
