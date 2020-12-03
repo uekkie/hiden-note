@@ -1,7 +1,6 @@
 const environment = process.env.NODE_ENV || 'development'
-const isDev = environment !== 'production'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const envSet = isDev ? require(`./env.${environment}.ts`) : {}
+const envSet = require(`./env.${environment}.ts`)
 
 export default {
   ssr: false,
