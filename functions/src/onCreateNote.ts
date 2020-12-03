@@ -15,7 +15,7 @@ module.exports = async (
   const docData = doc.data()!
   const index = algoliaClient().initIndex('notes')
   const recordData: INoteRecord = {
-    objectID: docData.groupId + doc.id,
+    objectID: doc.id,
     id: doc.id,
     title: docData.title,
     content: docData.content,
