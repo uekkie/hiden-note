@@ -11,10 +11,10 @@ let notesStore: Notes
 // eslint-disable-next-line import/no-mutable-exports
 let usersStore: Users
 
-function initialiseStores(store: Store<any>): void {
+function initializeStores(store: Store<any>): void {
   authStore = getModule(Auth, store)
   notesStore = getModule(Notes, store)
   usersStore = getModule(Users, store)
 }
 
-export { initialiseStores, authStore, notesStore, usersStore }
+export { initializeStores, authStore, notesStore, usersStore }
