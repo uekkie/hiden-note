@@ -1,9 +1,7 @@
 // import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import { algoliaClient } from './algolia/client'
-import {
-  INoteRecord
-} from './types/algolia'
+import { INoteRecord } from './types/algolia'
 
 module.exports = async (
   doc: functions.firestore.DocumentSnapshot,
@@ -21,7 +19,7 @@ module.exports = async (
     title: docData.title,
     content: docData.content,
     createdAt: docData.createdAt.toDate().getTime(),
-    updatedAt: docData.updatedAt.toDate().getTime()
+    updatedAt: docData.updatedAt.toDate().getTime(),
   }
   await index.saveObject(recordData)
 

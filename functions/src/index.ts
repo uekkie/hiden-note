@@ -1,6 +1,6 @@
 import functions = require('firebase-functions')
 
-import admin =  require('firebase-admin')
+import admin = require('firebase-admin')
 admin.initializeApp()
 
 export const onCreateNote = functions
