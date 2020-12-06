@@ -2,11 +2,11 @@ import firebase from 'firebase'
 import 'firebase/auth'
 
 const config = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  apiKey: 'AIzaSyDtK7TZaHoB03Ei06sxuc1VpuVM5AxAiNM',
+  authDomain: 'hiden-note.firebaseapp.com',
+  databaseURL: 'https://hiden-note.firebaseio.com',
+  projectId: 'hiden-note',
+  storageBucket: 'hiden-note.appspot.com',
 }
 if (!firebase.apps.length) {
   firebase.initializeApp(config)

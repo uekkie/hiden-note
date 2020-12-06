@@ -9,6 +9,7 @@ module.exports = async (
   doc: functions.firestore.DocumentSnapshot,
   _context: functions.EventContext
 ) => {
+  console.log(process.env.ALGOLIA_APP_ID)
   if (!doc.data()) {
     return
   }
