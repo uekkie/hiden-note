@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions'
 import { algoliaClient } from './algolia/client'
+
 module.exports = async (
   doc: functions.firestore.DocumentSnapshot,
   _context: functions.EventContext
