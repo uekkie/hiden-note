@@ -7,4 +7,7 @@ module.exports = {
   firebaseMessagingSenderId: '546700661025',
   firebaseAppId: '1:546700661025:web:ce5e2065eca876206fae60',
   firebaseMeasurementId: 'G-TJHJSRS8EH',
+
+  ALGOLIA_APP_ID: 'UJGUDE9ZG0',
+  ALGOLIA_SEARCH_KEY: '31ada564acd419b6878bde36abc561ea',
 }

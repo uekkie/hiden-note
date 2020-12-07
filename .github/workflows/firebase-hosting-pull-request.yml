@@ -12,14 +12,9 @@ jobs:
         run: yarn
       - name: Build vue contents
         run: yarn build
-        env:
-          ALGOLIA_APP_ID: '${{ secrets.ALGOLIA_APP_ID }}'
-          ALGOLIA_SEARCH_KEY: '${{ secrets.ALGOLIA_SEARCH_KEY }}'
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HIDEN_NOTE }}'
           projectId: hiden-note
-        env:
-          ALGOLIA_APP_ID: '${{ secrets.ALGOLIA_APP_ID }}'
-          ALGOLIA_SEARCH_KEY: '${{ secrets.ALGOLIA_SEARCH_KEY }}'
+
