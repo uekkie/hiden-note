@@ -20,13 +20,13 @@ export default {
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
     {
-      src: '~/node_modules/highlight.js/styles/atom-one-light.css',
+      src: '~/node_modules/highlight.js/styles/atom-one-light.css', // pageコンポーネントに書いてもいいかも
       lang: 'css',
     },
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [],
+  plugins: ['firebase'],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,

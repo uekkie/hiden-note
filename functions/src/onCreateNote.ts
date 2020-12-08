@@ -14,6 +14,7 @@ module.exports = async (
   if (!docData) {
     return
   }
+  // イベントIDを使う
   const index = algoliaClient().initIndex('notes')
   const recordData: INoteRecord = {
     objectID: doc.id,

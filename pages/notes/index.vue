@@ -5,6 +5,7 @@
     <tag-index v-if="userSignedIn" />
     <note-list v-if="userSignedIn" />
     <div v-else>ログインしてください</div>
+    <nuxt-child />
   </b-container>
 </template>
 
