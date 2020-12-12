@@ -10,7 +10,10 @@ module.exports = async (
   if (!doc.data()) {
     return
   }
-  const docData = doc.data()!
+  const docData = doc.data()
+  if (!docData) {
+    return
+  }
   const index = algoliaClient().initIndex('notes')
   const recordData: INoteRecord = {
     objectID: doc.id,

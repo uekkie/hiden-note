@@ -17,5 +17,4 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HIDEN_NOTE }}'
           projectId: hiden-note
-        env:
-          ALGOLIA_APP_ID: '${{ secrets.ALGOLIA_APP_ID }}'
+
