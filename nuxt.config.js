@@ -14,7 +14,7 @@ export default {
   },
   env: envSet,
   css: [],
-  plugins: [],
+  plugins: ['firebase'],
   components: true,
   buildModules: ['@nuxt/typescript-build'],
   modules: [['bootstrap-vue/nuxt', { icons: true }], '@nuxtjs/markdownit'],
