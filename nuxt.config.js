@@ -13,18 +13,11 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
   env: envSet,
-
-  css: [
-    {
-      src: '~/node_modules/highlight.js/styles/atom-one-light.css',
-      lang: 'css',
-    },
-  ],
+  css: [],
   plugins: [],
   components: true,
   buildModules: ['@nuxt/typescript-build'],
   modules: [['bootstrap-vue/nuxt', { icons: true }], '@nuxtjs/markdownit'],
-
   build: {
     babel: {
       babelrc: false,

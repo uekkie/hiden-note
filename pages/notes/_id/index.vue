@@ -50,6 +50,7 @@ import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
 import { notesStore } from '@/store'
 import TagList from '~/components/tags/TagList.vue'
+import 'highlight.js/styles/atom-one-light.css'
 
 @Component({
   components: { TagList },

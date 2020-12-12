@@ -11,6 +11,7 @@
 <script lang="ts">
 import { authStore, notesStore, usersStore } from '@/store'
 import { Component, Vue } from 'nuxt-property-decorator'
+import 'highlight.js/styles/atom-one-light.css'
 
 @Component({})
 class Index extends Vue {

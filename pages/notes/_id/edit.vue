@@ -11,6 +11,7 @@
 import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
 import { authStore, notesStore } from '@/store'
+import 'highlight.js/styles/atom-one-light.css'
 
 @Component
 class NoteEdit extends Vue {
