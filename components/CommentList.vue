@@ -7,7 +7,7 @@
           <div class="text-muted mb-1">
             <span>
               <NuxtLink :to="{ path: `/users/${comment.userId}` }">
-                {{ getUser(comment.userId).displayName }}
+                {{ getUserName(comment.userId) }}
               </NuxtLink>
             </span>
             <span class="float-right">{{
@@ -23,51 +23,34 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { db } from '@/plugins/firebase'
-import { User, NoteComment } from '@/models'
-import { usersStore } from '@/store'
+import { User } from '@/models'
+import { usersStore, notesStore } from '@/store'
 
 @Component
-class CommentForm extends Vue {
+class CommentList extends Vue {
   @Prop({ default: false })
   noteId!: string
 
-  users: User[] = []
-  noteComments: NoteComment[] = []
-
   async created() {
     usersStore.initialize()
-    this.noteComments = await this.getNoteComments(this.noteId)
-    this.users = usersStore.users
+    notesStore.watchNoteComments(this.noteId)
+    await notesStore.storedNoteComments(this.noteId)
   }
 
   get comments() {
-    return this.noteComments
+    return notesStore.storedComments
   }
 
-  getUser(userId: string): User | null {
-    const matchUsers = this.users.filter((user) => {
-      return user.id === userId
-    })
-
-    return matchUsers.length === 0 ? null : matchUsers[0]
+  getUser(userId: string): User | undefined {
+    return usersStore.storedUsers.find((user) => user.id === userId)
   }
 
-  private async getNoteComments(noteId: string): Promise<NoteComment[]> {
-    const commentsRef = db
-      .collection('notes')
-      .doc(noteId)
-      .collection('comments')
-    const querySnapshot = await commentsRef.orderBy('createdAt', 'desc').get()
-
-    const comments: NoteComment[] = []
-    querySnapshot.forEach((doc) => {
-      comments.push(new NoteComment(Object.assign({ id: doc.id }, doc.data())))
-    })
-    return comments
+  getUserName(userId: string): string | undefined {
+    const user = this.getUser(userId)
+    return user ? user.displayName : 'no name'
   }
 }
-export default CommentForm
+export default CommentList
 </script>
 
 <style></style>

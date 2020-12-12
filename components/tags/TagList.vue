@@ -1,8 +1,16 @@
-<template lang="pug">
-  .tags.d-flex.justify-content-start
-    b-button(:to="`/tags/${tag.tagName}`" v-for="(tag, index) in tags" :key="index" variant="primary" class="mx-1")
-      span {{ tag.tagName }}
-      span(v-if="isNoteCount") （{{tag.noteCount}}）
+<template>
+  <div class="tags d-flex justify-content-start">
+    <b-button
+      v-for="(tag, index) in tags"
+      :key="index"
+      :to="`/tags/${tag.tagName}`"
+      variant="primary"
+      class="mx-1"
+    >
+      <span>{{ tag.tagName }}</span>
+      <span v-if="isNoteCount">（{{ tag.noteCount }}）</span>
+    </b-button>
+  </div>
 </template>
 
 <script lang="ts">

@@ -1,3 +1,7 @@
+const environment = process.env.NODE_ENV || 'development'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const envSet = require(`./env.${environment}.ts`)
+
 export default {
   ssr: false,
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -10,6 +14,7 @@ export default {
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
+  env: envSet,
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [

@@ -15,9 +15,11 @@
     "@nuxt/typescript-runtime": "^2.0.0",
     "@nuxtjs/markdownit": "^1.2.10",
     "@types/diff": "^4.0.2",
+    "algoliasearch": "^4.8.2",
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
+    "dotenv": "^8.2.0",
     "firebase": "^8.0.2",
     "firebaseui": "^4.7.1",
     "luxon": "^1.25.0",
@@ -25,7 +27,6 @@
     "nuxt": "^2.14.6",
     "nuxt-fontawesome": "^0.4.0",
     "nuxt-property-decorator": "^2.8.8",
-    "sanitize-html": "^2.1.2",
     "vuex-module-decorators": "^1.0.1",
     "vuexfire": "^3.2.4"
   },
@@ -37,7 +38,6 @@
     "@nuxtjs/eslint-config-typescript": "^3.0.0",
     "@nuxtjs/eslint-module": "^2.0.0",
     "@types/luxon": "^1.25.0",
-    "@types/sanitize-html": "^1.27.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
@@ -46,8 +46,6 @@
     "fibers": "^5.0.0",
     "mocha": "^8.2.1",
     "prettier": "^2.1.2",
-    "pug": "^3.0.0",
-    "pug-plain-loader": "^1.0.0",
     "sass": "^1.29.0",
     "sass-loader": "^10.1.0"
   }

@@ -1,10 +1,8 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 
 import { db, FieldValue } from '@/plugins/firebase'
-import { Note, NoteHistory } from '@/models/note'
+import { Note, NoteHistory, NoteComment } from '@/models/note'
 import { authStore } from '@/store'
-
-const notesRef = db.collection('notes')
 
 @Module({
   name: 'notes',
@@ -15,6 +13,13 @@ class Notes extends VuexModule {
   storedNotes: Note[] = []
   initialized: boolean = false
   storedUnsubscribed?: () => void = undefined
+  selectedNoteId = ''
+  storedComments: NoteComment[] = []
+  storedCommentsUnsubscribe?: () => void = undefined
+
+  get notesRef() {
+    return db.collection('notes')
+  }
 
   get notes() {
     return this.storedNotes
@@ -63,6 +68,11 @@ class Notes extends VuexModule {
     this.storedNotes = this.storedNotes.filter((q) => q.id !== note.id)
   }
 
+  @Mutation
+  SET_COMMENT_UNSUBSCRIBE(value?: () => void) {
+    this.storedCommentsUnsubscribe = value
+  }
+
   @Action({ rawError: true })
   async initialize() {
     if (this.initialized) {
@@ -81,7 +91,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   private watchNotes() {
-    const unsubscribe = notesRef.onSnapshot((querySnapshot) => {
+    const unsubscribe = this.notesRef.onSnapshot((querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
         const note = new Note(
           Object.assign({ id: change.doc.id }, change.doc.data())
@@ -99,7 +109,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async getNote(id: string): Promise<Note> {
-    const noteRef = await notesRef.doc(id).get()
+    const noteRef = await this.notesRef.doc(id).get()
     const note = {
       id: noteRef.id,
       ...noteRef.data(),
@@ -115,7 +125,7 @@ class Notes extends VuexModule {
     id: string
     historyId: string
   }): Promise<NoteHistory> {
-    const noteHistoryRef = await notesRef
+    const noteHistoryRef = await this.notesRef
       .doc(id)
       .collection('histories')
       .doc(historyId)
@@ -128,7 +138,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async createNote(note: Note): Promise<string> {
-    const noteRef = await notesRef.add({
+    const noteRef = await this.notesRef.add({
       userId: authStore.userId,
       title: note.title,
       content: note.content,
@@ -141,7 +151,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async updateNote(note: Note) {
-    const noteRef = notesRef.doc(note.id)
+    const noteRef = this.notesRef.doc(note.id)
     const beforeNote = await noteRef.get()
     const beforeContent = beforeNote.get('content')
 
@@ -166,7 +176,7 @@ class Notes extends VuexModule {
   async storeNotes(limit = 10) {
     this.CLEAR_NOTES()
 
-    const querySnapshot = await notesRef
+    const querySnapshot = await this.notesRef
       .orderBy('updatedAt', 'desc')
       .limit(limit)
       .get()
@@ -178,12 +188,12 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async deleteNote(noteId: string) {
-    await notesRef.doc(noteId).delete()
+    await this.notesRef.doc(noteId).delete()
   }
 
   @Action({ rawError: true })
   async getNotesByTagName(tagName: string) {
-    const querySnapshot = await notesRef
+    const querySnapshot = await this.notesRef
       .where('tags', 'array-contains', tagName)
       .get()
 
@@ -201,7 +211,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async getNotesCountByTagName(tagName: string) {
-    const querySnapshot = await notesRef
+    const querySnapshot = await this.notesRef
       .where('tags', 'array-contains', tagName)
       .get()
 
@@ -216,7 +226,7 @@ class Notes extends VuexModule {
     noteId: string
     limit: number
   }) {
-    const querySnapshot = await notesRef
+    const querySnapshot = await this.notesRef
       .doc(noteId)
       .collection('histories')
       .orderBy('createdAt', 'desc')
@@ -236,7 +246,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async fetchTags({ limit = 5 }: { limit: number }) {
-    const querySnapshot = await notesRef.get()
+    const querySnapshot = await this.notesRef.get()
     const tags = [] as any[]
     querySnapshot.forEach(function (noteSnapshot) {
       tags.push(noteSnapshot.get('tags'))
@@ -255,7 +265,7 @@ class Notes extends VuexModule {
 
       return []
     }
-    const querySnapshot = await notesRef
+    const querySnapshot = await this.notesRef
       .where('userId', '==', userId)
       .orderBy('createdAt', 'desc')
       .get()
@@ -270,6 +280,82 @@ class Notes extends VuexModule {
       )
     }
     return usersNotes
+  }
+
+  // ----Comment------
+
+  @Mutation
+  STORE_COMMENT(comment: NoteComment) {
+    this.storedComments = this.storedComments.filter((q) => q.id !== comment.id)
+    this.storedComments.push(comment)
+  }
+
+  @Mutation
+  REMOVE_COMMENT(comment: NoteComment) {
+    this.storedComments = this.storedComments.filter((q) => q.id !== comment.id)
+  }
+
+  @Action({ rawError: true })
+  createComment({ noteId, content }: { noteId: string; content: string }) {
+    this.SET_SELECTED_NOTE_ID(noteId)
+    db.collection(`notes/${this.selectedNoteId}/comments`).add({
+      userId: authStore.userId,
+      content,
+      noteId: this.selectedNoteId,
+      createdAt: FieldValue.serverTimestamp(),
+    })
+  }
+
+  @Mutation
+  SET_SELECTED_NOTE_ID(value: string) {
+    if (this.selectedNoteId !== value) {
+      if (this.storedCommentsUnsubscribe) {
+        this.storedCommentsUnsubscribe()
+      }
+      this.storedCommentsUnsubscribe = undefined
+      this.storedComments = []
+    }
+    this.selectedNoteId = value
+  }
+
+  @Action({ rawError: true })
+  watchNoteComments(noteId: string) {
+    this.SET_SELECTED_NOTE_ID(noteId)
+    const unsubscribe = this.notesRef
+      .doc(noteId)
+      .collection('comments')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          const noteComment = new NoteComment(
+            Object.assign({ id: change.doc.id }, change.doc.data())
+          )
+          if (this.selectedNoteId !== noteComment.noteId) {
+            return
+          }
+          if (change.type === 'added' || change.type === 'modified') {
+            this.STORE_COMMENT(noteComment)
+          } else if (change.type === 'removed') {
+            this.REMOVE_COMMENT(noteComment)
+          }
+        })
+      })
+    this.SET_COMMENT_UNSUBSCRIBE(unsubscribe)
+  }
+
+  @Action({ rawError: true })
+  async storedNoteComments(noteId: string) {
+    const commentsRef = db
+      .collection('notes')
+      .doc(noteId)
+      .collection('comments')
+    const querySnapshot = await commentsRef.orderBy('createdAt', 'asc').get()
+
+    querySnapshot.forEach((doc) => {
+      this.STORE_COMMENT(
+        new NoteComment(Object.assign({ id: doc.id }, doc.data()))
+      )
+    })
   }
 }
 export default Notes

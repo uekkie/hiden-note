@@ -1,9 +1,10 @@
-<template lang="pug">
-b-container
-  h1.title 秘伝のタレ
-  tag-index(v-if='userSignedIn')
-  note-list(v-if='userSignedIn')
-  div(v-else) ログインしてください
+<template>
+  <b-container>
+    <h1 class="title">秘伝のタレ</h1>
+    <tag-index v-if="userSignedIn" />
+    <note-list v-if="userSignedIn" />
+    <div v-else>ログインしてください</div>
+  </b-container>
 </template>
 
 <script lang="ts">

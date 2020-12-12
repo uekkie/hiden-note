@@ -1,5 +1,9 @@
-<template lang="pug">
-  note-form(:note="note" submit-label="保存する" @submit="onSubmit")
+<template>
+  <note-form
+    :note="note"
+    submit-label="保存する"
+    @submit="onSubmit"
+  ></note-form>
 </template>
 
 <script lang="ts">

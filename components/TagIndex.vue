@@ -1,6 +1,7 @@
-<template lang="pug">
-  .tag-index
-    tag-list(:tags='tagInfos' isNoteCount='true')
+<template>
+  <div class="tag-index">
+    <tag-list :tags="tagInfos" is-note-count="true"></tag-list>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
