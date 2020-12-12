@@ -12,7 +12,7 @@ module.exports = async (
     objectID: change.after.id,
     title: docData.title,
     content: docData.content,
-    updatedAt: docData.updatedAt.toDate().getTime()
+    updatedAt: docData.updatedAt.toDate().getTime(),
   })
   return null
 }

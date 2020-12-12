@@ -9,8 +9,8 @@ module.exports = async (
   }
   const filterQuery = `id:${doc.id}`
   const notesIndex = algoliaClient().initIndex('notes')
-  notesIndex.deleteBy({
-    filters: filterQuery
+  await notesIndex.deleteBy({
+    filters: filterQuery,
   })
 
   return null
