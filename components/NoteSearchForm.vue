@@ -19,11 +19,12 @@
       <div>
         <small>
           <b-img v-bind="photoProps(note.userId)" rounded="circle"></b-img>
-          <NuxtLink :to="`/users/${note.userId}`">{{
-            userName(note.userId)
-          }}</NuxtLink></small
-        >
+          <NuxtLink :to="`/users/${note.userId}`">
+            {{ userName(note.userId) }}
+          </NuxtLink>
+        </small>
       </div>
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="content" v-html="formattedContent(note.content)" />
       <div class="text-right">
         <small>{{ note.updatedAt }}</small>
@@ -38,7 +39,6 @@ import { Vue, Component } from 'nuxt-property-decorator'
 import { algoliaClient } from '@/utils/algolia'
 import { usersStore } from '@/store'
 const index = algoliaClient().initIndex('notes')
-
 const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   inline: true,
   html: false,
@@ -48,22 +48,21 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
 
 @Component
 class NoteSearchForm extends Vue {
-  noteList: any[] = []
-  query: string = ''
+  private noteList: any[] = []
+  private query: string = ''
+
   get canSubmit(): boolean {
     if (!this.query) return false
     return this.query.length > 0
   }
 
-  created() {}
+  get users() {
+    return usersStore.users
+  }
 
   async searchNote() {
     const searchResult = await index.search(this.query)
     this.noteList = searchResult.hits
-  }
-
-  get users() {
-    return usersStore.users
   }
 
   formattedContent(content: string): string {
@@ -89,5 +88,3 @@ class NoteSearchForm extends Vue {
 }
 export default NoteSearchForm
 </script>
-
-<style></style>

@@ -60,7 +60,6 @@ class Auth extends VuexModule {
   public async saveUser(user: User) {
     const userDoc = userRef.doc(user.id)
     await userDoc.withConverter(userConverter).set(user)
-    console.log('saved user', user)
   }
 
   @Action({ rawError: true })

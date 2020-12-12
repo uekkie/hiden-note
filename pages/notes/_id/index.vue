@@ -56,27 +56,29 @@ import 'highlight.js/styles/atom-one-light.css'
   components: { TagList },
 })
 class NoteShow extends Vue {
-  note: Note | null = null
-  modalShow: boolean = false
-  loading: boolean = true
-  relatedNotes: Note[] = []
+  private note: Note | null = null
+  private modalShow: boolean = false
+  private loading: boolean = true
+  private relatedNotes: Note[] = []
 
   async created() {
     this.note = await notesStore.getNote(this.$route.params.id)
-    this.loading = false
-    if (this.note.tags.length > 0) {
+    if (this.note.tags && this.note.tags.length > 0) {
       const tagName = this.note.tags[0]
       const notes = await notesStore.getNotesByTagName(tagName)
       this.relatedNotes = notes.filter((note) => {
         return note.id !== this.note!.id
       })
     }
+    this.loading = false
   }
 
   tags(note: Note) {
-    return note.tags.map((tag) => {
-      return { tagName: tag, noteCount: 0 }
-    })
+    return note.tags
+      ? note.tags.map((tag) => {
+          return { tagName: tag, noteCount: 0 }
+        })
+      : []
   }
 
   editPath() {

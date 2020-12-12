@@ -29,11 +29,11 @@ import { NoteHistory } from '@/models/note'
 
 @Component
 class NoteEditorList extends Vue {
-  noteHistories: NoteHistory[] = []
-  users: User[] = []
-
   @Prop({ default: false })
   noteId!: string
+
+  private noteHistories: NoteHistory[] = []
+  private users: User[] = []
 
   async created() {
     await notesStore.initialize()

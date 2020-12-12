@@ -14,11 +14,12 @@
       <div>
         <small>
           <b-img v-bind="photoProps(note.userId)" rounded="circle"></b-img>
-          <NuxtLink :to="`/users/${note.userId}`">{{
-            userName(note.userId)
-          }}</NuxtLink></small
-        >
+          <NuxtLink :to="`/users/${note.userId}`">
+            {{ userName(note.userId) }}
+          </NuxtLink>
+        </small>
       </div>
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="content" v-html="formattedContent(note.content)" />
       <div class="text-right">
         <small>{{ formatDate(note.updatedAt.toDate()) }}</small>

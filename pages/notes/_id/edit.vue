@@ -15,7 +15,7 @@ import 'highlight.js/styles/atom-one-light.css'
 
 @Component
 class NoteEdit extends Vue {
-  note: Note | null = null
+  private note: Note | null = null
 
   created() {
     notesStore.getNote(this.$route.params.id).then((note) => {
