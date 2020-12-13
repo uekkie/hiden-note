@@ -1,6 +1,5 @@
 <template>
   <b-container>
-    <h1 class="title">秘伝のタレ</h1>
     <div class="notes__search-form my-3">
       <note-search-form />
     </div>
