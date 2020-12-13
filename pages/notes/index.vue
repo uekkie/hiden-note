@@ -1,7 +1,9 @@
 <template>
   <b-container>
     <h1 class="title">秘伝のタレ</h1>
-    <note-search-form></note-search-form>
+    <div class="m-2">
+      <note-search-form />
+    </div>
     <template v-if="userSignedIn">
       <tag-index />
       <note-list />
