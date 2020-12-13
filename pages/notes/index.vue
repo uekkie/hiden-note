@@ -1,12 +1,16 @@
 <template>
   <b-container>
     <h1 class="title">秘伝のタレ</h1>
-    <div class="m-2">
+    <div class="notes__search-form my-3">
       <note-search-form />
     </div>
     <template v-if="userSignedIn">
-      <tag-index />
-      <note-list />
+      <div class="notes__tag-index">
+        <tag-index />
+      </div>
+      <div class="notes__note-list my-3">
+        <note-list />
+      </div>
     </template>
     <div v-else>ログインしてください</div>
   </b-container>
