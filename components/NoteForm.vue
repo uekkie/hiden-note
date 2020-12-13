@@ -1,7 +1,7 @@
 <template>
   <b-container v-if="note">
     <form @submit.prevent="submit">
-      <b-row align-v="start">
+      <b-row class="mb-2" align-v="start">
         <b-col>
           <b-form-input
             v-model.trim="note.title"
@@ -10,7 +10,7 @@
           />
         </b-col>
       </b-row>
-      <b-row align-v="start">
+      <b-row class="mb-2" align-v="start">
         <b-col>
           <b-form-tags
             v-model.trim="tags"
@@ -18,7 +18,7 @@
           />
         </b-col>
       </b-row>
-      <b-row align-v="stretch">
+      <b-row class="mb-2" align-v="stretch">
         <b-col class="pr-0">
           <b-form-textarea
             v-model.trim="note.content"
