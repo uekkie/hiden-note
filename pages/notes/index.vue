@@ -1,8 +1,5 @@
 <template>
   <b-container>
-    <div class="notes__search-form my-3">
-      <note-search-form />
-    </div>
     <template v-if="userSignedIn">
       <div class="notes__tag-index">
         <tag-index />

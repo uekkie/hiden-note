@@ -1,13 +1,9 @@
 <template>
-  <div class="form">
-    <b-form-row>
-      <b-col cols="10">
-        <b-form-input v-model="query" type="text" />
-      </b-col>
-      <b-col cols="2">
-        <b-button block @click="searchNote">検索</b-button>
-      </b-col>
-    </b-form-row>
+  <b-container>
+    <b-form @submit.prevent="searchNote">
+      <label for="text-keyword">検索キ-ワード</label>
+      <b-form-input v-model.trim="query" type="text" />
+    </b-form>
     <div
       v-for="note in noteList"
       :key="note.id"
@@ -31,7 +27,7 @@
       </div>
       <hr />
     </div>
-  </div>
+  </b-container>
 </template>
 
 <script lang="ts">
@@ -47,7 +43,7 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
 })
 
 @Component
-class NoteSearchForm extends Vue {
+class SearchIndex extends Vue {
   private noteList: any[] = []
   private query: string = ''
 
@@ -60,7 +56,22 @@ class NoteSearchForm extends Vue {
     return usersStore.users
   }
 
-  async searchNote() {
+  fetch() {
+    this.query = this.$route.query.q as string
+    this.queryNote()
+  }
+
+  searchNote() {
+    if (this.query.length > 0) {
+      this.$router.push({
+        path: 'search',
+        query: { q: this.query },
+      })
+      this.queryNote()
+    }
+  }
+
+  async queryNote() {
     const searchResult = await index.search(this.query)
     this.noteList = searchResult.hits
   }
@@ -86,5 +97,5 @@ class NoteSearchForm extends Vue {
     }
   }
 }
-export default NoteSearchForm
+export default SearchIndex
 </script>
