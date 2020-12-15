@@ -1,5 +1,5 @@
 <template>
-  <div class="tag-index">
+  <div class="tags__tag-index">
     <tag-list :tags="tagInfos" is-note-count="true"></tag-list>
   </div>
 </template>

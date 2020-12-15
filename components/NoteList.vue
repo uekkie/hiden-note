@@ -50,6 +50,10 @@ class NoteList extends Vue {
     return usersStore.users
   }
 
+  async created() {
+    await notesStore.initialize()
+  }
+
   formattedContent(content: string): string {
     return md.render(content)
   }

@@ -1,6 +1,5 @@
 <template>
   <b-container>
-    <h1 class="title">秘伝のタレ</h1>
     <template v-if="userSignedIn">
       <tag-index />
       <note-list />

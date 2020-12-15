@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions'
-import * as algoliasearch from 'algoliasearch'
+import algoliasearch from 'algoliasearch'
 
 export const algoliaClient = () => {
   const algoliaId = functions.config().algolia.app_id
