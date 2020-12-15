@@ -10,9 +10,9 @@
                 {{ getUserName(comment.userId) }}
               </NuxtLink>
             </span>
-            <span class="float-right">{{
-              comment.createdAt ? comment.createdAtString() : ''
-            }}</span>
+            <span class="float-right">
+              {{ comment.createdAt ? comment.createdAtString() : '' }}
+            </span>
           </div>
           <div style="white-space: pre-line">{{ comment.content }}</div>
         </div>
@@ -31,14 +31,14 @@ class CommentList extends Vue {
   @Prop({ default: false })
   noteId!: string
 
+  get comments() {
+    return notesStore.storedComments
+  }
+
   async created() {
     usersStore.initialize()
     notesStore.watchNoteComments(this.noteId)
     await notesStore.storedNoteComments(this.noteId)
-  }
-
-  get comments() {
-    return notesStore.storedComments
   }
 
   getUser(userId: string): User | undefined {
@@ -52,5 +52,3 @@ class CommentList extends Vue {
 }
 export default CommentList
 </script>
-
-<style></style>

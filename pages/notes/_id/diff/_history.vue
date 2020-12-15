@@ -11,6 +11,7 @@
     </b-card>
   </b-container>
 </template>
+
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
 import { notesStore } from '@/store'
@@ -18,8 +19,13 @@ const Diff = require('diff')
 
 @Component
 class NoteDiff extends Vue {
-  prevNoteContent: string = ''
-  currentNoteContent: string = ''
+  private prevNoteContent: string = ''
+  private currentNoteContent: string = ''
+
+  get diffContent() {
+    return Diff.diffLines(this.prevNoteContent, this.currentNoteContent)
+  }
+
   async created() {
     const noteId = this.$route.params.id
     const historyId = this.$route.params.history
@@ -31,12 +37,6 @@ class NoteDiff extends Vue {
 
     this.prevNoteContent = history.content
     this.currentNoteContent = note.content
-  }
-
-  get diffContent() {
-    console.log(Diff.diffLines(this.prevNoteContent, this.currentNoteContent))
-
-    return Diff.diffLines(this.prevNoteContent, this.currentNoteContent)
   }
 }
 export default NoteDiff

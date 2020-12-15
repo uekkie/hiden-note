@@ -11,10 +11,11 @@
 import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
 import { authStore, notesStore } from '@/store'
+import 'highlight.js/styles/atom-one-light.css'
 
 @Component
 class NoteEdit extends Vue {
-  note: Note | null = null
+  private note: Note | null = null
 
   created() {
     notesStore.getNote(this.$route.params.id).then((note) => {

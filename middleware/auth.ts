@@ -18,7 +18,6 @@ export default async function ({ route, redirect }: Context) {
   }
 
   const isRootPath = route.name === 'index'
-  console.log('route name ', route.name)
   if (authStore.userSignedIn) {
     if (isRootPath) {
       return redirect({

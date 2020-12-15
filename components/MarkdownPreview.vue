@@ -16,7 +16,7 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
 @Component
 class MarkdownPreview extends Vue {
   @Prop({ default: false })
-  content!: string
+  private content!: string
 
   get formattedContent(): string {
     return md.render(this.content)

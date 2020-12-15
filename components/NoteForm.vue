@@ -29,7 +29,7 @@
         </b-col>
         <b-col class="pl-0">
           <div class="px-2 py-1 border h-100">
-            <markdown-preview :content="note.content"></markdown-preview>
+            <markdown-preview :content="note.content" />
           </div>
         </b-col>
       </b-row>
@@ -54,8 +54,6 @@ import { Component, Vue, Prop } from 'nuxt-property-decorator'
 
 @Component({})
 class NoteForm extends Vue {
-  tags: string[] = []
-
   @Prop({ default: false })
   submitLabel!: string
 
@@ -64,6 +62,8 @@ class NoteForm extends Vue {
     required: true,
   })
   note!: Note
+
+  private tags: string[] = []
 
   get canSubmit(): boolean {
     if (!this.note) return false
