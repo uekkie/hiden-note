@@ -1,14 +1,18 @@
 <template>
-  <div class="tags d-flex justify-content-start">
+  <div class="d-flex justify-content-start flex-wrap">
     <b-button
       v-for="(tag, index) in tags"
       :key="index"
       :to="`/tags/${tag.tagName}`"
       variant="primary"
-      class="mx-1"
+      class="tag__tag-button btn-sm mr-1 my-2"
     >
-      <span>{{ tag.tagName }}</span>
-      <span v-if="isNoteCount">（{{ tag.noteCount }}）</span>
+      <span>
+        {{ tag.tagName }}
+        <b-badge v-if="isNoteCount" variant="light">
+          {{ tag.noteCount }}
+        </b-badge>
+      </span>
     </b-button>
   </div>
 </template>
