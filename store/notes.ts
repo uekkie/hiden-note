@@ -153,11 +153,13 @@ class Notes extends VuexModule {
   async updateNote(note: Note) {
     const noteRef = this.notesRef.doc(note.id)
     const beforeNote = await noteRef.get()
+    const beforeTitle = beforeNote.get('title')
     const beforeContent = beforeNote.get('content')
 
-    // NOTE: 内容（content）に変更がないときは履歴に残さない
-    if (beforeContent !== note.content) {
+    // タイトルか内容に変更がないときは履歴に残さない
+    if (beforeTitle !== note.title || beforeContent !== note.content) {
       await noteRef.collection('histories').add({
+        title: beforeTitle,
         content: beforeContent,
         userId: authStore.userId,
         createdAt: FieldValue.serverTimestamp(),
