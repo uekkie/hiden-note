@@ -9,7 +9,28 @@
     "generate": "nuxt-ts generate",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint": "yarn lint:js",
-    "test": "mocha --exit"
+    "test": "jest",
+    "clearJestCache": "jest --clearCache",
+    "setup:emu:firestore": "firebase setup:emulators:firestore",
+    "emulator-start": "firebase emulators:start --only firestore",
+    "test-watch": "jest --watch"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "\\.ts$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/spec/**/*.test.ts"
+    ]
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.0",
@@ -38,17 +59,22 @@
     "@nuxtjs/eslint-config-typescript": "^3.0.0",
     "@nuxtjs/eslint-module": "^2.0.0",
     "@types/algoliasearch": "^3.34.11",
-    "@types/luxon": "^1.25.0",
     "@types/diff": "^4.0.2",
+    "@types/jest": "^26.0.19",
+    "@types/luxon": "^1.25.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-nuxt": "^1.0.0",
     "eslint-plugin-prettier": "^3.1.4",
     "fibers": "^5.0.0",
+    "jest": "^26.6.3",
     "mocha": "^8.2.1",
     "prettier": "^2.1.2",
     "sass": "^1.29.0",
-    "sass-loader": "^10.1.0"
+    "sass-loader": "^10.1.0",
+    "ts-jest": "^26.4.4",
+    "ts-loader": "^8.0.12",
+    "typescript": "^4.1.3"
   }
 }

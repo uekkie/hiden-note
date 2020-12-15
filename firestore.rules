@@ -1,17 +1,22 @@
 rules_version = '2';
 
 service cloud.firestore {
-  function isAnyAuthenticated() {
-    return request.auth != null;
+  function isApprovedEmails() {
+    return request.auth != null && request.auth.token.email.matches('hirocueki@gmail.com|natto.and.eggs@gmail.com|.*@sonicgarden.jp');
   }
 
-  function isApprovedEmails() {
-    return request.auth.token.email.matches('hirocueki@gmail.com|natto.and.eggs@gmail.com|.*@sonicgarden.jp');
+  function isValidNoteData(note) {
+    return note.title.size() > 0 && note.title.size() <= 100 &&
+           note.content.size() > 0;
   }
 
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if isAnyAuthenticated() && isApprovedEmails();
+
+    match /notes/{nodeId} {
+      allow list: if isApprovedEmails();
+      allow delete: if isApprovedEmails() && resource.data.userId == request.auth.uid;
+      allow create: if isApprovedEmails() && request.resource.data.userId == request.auth.uid && isValidNoteData(request.resource.data);
+      allow update: if isApprovedEmails() && request.resource.data.userId == resource.data.userId;
     }
   }
 }
