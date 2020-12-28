@@ -1,7 +1,8 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-
-import { db } from '@/plugins/firebase'
 import { User } from '@/models'
+import firebase from 'firebase'
+
+export const db = firebase.firestore()
 
 const usersRef = db.collection('users')
 

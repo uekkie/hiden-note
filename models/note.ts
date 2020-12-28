@@ -1,6 +1,6 @@
 import firebase from 'firebase'
-import { FieldValue } from '@/plugins/firebase'
 import { DateTime } from 'luxon'
+export const FieldValue = firebase.firestore.FieldValue
 
 export interface INote {
   id: string

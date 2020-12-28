@@ -1,24 +1,35 @@
 <template>
   <b-container>
-    <template v-if="userSignedIn">
+    <template v-if="user">
       <tag-index />
       <note-list />
     </template>
-    <div v-else>ログインしてください</div>
+    <div v-else>
+      <button :disabled="isValid" @click="login">LOGIN</button>
+      ログインしてください
+    </div>
   </b-container>
 </template>
 
 <script lang="ts">
-import { authStore } from '@/store'
-import { Component, Vue } from 'nuxt-property-decorator'
+import { computed, defineComponent } from '@nuxtjs/composition-api'
+import useAuth from '@/use/use-auth'
+import useLogin from '@/use/use-login'
 
-@Component({})
-class Index extends Vue {
-  get userSignedIn() {
-    return authStore.userSignedIn
-  }
-}
-export default Index
+export default defineComponent({
+  setup() {
+    const { user, loading, error } = useAuth()
+    const loginState = useLogin()
+    return {
+      user,
+      loading,
+      error: computed(() => (loginState.error || error).value),
+      login: loginState.login,
+      logout: loginState.logout,
+      isValid: loginState.isValid,
+    }
+  },
+})
 </script>
 
 <style lang="sass">

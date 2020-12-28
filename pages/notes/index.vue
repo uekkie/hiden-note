@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <template v-if="userSignedIn">
+    <template v-if="user">
       <div class="notes__tag-index">
         <tag-index />
       </div>
@@ -13,22 +13,23 @@
 </template>
 
 <script lang="ts">
-import { authStore, notesStore, usersStore } from '@/store'
-import { Component, Vue } from 'nuxt-property-decorator'
+import useAuth from '@/use/use-auth'
+import { defineComponent } from '@nuxtjs/composition-api'
+import { notesStore, usersStore } from '@/store'
 import 'highlight.js/styles/atom-one-light.css'
 
-@Component({})
-class Index extends Vue {
-  get userSignedIn() {
-    return authStore.userSignedIn
-  }
-
+export default defineComponent({
+  setup() {
+    const { user } = useAuth()
+    return {
+      user,
+    }
+  },
   async created() {
     await notesStore.initialize()
     await usersStore.initialize()
-  }
-}
-export default Index
+  },
+})
 </script>
 
 <style lang="sass">

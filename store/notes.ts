@@ -1,8 +1,10 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-
-import { db, FieldValue } from '@/plugins/firebase'
 import { Note, NoteHistory, NoteComment } from '@/models/note'
 import { authStore } from '@/store'
+import firebase from 'firebase'
+
+export const db = firebase.firestore()
+export const FieldValue = firebase.firestore.FieldValue
 
 @Module({
   name: 'notes',

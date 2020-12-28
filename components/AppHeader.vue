@@ -4,7 +4,7 @@
       <b-navbar-brand to="/">秘伝のタレ</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
-        <template v-if="userSignedIn">
+        <template v-if="user">
           <b-navbar-nav class="ml-auto">
             <b-nav-form class="mr-2">
               <header-search-bar />
@@ -43,45 +43,30 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
-import { authStore } from '../store'
+import { computed, defineComponent } from '@nuxtjs/composition-api'
+import useAuth from '@/use/use-auth'
+import useLogin from '@/use/use-login'
 
-@Component
-class AppHeader extends Vue {
-  get userSignedIn() {
-    return authStore.userSignedIn
-  }
+export default defineComponent({
+  setup() {
+    const { user, loading, error } = useAuth()
+    const loginState = useLogin()
 
-  get userId() {
-    return authStore.user!.id
-  }
-
-  get displayName() {
-    return authStore.userDisplayName
-  }
-
-  get photoProps() {
     return {
-      width: 32,
-      height: 32,
-      class: 'm1',
-      src: authStore.user!.photoURL,
+      user,
+      loading,
+      userId: computed(() => user.value?.uid),
+      displayName: computed(() => user.value?.displayName),
+      photoProps: computed(() => {
+        return { width: 32, height: 32, class: 'm1', src: user.value?.photoURL }
+      }),
+      error: computed(() => (loginState.error || error).value),
+      login: loginState.login,
+      logout: loginState.logout,
+      isValid: loginState.isValid,
     }
-  }
-
-  login() {
-    authStore.login()
-  }
-
-  logout() {
-    authStore.logout().then((result) => {
-      if (result) {
-        this.$router.push('/')
-      }
-    })
-  }
-}
-export default AppHeader
+  },
+})
 </script>
 
 <style lang="scss" scoped>

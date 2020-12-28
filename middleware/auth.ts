@@ -1,24 +1,10 @@
 import { Context } from '@nuxt/types'
-import { authStore } from '@/store'
-import { auth } from '@/plugins/firebase'
-import firebase from 'firebase'
+import useAuth from '@/use/use-auth'
+const { user } = useAuth()
 
-export default async function ({ route, redirect }: Context) {
-  if (!authStore.userSignedIn) {
-    const authenticatedUser: firebase.User | null = await new Promise(
-      (resolve): void => {
-        auth.onAuthStateChanged((authenticatedUser): void => {
-          resolve(authenticatedUser)
-        })
-      }
-    )
-    if (authenticatedUser) {
-      authStore.doSignIn(authenticatedUser)
-    }
-  }
-
+export default function ({ route, redirect }: Context) {
   const isRootPath = route.name === 'index'
-  if (authStore.userSignedIn) {
+  if (user) {
     if (isRootPath) {
       return redirect({
         name: 'notes',

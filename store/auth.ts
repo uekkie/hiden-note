@@ -1,10 +1,9 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { firebase, db } from '@/plugins/firebase'
-
 import { User, userConverter } from '@/models'
+import firebase from 'firebase'
 import { authStore, notesStore, usersStore } from '~/utils/store-accessor'
 
-const userRef = db.collection('users')
+const userRef = firebase.firestore().collection('users')
 
 @Module({
   name: 'auth',
