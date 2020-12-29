@@ -14,9 +14,9 @@
       <div>
         <small>
           <b-img v-bind="photoProps(note.userId)" rounded="circle"></b-img>
-          <NuxtLink :to="`/users/${note.userId}`">
+          <nuxt-link :to="`/users/${note.userId}`">
             {{ userName(note.userId) }}
-          </NuxtLink>
+          </nuxt-link>
         </small>
       </div>
       <!-- eslint-disable-next-line vue/no-v-html -->
