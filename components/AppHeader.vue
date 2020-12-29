@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-navbar variant="light">
-      <b-navbar-brand to="/">秘伝のタレ</b-navbar-brand>
+    <b-navbar class="header">
+      <b-navbar-brand class="header__title" to="/">秘伝のタレ</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <template v-if="userSignedIn">
@@ -87,5 +87,11 @@ export default AppHeader
 <style lang="scss" scoped>
 .header__new-note-button {
   width: 150px;
+}
+.header {
+  background-color: #6bae42;
+}
+.header__title {
+  color: white;
 }
 </style>
