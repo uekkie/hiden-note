@@ -50,11 +50,10 @@ export default Index
   height: calc(100vh - #{$header-height})
 
 .notes__left-column
-  flex-basis: 220px
+  width: 350px
   height: 100%
   overflow-y: auto
 
 .notes__right-column
-  flex-basis: 280px
   height: 100%
 </style>

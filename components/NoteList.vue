@@ -1,30 +1,44 @@
 <template>
-  <div class="notes">
+  <div class="note-list">
     <h3>ノート一覧</h3>
     <p>ノート総数：{{ notes.length }}</p>
 
     <div
       v-for="(note, index) in notes"
       :key="index"
-      class="flex-column align-items-start"
+      class="note-list__note flex-column align-items-start mb-3"
     >
-      <h3>
-        <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
-      </h3>
-      <div>
-        <small>
-          <b-img v-bind="photoProps(note.userId)" rounded="circle"></b-img>
+      <div class="note-list__note-author">
+        <div class="note-list__note-author-pic mr-3">
           <nuxt-link :to="`/users/${note.userId}`">
+            <b-img
+              thumbnail
+              v-bind="photoProps(note.userId)"
+              rounded="circle"
+            ></b-img>
+          </nuxt-link>
+        </div>
+        <div>
+          <nuxt-link
+            class="note-list__note-author-link"
+            :to="`/users/${note.userId}`"
+          >
             {{ userName(note.userId) }}
           </nuxt-link>
-        </small>
+          <br />
+          <time>
+            <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
+          </time>
+        </div>
       </div>
-      <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="content" v-html="formattedContent(note.content)" />
-      <div class="text-right">
-        <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
+      <div class="note-list__note-dody">
+        <h3>
+          <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
+        </h3>
+
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div class="content" v-html="formattedContent(note.content)" />
       </div>
-      <hr />
     </div>
   </div>
 </template>
@@ -81,3 +95,27 @@ class NoteList extends Vue {
 }
 export default NoteList
 </script>
+
+<style lang="sass" scoped>
+@import '@/assets/stylesheets/_resources.sass'
+
+.note-list__note-author
+  display: flex
+  align-items: center
+  justify-content: start
+.note-list__note-author-pic
+  width: 32px
+  height: 32px
+.note-list__note-author-link
+  color: black
+  &:hover
+    text-decoration: none
+    color: #333
+.note-list__note
+  background: $note-background
+  box-shadow: 0 0 0 1px #ddd
+  border-radius: 5px
+  padding: 1rem
+.note-list__note-dody
+  padding-left: 3rem
+</style>
