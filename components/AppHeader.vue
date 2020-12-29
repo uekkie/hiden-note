@@ -84,14 +84,20 @@ class AppHeader extends Vue {
 export default AppHeader
 </script>
 
-<style lang="scss" scoped>
-.header__new-note-button {
-  width: 150px;
-}
-.header {
-  background-color: #6bae42;
-}
-.header__title {
-  color: white;
-}
+<style lang="sass" scoped>
+@import '@/assets/stylesheets/_resources.sass'
+
+.header
+  height: $header-height
+
+.header__new-note-button
+  width: 150px
+
+.header
+  background-color: $brand-color
+
+.header__title
+  color: white
+  &:hover
+    color: white
 </style>
