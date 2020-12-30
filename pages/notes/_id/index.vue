@@ -2,39 +2,29 @@
   <b-container v-if="!loading">
     <b-row>
       <b-col cols="8">
-        <note-content :note="note" :user="user(note.userId)" />
+        <note-content
+          :note="getCurrentNote"
+          :user="user(getCurrentNote.userId)"
+          @onDeleteNote="onDeleteNote"
+        />
 
         <div class="note--comment-list my-3">
           <h5>コメント一覧</h5>
-          <comment-list :note-id="note.id"></comment-list>
+          <comment-list :note-id="noteId"></comment-list>
         </div>
         <div class="note--comment-form mt-3">
           <h5>コメント投稿</h5>
-          <comment-form :note-id="note.id"></comment-form>
+          <comment-form :note-id="noteId"></comment-form>
         </div>
-
-        <b-modal
-          v-model="modalShow"
-          title="ノートの削除"
-          @ok="handleDeleteNote"
-        >
-          削除してよろしいですか？
-        </b-modal>
       </b-col>
       <b-col cols="4">
-        <note-editor-list :note-id="note.id"></note-editor-list>
-
-        <div class="related">
-          <h3>おなじタグの付いたノート</h3>
-          <b-list-group>
-            <b-list-group-item
-              v-for="(note, index) in relatedNotes"
-              :key="index"
-            >
-              <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
-            </b-list-group-item>
-          </b-list-group>
-        </div>
+        <note-editor-container
+          :note-id="getCurrentNote.id"
+        ></note-editor-container>
+        <related-note-container
+          class="mt-4"
+          :related-notes="relatedNotes"
+        ></related-note-container>
       </b-col>
     </b-row>
   </b-container>
@@ -42,37 +32,36 @@
 
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
-import { Note } from '@/models/note'
 import { notesStore, usersStore } from '@/store'
-import NoteTagList from '~/components/NoteTagList.vue'
 import 'highlight.js/styles/atom-one-light.css'
 
-@Component({
-  components: { NoteTagList },
-})
+@Component
 class NoteShow extends Vue {
-  private note: Note | null = null
-  private modalShow: boolean = false
   private loading: boolean = true
-  private relatedNotes: Note[] = []
 
   get users() {
     return usersStore.users
   }
 
+  get noteId() {
+    return this.getCurrentNote?.id || ''
+  }
+
+  get relatedNotes() {
+    return notesStore.storedRelatedNotes
+  }
+
+  get getCurrentNote() {
+    return notesStore.getCurrentNote
+  }
+
   async created() {
-    this.note = await notesStore.getNote(this.$route.params.id)
-    if (this.note.tags && this.note.tags.length > 0) {
-      const tagName = this.note.tags[0]
-      const notes = await notesStore.getNotesByTagName(tagName)
-      this.relatedNotes = notes.filter((note) => {
-        return note.id !== this.note!.id
-      })
-    }
+    await notesStore.setCurrentNoteById(this.$route.params.id)
+    await notesStore.storeRelatedNotes()
     this.loading = false
   }
 
-  async handleDeleteNote(bvModalEvt: any) {
+  async onDeleteNote(bvModalEvt: any) {
     bvModalEvt.preventDefault()
     await notesStore.deleteNote(this.$route.params.id)
     this.$router.push('/')

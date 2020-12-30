@@ -5,7 +5,7 @@
       <b-form-input v-model.trim="query" type="text" />
     </b-form>
     <div
-      v-for="note in noteList"
+      v-for="note in NotesContainer"
       :key="note.id"
       class="my-2 flex-column align-items-start"
     >
@@ -44,7 +44,7 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
 
 @Component
 class SearchIndex extends Vue {
-  private noteList: any[] = []
+  private NotesContainer: any[] = []
   private query: string = ''
 
   get canSubmit(): boolean {
@@ -73,7 +73,7 @@ class SearchIndex extends Vue {
 
   async queryNote() {
     const searchResult = await index.search(this.query)
-    this.noteList = searchResult.hits
+    this.NotesContainer = searchResult.hits
   }
 
   formattedContent(content: string): string {

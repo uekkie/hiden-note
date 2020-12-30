@@ -1,14 +1,14 @@
 <template>
   <b-container class="container-fluid">
     <div class="notes__columns">
-      <div class="notes__left-column">
+      <div class="notes__left-column mr-3">
         <div v-if="userSignedIn" class="notes__tag-index">
-          <tag-index />
+          <popular-tags-container />
         </div>
       </div>
       <div class="notes__right-column">
-        <div v-if="userSignedIn" class="notes__note-list my-3">
-          <note-list />
+        <div v-if="userSignedIn">
+          <notes-container :notes="recentNotes" />
         </div>
         <div v-else>ログインしてください</div>
       </div>
@@ -25,6 +25,10 @@ import 'highlight.js/styles/atom-one-light.css'
 class Index extends Vue {
   get userSignedIn() {
     return authStore.userSignedIn
+  }
+
+  get recentNotes() {
+    return notesStore.recentNotes
   }
 
   async created() {

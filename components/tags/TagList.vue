@@ -11,7 +11,7 @@
       >
         <span>
           {{ tag.tagName }}
-          <b-badge v-if="isNoteCount" variant="success">
+          <b-badge variant="success">
             {{ tag.noteCount }}
           </b-badge>
         </span>
@@ -24,9 +24,6 @@
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
 @Component
 class TagList extends Vue {
-  @Prop({ default: false })
-  isNoteCount!: false
-
   @Prop({ default: {} })
   tags!: { tagName: string; noteCount: number }[]
 }

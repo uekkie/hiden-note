@@ -1,6 +1,8 @@
 <template>
   <b-container>
-    <h3>「{{ tagName }}」が付いているノート表示</h3>
+    <h3>
+      タグ <code>#{{ tagName }}</code> が付いているノート
+    </h3>
     <b-list-group>
       <b-list-group-item
         variant="primary"
@@ -19,6 +21,12 @@
         <b-row>
           <b-col>
             <nuxt-link :to="`/notes/${note.id}`"> {{ note.title }}</nuxt-link>
+          </b-col>
+          <b-col>
+            <time-label
+              v-if="note.updatedAt"
+              :datetime="note.updatedAt.toDate()"
+            />
           </b-col>
         </b-row>
       </b-list-group-item>

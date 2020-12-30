@@ -8,10 +8,7 @@
         </nuxt-link>
       </div>
       <div>
-        <nuxt-link
-          class="note-list__note-author-link"
-          :to="`/users/${note.userId}`"
-        >
+        <nuxt-link class="note__author-link" :to="`/users/${note.userId}`">
           {{ userName }}
         </nuxt-link>
         <br />
@@ -34,14 +31,18 @@
     <div class="note--body mt-5 ml-3">
       <markdown-preview :content="note.content"></markdown-preview>
     </div>
+    <b-modal v-model="modalShow" title="ノートの削除" @ok="onDeleteNote">
+      削除してよろしいですか？
+    </b-modal>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop, Emit } from 'nuxt-property-decorator'
 import { Note, User } from '@/models'
 @Component
 class NoteContent extends Vue {
+  private modalShow: boolean = false
   @Prop()
   note!: Note
 
@@ -75,6 +76,9 @@ class NoteContent extends Vue {
       return null
     }
   }
+
+  @Emit('onDeleteNote')
+  onDeleteNote() {}
 }
 export default NoteContent
 </script>

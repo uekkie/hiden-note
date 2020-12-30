@@ -5,12 +5,15 @@
         <div>
           <div class="text-muted mb-1">
             <span>
-              <NuxtLink :to="{ path: `/users/${comment.userId}` }">
+              <nuxt-link :to="{ path: `/users/${comment.userId}` }">
                 {{ getUserName(comment.userId) }}
-              </NuxtLink>
+              </nuxt-link>
             </span>
             <span class="float-right">
-              {{ comment.createdAt ? comment.createdAtString() : '' }}
+              <time-label
+                v-if="comment.createdAt"
+                :datetime="comment.createdAt.toDate()"
+              />
             </span>
           </div>
           <div style="white-space: pre-line">{{ comment.content }}</div>
@@ -36,8 +39,12 @@ class CommentList extends Vue {
 
   async created() {
     usersStore.initialize()
-    notesStore.watchNoteComments(this.noteId)
-    await notesStore.storedNoteComments(this.noteId)
+    if (this.noteId) {
+      notesStore.watchNoteComments(this.noteId)
+      await notesStore.storedNoteComments(this.noteId)
+    } else {
+      console.error('noteId not exists')
+    }
   }
 
   getUser(userId: string): User | undefined {

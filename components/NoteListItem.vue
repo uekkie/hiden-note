@@ -32,7 +32,7 @@
 import { Component, Vue, Prop } from 'nuxt-property-decorator'
 import { Note, User } from '@/models'
 @Component
-class NoteListItem extends Vue {
+class NotesContainerItem extends Vue {
   @Prop()
   note!: Note
 
@@ -67,5 +67,5 @@ class NoteListItem extends Vue {
     }
   }
 }
-export default NoteListItem
+export default NotesContainerItem
 </script>

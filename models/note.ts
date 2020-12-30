@@ -1,6 +1,5 @@
 import firebase from 'firebase'
 import { FieldValue } from '@/plugins/firebase'
-import { DateTime } from 'luxon'
 
 export interface INote {
   id: string
@@ -39,16 +38,6 @@ export class Note implements INote {
       updatedAt,
     })
   }
-
-  createdAtString() {
-    const dt = DateTime.fromJSDate(this.createdAt.toDate())
-    return dt.toFormat('yyyy-MM-dd HH:mm')
-  }
-
-  updatedAtString() {
-    const dt = DateTime.fromJSDate(this.updatedAt.toDate())
-    return dt.toFormat('yyyy-MM-dd HH:mm')
-  }
 }
 // NOTE_HISTORY
 export interface INoteHistory {
@@ -79,11 +68,6 @@ export class NoteHistory implements INoteHistory {
       userId,
       createdAt,
     })
-  }
-
-  createdAtString() {
-    const dt = DateTime.fromJSDate(this.createdAt.toDate())
-    return dt.toFormat('yyyy-MM-dd HH:mm')
   }
 }
 
@@ -156,10 +140,5 @@ export class NoteComment implements INoteComment {
       noteId,
       createdAt,
     })
-  }
-
-  createdAtString() {
-    const dt = DateTime.fromJSDate(this.createdAt.toDate())
-    return dt.toFormat('yyyy-MM-dd HH:mm')
   }
 }

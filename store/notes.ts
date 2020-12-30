@@ -4,6 +4,8 @@ import { db, FieldValue } from '@/plugins/firebase'
 import { Note, NoteHistory, NoteComment } from '@/models/note'
 import { authStore } from '@/store'
 
+const notesRef = db.collection('notes')
+
 @Module({
   name: 'notes',
   stateFactory: true,
@@ -11,15 +13,14 @@ import { authStore } from '@/store'
 })
 class Notes extends VuexModule {
   storedNotes: Note[] = []
+  storedUsersNotes: Note[] = []
+  storedRelatedNotes: Note[] = []
   initialized: boolean = false
   storedUnsubscribed?: () => void = undefined
   selectedNoteId = ''
   storedComments: NoteComment[] = []
   storedCommentsUnsubscribe?: () => void = undefined
-
-  get notesRef() {
-    return db.collection('notes')
-  }
+  currentNote?: Note = undefined
 
   get notes() {
     return this.storedNotes
@@ -30,6 +31,14 @@ class Notes extends VuexModule {
     return dup.sort((noteA: Note, noteB: Note) =>
       noteA.updatedAt > noteB.updatedAt ? -1 : 0
     )
+  }
+
+  get usersNotes() {
+    return this.storedUsersNotes
+  }
+
+  get getCurrentNote() {
+    return this.currentNote
   }
 
   @Mutation
@@ -50,6 +59,8 @@ class Notes extends VuexModule {
     this.storedUnsubscribed = undefined
     this.initialized = false
     this.storedNotes = []
+    this.storedRelatedNotes = []
+    this.storedUsersNotes = []
   }
 
   @Mutation
@@ -59,8 +70,37 @@ class Notes extends VuexModule {
   }
 
   @Mutation
+  STORE_RELATED_NOTE(note: Note) {
+    if (this.currentNote!.id === note.id) {
+      return
+    }
+    this.storedRelatedNotes = this.storedRelatedNotes.filter(
+      (q) => q.id !== note.id
+    )
+    this.storedRelatedNotes.push(note)
+  }
+
+  @Mutation
+  STORE_USERS_NOTE(note: Note) {
+    this.storedUsersNotes = this.storedUsersNotes.filter(
+      (q) => q.id !== note.id
+    )
+    this.storedUsersNotes.push(note)
+  }
+
+  @Mutation
   CLEAR_NOTES() {
     this.storedNotes = []
+  }
+
+  @Mutation
+  CLEAR_RELATED_NOTES() {
+    this.storedRelatedNotes = []
+  }
+
+  @Mutation
+  CLEAR_USERS_NOTES() {
+    this.storedUsersNotes = []
   }
 
   @Mutation
@@ -71,6 +111,11 @@ class Notes extends VuexModule {
   @Mutation
   SET_COMMENT_UNSUBSCRIBE(value?: () => void) {
     this.storedCommentsUnsubscribe = value
+  }
+
+  @Mutation
+  SET_CURRENT_NOTE(note: Note) {
+    this.currentNote = note
   }
 
   @Action({ rawError: true })
@@ -91,7 +136,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   private watchNotes() {
-    const unsubscribe = this.notesRef.onSnapshot((querySnapshot) => {
+    const unsubscribe = notesRef.onSnapshot((querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
         const note = new Note(
           Object.assign({ id: change.doc.id }, change.doc.data())
@@ -109,7 +154,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async getNote(id: string): Promise<Note> {
-    const noteRef = await this.notesRef.doc(id).get()
+    const noteRef = await notesRef.doc(id).get()
     const note = {
       id: noteRef.id,
       ...noteRef.data(),
@@ -125,7 +170,7 @@ class Notes extends VuexModule {
     id: string
     historyId: string
   }): Promise<NoteHistory> {
-    const noteHistoryRef = await this.notesRef
+    const noteHistoryRef = await notesRef
       .doc(id)
       .collection('histories')
       .doc(historyId)
@@ -138,7 +183,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async createNote(note: Note): Promise<string> {
-    const noteRef = await this.notesRef.add({
+    const noteRef = await notesRef.add({
       userId: authStore.userId,
       title: note.title,
       content: note.content,
@@ -151,7 +196,7 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async updateNote(note: Note) {
-    const noteRef = this.notesRef.doc(note.id)
+    const noteRef = notesRef.doc(note.id)
     const beforeNote = await noteRef.get()
     const beforeContent = beforeNote.get('content')
 
@@ -176,7 +221,7 @@ class Notes extends VuexModule {
   async storeNotes(limit = 10) {
     this.CLEAR_NOTES()
 
-    const querySnapshot = await this.notesRef
+    const querySnapshot = await notesRef
       .orderBy('updatedAt', 'desc')
       .limit(limit)
       .get()
@@ -188,12 +233,12 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async deleteNote(noteId: string) {
-    await this.notesRef.doc(noteId).delete()
+    await notesRef.doc(noteId).delete()
   }
 
   @Action({ rawError: true })
   async getNotesByTagName(tagName: string) {
-    const querySnapshot = await this.notesRef
+    const querySnapshot = await notesRef
       .where('tags', 'array-contains', tagName)
       .get()
 
@@ -210,12 +255,22 @@ class Notes extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async getNotesCountByTagName(tagName: string) {
-    const querySnapshot = await this.notesRef
-      .where('tags', 'array-contains', tagName)
-      .get()
+  async storeRelatedNotes() {
+    if (!this.getCurrentNote) {
+      return
+    }
+    if (this.getCurrentNote.tags && this.getCurrentNote.tags.length > 0) {
+      const tagName = this.getCurrentNote.tags[0]
+      const querySnapshot = await notesRef
+        .where('tags', 'array-contains', tagName)
+        .get()
 
-    return querySnapshot.docs.length
+      querySnapshot.docs.forEach((doc) => {
+        this.STORE_RELATED_NOTE(
+          new Note(Object.assign({ id: doc.id }, doc.data()))
+        )
+      })
+    }
   }
 
   @Action({ rawError: true })
@@ -226,7 +281,7 @@ class Notes extends VuexModule {
     noteId: string
     limit: number
   }) {
-    const querySnapshot = await this.notesRef
+    const querySnapshot = await notesRef
       .doc(noteId)
       .collection('histories')
       .orderBy('createdAt', 'desc')
@@ -245,8 +300,18 @@ class Notes extends VuexModule {
   }
 
   @Action({ rawError: true })
+  async setCurrentNoteById(noteId: string) {
+    const noteRef = await notesRef.doc(noteId).get()
+    const note = new Note(Object.assign({ id: noteId }, noteRef.data()))
+    if (note.id !== this.currentNote?.id) {
+      this.CLEAR_RELATED_NOTES()
+    }
+    this.SET_CURRENT_NOTE(note)
+  }
+
+  @Action({ rawError: true })
   async fetchTags({ limit = 5 }: { limit: number }) {
-    const querySnapshot = await this.notesRef.get()
+    const querySnapshot = await notesRef.get()
     const tags = [] as any[]
     querySnapshot.forEach(function (noteSnapshot) {
       tags.push(noteSnapshot.get('tags'))
@@ -258,28 +323,46 @@ class Notes extends VuexModule {
       .slice(0, limit)
   }
 
+  // @Action({ rawError: true })
+  // async getNotesByUserId(userId: string) {
+  //   if (!userId) {
+  //     console.error('error undefined [userId] !!')
+
+  //     return []
+  //   }
+  //   const querySnapshot = await notesRef
+  //     .where('userId', '==', userId)
+  //     .orderBy('createdAt', 'desc')
+  //     .get()
+
+  //   const usersNotes: Note[] = []
+  //   for (const doc of querySnapshot.docs) {
+  //     usersNotes.push(
+  //       new Note({
+  //         id: doc.id,
+  //         ...doc.data(),
+  //       })
+  //     )
+  //   }
+  //   return usersNotes
+  // }
+
   @Action({ rawError: true })
-  async getNotesByUserId(userId: string) {
+  async storeUsersNotes(userId: string) {
     if (!userId) {
       console.error('error undefined [userId] !!')
 
       return []
     }
-    const querySnapshot = await this.notesRef
+    this.CLEAR_USERS_NOTES()
+    const querySnapshot = await notesRef
       .where('userId', '==', userId)
       .orderBy('createdAt', 'desc')
       .get()
 
-    const usersNotes: Note[] = []
-    for (const doc of querySnapshot.docs) {
-      usersNotes.push(
-        new Note({
-          id: doc.id,
-          ...doc.data(),
-        })
-      )
-    }
-    return usersNotes
+    querySnapshot.docs.forEach((doc) => {
+      this.STORE_USERS_NOTE(new Note(Object.assign({ id: doc.id }, doc.data())))
+    })
   }
 
   // ----Comment------
@@ -321,7 +404,7 @@ class Notes extends VuexModule {
   @Action({ rawError: true })
   watchNoteComments(noteId: string) {
     this.SET_SELECTED_NOTE_ID(noteId)
-    const unsubscribe = this.notesRef
+    const unsubscribe = notesRef
       .doc(noteId)
       .collection('comments')
       .orderBy('createdAt', 'desc')
