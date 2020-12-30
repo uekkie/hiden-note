@@ -9,14 +9,43 @@ service cloud.firestore {
     return note.title.size() > 0 && note.title.size() <= 100 &&
            note.content.size() > 0;
   }
+  
+  function isValidNoteHistoryData(noteHistory) {
+    return noteHistory.userId.size() > 0 &&
+           noteHistory.content.size() > 0;
+  }
+  
+  function isValidCommentData(comment) {
+    return comment.noteId.size() > 0 &&
+    			 comment.userId.size() > 0 &&
+           comment.content.size() > 0;
+  }
 
   match /databases/{database}/documents {
-
-    match /notes/{nodeId} {
-      allow list: if isApprovedEmails();
+    match /notes/{noteId} {
+      allow read: if isApprovedEmails()
       allow delete: if isApprovedEmails() && resource.data.userId == request.auth.uid;
       allow create: if isApprovedEmails() && request.resource.data.userId == request.auth.uid && isValidNoteData(request.resource.data);
       allow update: if isApprovedEmails() && request.resource.data.userId == resource.data.userId;
+
+      match /histories/{historyId} {
+        allow read: if isApprovedEmails()
+        allow delete: if isApprovedEmails() && resource.data.userId == request.auth.uid;
+        allow create: if isApprovedEmails() && request.resource.data.userId == request.auth.uid && isValidNoteHistoryData(request.resource.data);
+        allow update: if isApprovedEmails() && request.resource.data.userId == resource.data.userId;
+      }
+
+      match /comments/{commentId} {
+        allow read: if isApprovedEmails()
+        allow delete: if isApprovedEmails() && resource.data.userId == request.auth.uid;
+        allow create: if isApprovedEmails() && request.resource.data.userId == request.auth.uid && isValidCommentData(request.resource.data);
+        allow update: if isApprovedEmails() && request.resource.data.userId == resource.data.userId;
+      }
+    }
+
+    match /users/{userId} {
+      allow read: if isApprovedEmails()
+      allow write: if isApprovedEmails() && resource.data.userId == request.auth.uid;
     }
   }
 }
