@@ -13,11 +13,11 @@
               <b-button
                 size="sm"
                 to="/notes/new"
-                variant="primary"
+                variant="light"
                 type="submit"
                 class="header__new-note-button"
               >
-                <b-icon variant="outline-primary" icon="pencil"></b-icon>
+                <b-icon variant="outline-light" icon="pencil"></b-icon>
                 新規ノート作成
               </b-button>
             </b-nav-form>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h5>コメント投稿</h5>
     <b-form @submit.prevent="onSubmitComment">
       <b-form-textarea v-model="commentContent" class="mb-3" required />
       <b-button type="submit" class="float-right" variant="primary">

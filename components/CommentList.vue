@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h5>コメント</h5>
     <b-list-group class="mb-3">
       <b-list-group-item v-for="comment in comments" :key="comment.id">
         <div>

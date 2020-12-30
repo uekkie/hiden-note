@@ -2,29 +2,24 @@
   <b-container v-if="!loading">
     <b-row>
       <b-col cols="8">
-        <h1>{{ note.title }}</h1>
-        <div class="d-flex justify-content-end">
-          <div class="edit">
-            <b-icon variant="secondary" icon="pencil"></b-icon>
-            <b-link class="text-secondary" :to="editPath()">編集する</b-link>
-          </div>
-          <div class="delete">
-            <b-icon variant="danger" icon="trash"></b-icon>
-            <b-link class="text-danger" @click="modalShow = !modalShow"
-              >削除する</b-link
-            >
-          </div>
+        <note-content :note="note" :user="user(note.userId)" />
+
+        <div class="note--comment-list my-3">
+          <h5>コメント一覧</h5>
+          <comment-list :note-id="note.id"></comment-list>
         </div>
-        <tag-list :tags="tags(note)"></tag-list>
+        <div class="note--comment-form mt-3">
+          <h5>コメント投稿</h5>
+          <comment-form :note-id="note.id"></comment-form>
+        </div>
 
-        <markdown-preview :content="note.content"></markdown-preview>
-
-        <comment-list :note-id="note.id"></comment-list>
-        <comment-form :note-id="note.id"></comment-form>
-
-        <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
-          >削除してよろしいですか？</b-modal
+        <b-modal
+          v-model="modalShow"
+          title="ノートの削除"
+          @ok="handleDeleteNote"
         >
+          削除してよろしいですか？
+        </b-modal>
       </b-col>
       <b-col cols="4">
         <note-editor-list :note-id="note.id"></note-editor-list>
@@ -48,18 +43,22 @@
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
-import { notesStore } from '@/store'
-import TagList from '~/components/tags/TagList.vue'
+import { notesStore, usersStore } from '@/store'
+import NoteTagList from '~/components/NoteTagList.vue'
 import 'highlight.js/styles/atom-one-light.css'
 
 @Component({
-  components: { TagList },
+  components: { NoteTagList },
 })
 class NoteShow extends Vue {
   private note: Note | null = null
   private modalShow: boolean = false
   private loading: boolean = true
   private relatedNotes: Note[] = []
+
+  get users() {
+    return usersStore.users
+  }
 
   async created() {
     this.note = await notesStore.getNote(this.$route.params.id)
@@ -73,22 +72,14 @@ class NoteShow extends Vue {
     this.loading = false
   }
 
-  tags(note: Note) {
-    return note.tags
-      ? note.tags.map((tag) => {
-          return { tagName: tag, noteCount: 0 }
-        })
-      : []
-  }
-
-  editPath() {
-    return this.note!.id + '/edit'
-  }
-
   async handleDeleteNote(bvModalEvt: any) {
     bvModalEvt.preventDefault()
     await notesStore.deleteNote(this.$route.params.id)
     this.$router.push('/')
+  }
+
+  user(userId: string) {
+    return this.users.find((user) => user.id === userId)
   }
 }
 export default NoteShow

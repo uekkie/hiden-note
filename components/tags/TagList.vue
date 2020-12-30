@@ -34,7 +34,6 @@ export default TagList
 </script>
 <style lang="sass">
 @import '@/assets/stylesheets/_resources.sass'
-// .tag-list__tag-list-item
 .tag-list__tag-list-item--link
   text-overflow: ellipsis
   border-radius: 5px

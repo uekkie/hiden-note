@@ -1,50 +1,16 @@
 <template>
   <div class="note-list">
-    <h3>ノート一覧</h3>
-    <p>ノート総数：{{ notes.length }}</p>
-
     <div
       v-for="(note, index) in notes"
       :key="index"
       class="note-list__note flex-column align-items-start mb-3"
     >
-      <div class="note-list__note-author">
-        <div class="note-list__note-author-pic mr-3">
-          <nuxt-link :to="`/users/${note.userId}`">
-            <b-img
-              thumbnail
-              v-bind="photoProps(note.userId)"
-              rounded="circle"
-            ></b-img>
-          </nuxt-link>
-        </div>
-        <div>
-          <nuxt-link
-            class="note-list__note-author-link"
-            :to="`/users/${note.userId}`"
-          >
-            {{ userName(note.userId) }}
-          </nuxt-link>
-          <br />
-          <time>
-            <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
-          </time>
-        </div>
-      </div>
-      <div class="note-list__note-dody">
-        <h3>
-          <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
-        </h3>
-
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <div class="content" v-html="formattedContent(note.content)" />
-      </div>
+      <note-list-item :note="note" :user="user(note.userId)" />
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { DateTime } from 'luxon'
 import { notesStore, usersStore } from '@/store'
 
 const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
@@ -80,23 +46,14 @@ class NoteList extends Vue {
     return this.users.find((user) => user.id === userId)?.photoURL
   }
 
-  photoProps(userId: string) {
-    return {
-      width: 32,
-      height: 32,
-      class: 'm1',
-      src: this.userPhotoURL(userId),
-    }
-  }
-
-  formatDate(date: Date): string {
-    return DateTime.fromJSDate(date).toISODate()
+  user(userId: string) {
+    return this.users.find((user) => user.id === userId)
   }
 }
 export default NoteList
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 @import '@/assets/stylesheets/_resources.sass'
 
 .note-list__note-author

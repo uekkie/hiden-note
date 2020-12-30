@@ -37,20 +37,12 @@ export default Index
 
 <style lang="sass">
 @import '@/assets/stylesheets/_resources.sass'
-.title
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif
-  display: block
-  font-weight: 300
-  font-size: 100px
-  color: #35495e
-  letter-spacing: 1px
-
 .notes__columns
   display: flex
   height: calc(100vh - #{$header-height})
 
 .notes__left-column
-  width: 350px
+  min-width: 180px
   height: 100%
   overflow-y: auto
 
