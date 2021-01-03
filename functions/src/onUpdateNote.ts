@@ -78,7 +78,7 @@ const calcNoteTagsCount = async function (calcTagNames: string[]) {
     if (querySnapshot.empty) {
       await db
         .collection('tags')
-        .doc(tag.toLocaleLowerCase())
+        .doc(tagLowerCase)
         .set({ content: tag, noteCount: 0 })
       return
     }
