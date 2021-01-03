@@ -51,14 +51,6 @@ class NotesContainerItem extends Vue {
     return this.note!.id + '/edit'
   }
 
-  get tags() {
-    return this.note.tags
-      ? this.note.tags.map((tag) => {
-          return { tagName: tag, noteCount: 0 }
-        })
-      : []
-  }
-
   get createdAt() {
     try {
       return this.note!.createdAt.toDate()

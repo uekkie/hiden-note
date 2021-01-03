@@ -2,6 +2,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 
 import { db, FieldValue } from '@/plugins/firebase'
 import { Note, NoteHistory, NoteComment } from '@/models/note'
+import { Tag } from '@/models/tag'
 import { authStore } from '@/store'
 
 const notesRef = db.collection('notes')
@@ -187,7 +188,7 @@ class Notes extends VuexModule {
       userId: authStore.userId,
       title: note.title,
       content: note.content,
-      tags: note.tags.length > 0 ? FieldValue.arrayUnion(...note.tags) : [],
+      tags: note.tags,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     })
@@ -256,21 +257,19 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async storeRelatedNotes() {
-    if (!this.getCurrentNote) {
-      return
-    }
-    if (this.getCurrentNote.tags && this.getCurrentNote.tags.length > 0) {
-      const tagName = this.getCurrentNote.tags[0]
-      const querySnapshot = await notesRef
-        .where('tags', 'array-contains', tagName)
-        .get()
-
-      querySnapshot.docs.forEach((doc) => {
-        this.STORE_RELATED_NOTE(
-          new Note(Object.assign({ id: doc.id }, doc.data()))
-        )
-      })
-    }
+    // if (!this.getCurrentNote) {
+    // }
+    // if (this.getCurrentNote.tags && this.getCurrentNote.tags.length > 0) {
+    //   const tagName = this.getCurrentNote.tags[0]
+    //   const querySnapshot = await notesRef
+    //     .where('tags', 'array-contains', tagName)
+    //     .get()
+    //   querySnapshot.docs.forEach((doc) => {
+    //     this.STORE_RELATED_NOTE(
+    //       new Note(Object.assign({ id: doc.id }, doc.data()))
+    //     )
+    //   })
+    // }
   }
 
   @Action({ rawError: true })
@@ -311,16 +310,18 @@ class Notes extends VuexModule {
 
   @Action({ rawError: true })
   async fetchTags({ limit = 5 }: { limit: number }) {
-    const querySnapshot = await notesRef.get()
-    const tags = [] as any[]
-    querySnapshot.forEach(function (noteSnapshot) {
-      tags.push(noteSnapshot.get('tags'))
+    const popularTagsSnapshot = await db
+      .collection('tags')
+      .orderBy('noteCount', 'desc')
+      .limit(limit)
+      .get()
+    // const querySnapshot = await notesRef.get()
+    const tags = [] as Tag[]
+    popularTagsSnapshot.forEach(function (tag) {
+      tags.push(new Tag(Object.assign(tag.data())))
     })
 
     return tags
-      .flat()
-      .filter((elem, index, self) => self.indexOf(elem) === index)
-      .slice(0, limit)
   }
 
   // @Action({ rawError: true })

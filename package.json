@@ -13,7 +13,8 @@
     "clearJestCache": "jest --clearCache",
     "setup:emu:firestore": "firebase setup:emulators:firestore",
     "emulator-start": "firebase emulators:start --only firestore",
-    "test-watch": "jest --watch"
+    "test-watch": "jest --watch",
+    "emu": "firebase emulators:start --only firestore,functions"
   },
   "jest": {
     "moduleFileExtensions": [

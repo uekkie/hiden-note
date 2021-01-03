@@ -20,6 +20,7 @@
 import { authStore, notesStore, usersStore } from '@/store'
 import { Component, Vue } from 'nuxt-property-decorator'
 import 'highlight.js/styles/atom-one-light.css'
+import { db } from '@/plugins/firebase'
 
 @Component({})
 class Index extends Vue {
@@ -34,6 +35,12 @@ class Index extends Vue {
   async created() {
     await notesStore.initialize()
     await usersStore.initialize()
+
+    const querySnapshot = await db
+      .collection('notes')
+      .where(`tags.dfaffdasf`, '==', true)
+      .get()
+    console.log(querySnapshot.empty)
   }
 }
 export default Index

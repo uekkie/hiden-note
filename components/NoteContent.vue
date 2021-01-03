@@ -62,11 +62,7 @@ class NoteContent extends Vue {
   }
 
   get tags() {
-    return this.note.tags
-      ? this.note.tags.map((tag) => {
-          return { tagName: tag, noteCount: 0 }
-        })
-      : []
+    return Object.keys(this.note.tags).map((key) => key)
   }
 
   get updatedAt() {
@@ -93,7 +89,7 @@ export default NoteContent
 .note__author
   display: flex
   align-items: center
-  justify-content: start
+  justify-content: flex-start
 .note__author-pic
   width: 32px
   height: 32px

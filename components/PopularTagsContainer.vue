@@ -1,24 +1,19 @@
 <template>
   <div class="popular-tags-container">
-    <tag-list :tags="tagInfos" />
+    <tag-list :tags="tags" />
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { notesStore } from '@/store'
+import { Tag } from '@/models/tag'
 
 @Component
 class PopularTagsContainer extends Vue {
-  tagInfos: { tagName: string; noteCount: number }[] = []
+  tags: Tag[] = []
 
   async created() {
-    const tags = await notesStore.fetchTags({ limit: 5 })
-    tags.forEach((tag) => {
-      this.tagInfos.push({
-        tagName: tag,
-        noteCount: 1, // await notesStore.getNotesCountByTagName(tag),
-      })
-    })
+    this.tags = await notesStore.fetchTags({ limit: 5 })
   }
 }
 export default PopularTagsContainer

@@ -71,7 +71,7 @@ class NoteForm extends Vue {
   }
 
   created() {
-    this.tags = this.note.tags
+    this.tags = Object.keys(this.note.tags).map((tag) => tag)
   }
 
   submit() {

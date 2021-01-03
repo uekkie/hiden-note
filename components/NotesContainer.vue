@@ -43,7 +43,7 @@ export default NotesContainer
 .notes-container__note-author
   display: flex
   align-items: center
-  justify-content: start
+  justify-content: flex-start
 .notes-container__note-author-pic
   width: 32px
   height: 32px

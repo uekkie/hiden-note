@@ -3,12 +3,12 @@
     <b-button
       v-for="(tag, index) in tags"
       :key="index"
-      :to="`/tags/${tag.tagName}`"
+      :to="`/tags/${tag}`"
       variant="primary"
       class="tag__tag-button btn-sm mr-1 my-2"
     >
       <span>
-        {{ tag.tagName }}
+        {{ tag }}
       </span>
     </b-button>
   </div>

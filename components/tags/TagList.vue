@@ -6,11 +6,11 @@
       class="tag-list__tag-list-item"
     >
       <nuxt-link
-        :to="`/tags/${tag.tagName}`"
+        :to="`/tags/${tag.content}`"
         class="tag-list__tag-list-item--link"
       >
         <span>
-          {{ tag.tagName }}
+          {{ tag.content }}
           <b-badge variant="success">
             {{ tag.noteCount }}
           </b-badge>
