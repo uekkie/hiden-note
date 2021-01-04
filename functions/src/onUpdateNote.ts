@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions'
+import * as admin from 'firebase-admin'
+
 import { algoliaClient } from './algolia/client'
-const admin = require('firebase-admin')
 
 const db = admin.firestore()
 
@@ -18,71 +19,41 @@ const updateNoteIndex = async function (
   })
 }
 
-// arr1 [1,2,3]
-// arr2 [2,3,4]
-// arrayDifference( arr1, arr2 ) => [1,4]
-const arrayDifference = function (arr1: string[], arr2: string[]) {
-  const counts = new Map<string, number>()
-
-  const arr = arr1.concat(arr2)
-
-  arr.forEach(function (value) {
-    if (typeof value !== 'string') return
-    const count = counts.get(value) || 0
-    counts.set(value, count + 1)
-  })
-
-  const calcTags: string[] = []
-  counts.forEach(function (value, key) {
-    if (value === 1) {
-      calcTags.push(key)
-    }
-  })
-  return calcTags
-}
 const updateNoteTagsCount = async function (
   change: functions.Change<functions.firestore.DocumentSnapshot>
 ) {
-  console.log('start updateNoteTagsCount')
-
   const beforeTagsMap = change.before.data()?.tags || {}
   const afterTagsMap = change.after.data()?.tags || {}
-  console.log(
-    'beforeTagsMap ',
-    beforeTagsMap,
-    'afterTagsMap ',
-    afterTagsMap,
-    ' == ',
-    beforeTagsMap !== afterTagsMap
-  )
 
-  if (beforeTagsMap !== afterTagsMap) {
-    const beforeTags = Object.keys(beforeTagsMap)
-    const afterTags = Object.keys(afterTagsMap)
-    const calcTags = arrayDifference(beforeTags, afterTags)
-    if (calcTags.length > 0) {
-      await calcNoteTagsCount(calcTags)
-    }
+  if (beforeTagsMap === afterTagsMap) {
+    return
+  }
+
+  const beforeTags = Object.keys(beforeTagsMap)
+  const afterTags = Object.keys(afterTagsMap)
+  const incrementTags = afterTags.filter((tag) => !beforeTags.includes(tag))
+  const decrementTags = beforeTags.filter((tag) => !afterTags.includes(tag))
+  if (incrementTags.length > 0) {
+    console.log('incrementTags ', incrementTags)
+    await calcNoteTagsCount(incrementTags, true)
+  }
+  if (decrementTags.length > 0) {
+    console.log('decrementTags ', decrementTags)
+    await calcNoteTagsCount(decrementTags, false)
   }
 }
 
-const calcNoteTagsCount = async function (calcTagNames: string[]) {
-  console.log('start calcNoteTagsCount ', calcTagNames)
+const calcNoteTagsCount = async function (
+  calcTagNames: string[],
+  isIncrement: boolean
+) {
   for (const tag of calcTagNames) {
-    const tagLowerCase = tag.toLowerCase()
     const querySnapshot = await db
       .collection('notes')
-      .where(`tags.${tagLowerCase}`, '==', true)
+      .where(`tags.${tag}`, '==', true)
       .get()
 
-    if (querySnapshot.empty) {
-      await db
-        .collection('tags')
-        .doc(tagLowerCase)
-        .set({ content: tag, noteCount: 0 })
-      return
-    }
-
+    const tagLowerCase = tag.toLowerCase()
     if (querySnapshot.size) {
       await db
         .collection('tags')
@@ -92,7 +63,7 @@ const calcNoteTagsCount = async function (calcTagNames: string[]) {
       await db
         .collection('tags')
         .doc(tagLowerCase)
-        .set({ content: tag, noteCount: 1 })
+        .set({ content: tag, noteCount: isIncrement ? 1 : 0 })
     }
   }
 }

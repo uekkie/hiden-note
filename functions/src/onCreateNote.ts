@@ -37,12 +37,12 @@ const calcNoteTagsCount = async function (
   }
 
   for (const tag of Object.keys(docData.tags)) {
-    const tagLowerCase = tag.toLowerCase()
     const querySnapshot = await db
       .collection('notes')
-      .where(`tags.${tagLowerCase}`, '==', true)
+      .where(`tags.${tag}`, '==', true)
       .get()
 
+    const tagLowerCase = tag.toLowerCase()
     if (querySnapshot.size) {
       await db
         .collection('tags')

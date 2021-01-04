@@ -22,9 +22,15 @@ class Notes extends VuexModule {
   storedComments: NoteComment[] = []
   storedCommentsUnsubscribe?: () => void = undefined
   currentNote?: Note = undefined
+  storedTags: Tag[] = []
+  storedTagsUnsubscribe?: () => void = undefined
 
   get notes() {
     return this.storedNotes
+  }
+
+  get tags() {
+    return this.storedTags
   }
 
   get recentNotes() {
@@ -58,10 +64,22 @@ class Notes extends VuexModule {
       this.storedUnsubscribed()
     }
     this.storedUnsubscribed = undefined
+
+    if (this.storedCommentsUnsubscribe) {
+      this.storedCommentsUnsubscribe()
+    }
+    this.storedCommentsUnsubscribe = undefined
+
+    if (this.storedTagsUnsubscribe) {
+      this.storedTagsUnsubscribe()
+    }
+    this.storedTagsUnsubscribe = undefined
+
     this.initialized = false
     this.storedNotes = []
     this.storedRelatedNotes = []
     this.storedUsersNotes = []
+    this.storedTags = []
   }
 
   @Mutation
@@ -240,10 +258,11 @@ class Notes extends VuexModule {
   @Action({ rawError: true })
   async getNotesByTagName(tagName: string) {
     const querySnapshot = await notesRef
-      .where('tags', 'array-contains', tagName)
+      .where(`tags.${tagName}`, '==', true)
       .get()
 
     const notes: Note[] = []
+
     for (const doc of querySnapshot.docs) {
       notes.push(
         new Note({
@@ -322,6 +341,24 @@ class Notes extends VuexModule {
     })
 
     return tags
+  }
+
+  @Action({ rawError: true })
+  watchTags() {
+    const unsubscribe = db
+      .collection('tags')
+      .where('noteCount', '>', 0)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          const tag = new Tag(Object.assign(change.doc.data()))
+          if (change.type === 'added' || change.type === 'modified') {
+            this.STORE_TAG(tag)
+          } else if (change.type === 'removed') {
+            this.REMOVE_TAG(tag)
+          }
+        })
+      })
+    this.SET_TAG_UNSUBSCRIBE(unsubscribe)
   }
 
   // @Action({ rawError: true })
@@ -440,6 +477,23 @@ class Notes extends VuexModule {
         new NoteComment(Object.assign({ id: doc.id }, doc.data()))
       )
     })
+  }
+
+  // -----TAGS-------
+  @Mutation
+  STORE_TAG(tag: Tag) {
+    this.storedTags = this.storedTags.filter((q) => q.content !== tag.content)
+    this.storedTags.push(tag)
+  }
+
+  @Mutation
+  REMOVE_TAG(tag: Tag) {
+    this.storedTags = this.storedTags.filter((q) => q.content !== tag.content)
+  }
+
+  @Mutation
+  SET_TAG_UNSUBSCRIBE(value?: () => void) {
+    this.storedTagsUnsubscribe = value
   }
 }
 export default Notes

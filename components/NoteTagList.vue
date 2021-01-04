@@ -1,4 +1,4 @@
-<template>
+<template template>
   <div class="d-flex justify-content-start flex-wrap">
     <b-button
       v-for="(tag, index) in tags"

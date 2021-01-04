@@ -17,6 +17,9 @@
         <time-label v-if="createdAt" :datetime="createdAt" />
       </div>
     </div>
+    <div class="note-list__note-tags">
+      <note-tag-list :tags="tags"></note-tag-list>
+    </div>
     <div class="note-list__note-dody">
       <h3>
         <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
@@ -57,6 +60,10 @@ class NotesContainerItem extends Vue {
     } catch {
       return null
     }
+  }
+
+  get tags() {
+    return Object.keys(this.note.tags).map((key) => key)
   }
 }
 export default NotesContainerItem

@@ -3,8 +3,8 @@
 /* eslint-disable import/first */
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:58080'
 import * as firebase from '@firebase/testing'
+import * as admin from 'firebase-admin'
 
-import admin = require('firebase-admin')
 const PROJECT_ID = 'hiden-note'
 admin.initializeApp({ projectId: PROJECT_ID})
 const db = admin.firestore()
@@ -50,7 +50,7 @@ describe('tags', () => {
   afterAll(async () => {
     await firebase.clearFirestoreData({ projectId: PROJECT_ID })
   })
-  
+
   describe('onNoteCreated: /notes/test-note1 に新規ドキュメント追加', () => {
     afterEach(async () => {
       await firebase.clearFirestoreData({ projectId: PROJECT_ID })

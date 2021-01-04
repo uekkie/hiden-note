@@ -10,10 +10,14 @@ import { Tag } from '@/models/tag'
 
 @Component
 class PopularTagsContainer extends Vue {
-  tags: Tag[] = []
+  get tags() {
+    return notesStore.tags.sort((tagA: Tag, tagB: Tag) =>
+      tagA.noteCount > tagB.noteCount ? -1 : 0
+    )
+  }
 
   async created() {
-    this.tags = await notesStore.fetchTags({ limit: 5 })
+    await notesStore.watchTags()
   }
 }
 export default PopularTagsContainer
