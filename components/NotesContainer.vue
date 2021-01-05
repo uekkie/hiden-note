@@ -26,8 +26,9 @@ class NotesContainer extends Vue {
     return usersStore.users
   }
 
-  async created() {
+  async fetch() {
     await notesStore.initialize()
+    await usersStore.initialize()
   }
 
   user(userId: string) {
