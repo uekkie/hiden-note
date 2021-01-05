@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="note-list__note-author">
+    <div v-if="user" class="note-list__note-author">
       <div class="note-list__note-author-pic mr-3">
         <nuxt-link :to="`/users/${note.userId}`">
           <b-img thumbnail v-bind="userPhotoProps" rounded="circle"></b-img>
@@ -40,7 +40,7 @@ class NotesContainerItem extends Vue {
   note!: Note
 
   @Prop()
-  user!: User
+  user?: User
 
   get userName() {
     return this.user?.displayName || 'no name'
