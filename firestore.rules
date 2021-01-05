@@ -9,12 +9,12 @@ service cloud.firestore {
     return note.title.size() > 0 && note.title.size() <= 100 &&
            note.content.size() > 0;
   }
-  
+
   function isValidNoteHistoryData(noteHistory) {
     return noteHistory.userId.size() > 0 &&
            noteHistory.content.size() > 0;
   }
-  
+
   function isValidCommentData(comment) {
     return comment.noteId.size() > 0 &&
     			 comment.userId.size() > 0 &&
@@ -46,6 +46,11 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isApprovedEmails()
       allow write: if isApprovedEmails() && resource.data.userId == request.auth.uid;
+    }
+
+    match /tags/{tagId} {
+      allow read: if isApprovedEmails()
+      allow write: if isApprovedEmails()
     }
   }
 }
