@@ -41,23 +41,9 @@ export default NotesContainer
 <style lang="sass">
 @import '@/assets/stylesheets/_resources.sass'
 
-.notes-container__note-author
-  display: flex
-  align-items: center
-  justify-content: flex-start
-.notes-container__note-author-pic
-  width: 32px
-  height: 32px
-.notes-container__note-author-link
-  color: black
-  &:hover
-    text-decoration: none
-    color: #333
 .notes-container__note
   background: $note-background
   box-shadow: 0 0 0 1px #ddd
   border-radius: 5px
   padding: 1rem
-.notes-container__note-dody
-  padding-left: 3rem
 </style>

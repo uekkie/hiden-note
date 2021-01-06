@@ -98,7 +98,6 @@ export default NoteContent
   &:hover
     text-decoration: none
     color: #333
-
-.note__dody
+.note__body
   padding-left: 3rem
 </style>
