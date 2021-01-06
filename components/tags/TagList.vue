@@ -1,19 +1,22 @@
 <template>
-  <div class="d-flex justify-content-start flex-wrap">
-    <b-button
+  <div>
+    <div
       v-for="(tag, index) in tags"
       :key="index"
-      :to="`/tags/${tag.tagName}`"
-      variant="primary"
-      class="tag__tag-button btn-sm mr-1 my-2"
+      class="tag-list__tag-list-item"
     >
-      <span>
-        {{ tag.tagName }}
-        <b-badge v-if="isNoteCount" variant="light">
-          {{ tag.noteCount }}
-        </b-badge>
-      </span>
-    </b-button>
+      <nuxt-link
+        :to="`/tags/${tag.content}`"
+        class="tag-list__tag-list-item--link"
+      >
+        <span>
+          {{ tag.content }}
+          <b-badge variant="success">
+            {{ tag.noteCount }}
+          </b-badge>
+        </span>
+      </nuxt-link>
+    </div>
   </div>
 </template>
 
@@ -21,11 +24,24 @@
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
 @Component
 class TagList extends Vue {
-  @Prop({ default: false })
-  isNoteCount!: false
-
   @Prop({ default: {} })
   tags!: { tagName: string; noteCount: number }[]
 }
 export default TagList
 </script>
+<style lang="sass">
+@import '@/assets/stylesheets/_resources.sass'
+.tag-list__tag-list-item--link
+  text-overflow: ellipsis
+  border-radius: 5px
+  display: block
+  padding-top: 8px
+  padding-left: 20px
+  height: 40px
+  color: black
+  &:hover
+    text-decoration: none
+    cursor: pointer
+    color: $brand-color
+    background-color: #ddd
+</style>

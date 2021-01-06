@@ -24,6 +24,15 @@ export class User implements IUser {
       photoURL,
     })
   }
+
+  photoProps() {
+    return {
+      width: 32,
+      height: 32,
+      class: 'm1',
+      src: this.photoURL,
+    }
+  }
 }
 
 export const userConverter = {

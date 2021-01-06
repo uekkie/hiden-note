@@ -28,7 +28,7 @@
           />
         </b-col>
         <b-col class="pl-0">
-          <div class="px-2 py-1 border h-100">
+          <div class="note-preview px-2 py-1 border h-100">
             <markdown-preview :content="note.content" />
           </div>
         </b-col>
@@ -71,7 +71,7 @@ class NoteForm extends Vue {
   }
 
   created() {
-    this.tags = this.note.tags
+    this.tags = Object.keys(this.note.tags).map((tag) => tag)
   }
 
   submit() {
@@ -84,3 +84,7 @@ class NoteForm extends Vue {
 }
 export default NoteForm
 </script>
+<style lang="sass">
+.note-preview
+  background-color: #fff
+</style>

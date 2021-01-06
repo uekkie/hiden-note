@@ -13,7 +13,8 @@
     "clearJestCache": "jest --clearCache",
     "setup:emu:firestore": "firebase setup:emulators:firestore",
     "emulator-start": "firebase emulators:start --only firestore",
-    "test-watch": "jest --watch"
+    "test-watch": "jest --watch",
+    "emu": "firebase emulators:start --only firestore,functions"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -39,11 +40,11 @@
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
+    "date-fns": "^2.16.1",
     "diff": "^5.0.0",
     "dotenv": "^8.2.0",
     "firebase": "^8.0.2",
     "firebaseui": "^4.7.1",
-    "luxon": "^1.25.0",
     "markdown-it-highlightjs": "^3.3.1",
     "nuxt": "^2.14.6",
     "nuxt-fontawesome": "^0.4.0",
@@ -61,7 +62,6 @@
     "@types/algoliasearch": "^3.34.11",
     "@types/diff": "^4.0.2",
     "@types/jest": "^26.0.19",
-    "@types/luxon": "^1.25.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
