@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-form @submit.prevent="searchNote">
-      <label for="text-keyword">検索キ-ワード</label>
+      <label for="text-keyword">検索キーワード</label>
       <b-form-input v-model.trim="query" type="text" />
     </b-form>
 
