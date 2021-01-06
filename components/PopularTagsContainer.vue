@@ -6,14 +6,12 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { notesStore } from '@/store'
-import { Tag } from '@/models/tag'
+import sortBy from 'lodash-es/sortBy'
 
 @Component
 class PopularTagsContainer extends Vue {
   get tags() {
-    return notesStore.tags.sort((tagA: Tag, tagB: Tag) =>
-      tagA.noteCount > tagB.noteCount ? -1 : 0
-    )
+    return sortBy(notesStore.tags, (tag) => -tag.noteCount)
   }
 
   async created() {
