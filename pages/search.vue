@@ -8,7 +8,7 @@
     <div
       v-for="note in NotesContainer"
       :key="note.id"
-      class="my-2 flex-column align-items-start"
+      class="my-2 flex-column align-items-start note"
     >
       <h3>
         <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
@@ -58,10 +58,16 @@ class SearchIndex extends Vue {
   async queryNote() {
     const searchResult = await index.search(this.query)
     this.NotesContainer = searchResult.hits
-    // .sort((resultA, resultB) =>
-    //   resultA.updatedAt > resultB.updatedAt ? -1 : 0
-    // )
   }
 }
 export default SearchIndex
 </script>
+
+<style lang="sass">
+@import '@/assets/stylesheets/_resources.sass'
+.note
+  background: $note-background
+  box-shadow: 0 0 0 1px #ddd
+  border-radius: 5px
+  padding: 1rem
+</style>
