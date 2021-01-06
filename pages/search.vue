@@ -1,10 +1,5 @@
 <template>
   <b-container>
-    <b-form @submit.prevent="searchNote">
-      <label for="text-keyword">検索キーワード</label>
-      <b-form-input v-model.trim="query" type="text" />
-    </b-form>
-
     <div
       v-for="note in NotesContainer"
       :key="note.id"
@@ -35,24 +30,9 @@ class SearchIndex extends Vue {
   private NotesContainer: any[] = []
   private query: string = ''
 
-  get canSubmit(): boolean {
-    if (!this.query) return false
-    return this.query.length > 0
-  }
-
-  fetch() {
+  async fetch() {
     this.query = this.$route.query.q as string
-    this.queryNote()
-  }
-
-  searchNote() {
-    if (this.query.length > 0) {
-      this.$router.push({
-        path: 'search',
-        query: { q: this.query },
-      })
-      this.queryNote()
-    }
+    await this.queryNote()
   }
 
   async queryNote() {
