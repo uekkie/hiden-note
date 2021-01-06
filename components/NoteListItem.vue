@@ -20,7 +20,7 @@
     <div class="note-list__note-tags">
       <note-tag-list :tags="tags"></note-tag-list>
     </div>
-    <div class="note-list__note-dody">
+    <div class="note-list__note-body">
       <h3>
         <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
       </h3>
