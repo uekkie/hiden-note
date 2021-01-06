@@ -1,28 +1,9 @@
 <template>
   <b-container>
-    <h3>「{{ tagName }}」が付いているノート表示</h3>
-    <b-list-group>
-      <b-list-group-item
-        variant="primary"
-        class="flex-column align-items-start"
-      >
-        <b-row>
-          <b-col>タイトル</b-col>
-          <b-col>更新日</b-col>
-        </b-row>
-      </b-list-group-item>
-      <b-list-group-item
-        v-for="(note, index) in notes"
-        :key="index"
-        class="flex-column align-items-start"
-      >
-        <b-row>
-          <b-col>
-            <nuxt-link :to="`/notes/${note.id}`"> {{ note.title }}</nuxt-link>
-          </b-col>
-        </b-row>
-      </b-list-group-item>
-    </b-list-group>
+    <h3>
+      タグ <code>#{{ tagName }}</code> が付いているノート
+    </h3>
+    <notes-container :notes="recentNotes" />
   </b-container>
 </template>
 
@@ -35,6 +16,13 @@ import { Note } from '@/models'
 class TagShow extends Vue {
   tagName: string = ''
   notes: Note[] = []
+
+  get recentNotes() {
+    return this.notes.sort((noteA, noteB) =>
+      noteA.createdAt > noteB.createdAt ? -1 : 0
+    )
+  }
+
   async created() {
     this.tagName = this.$route.params.tagId
     this.notes = await notesStore.getNotesByTagName(this.tagName)
@@ -42,3 +30,11 @@ class TagShow extends Vue {
 }
 export default TagShow
 </script>
+
+<style lang="sass" scoped>
+@import '@/assets/stylesheets/_resources.sass'
+
+.tag-list__header
+  color: white
+  background-color: $brand-color-light
+</style>

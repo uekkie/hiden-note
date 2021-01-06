@@ -1,12 +1,11 @@
 import firebase from 'firebase'
 import { FieldValue } from '@/plugins/firebase'
-import { DateTime } from 'luxon'
 
 export interface INote {
   id: string
   title: string
   content: string
-  tags: string[]
+  tags: {}
   userId: string
   createdAt: firebase.firestore.Timestamp
   updatedAt: firebase.firestore.Timestamp
@@ -15,7 +14,7 @@ export class Note implements INote {
   id: string = ''
   title: string = ''
   content: string = ''
-  tags: string[] = []
+  tags: {} = {}
   userId: string = ''
   createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
   updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
@@ -24,7 +23,7 @@ export class Note implements INote {
     id = '',
     title = '',
     content = '',
-    tags = [],
+    tags = {},
     userId = '',
     createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
     updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
@@ -38,11 +37,6 @@ export class Note implements INote {
       createdAt,
       updatedAt,
     })
-  }
-
-  createdAtString() {
-    const dt = DateTime.fromJSDate(this.createdAt.toDate())
-    return dt.toFormat('yyyy-MM-dd HH:mm')
   }
 }
 // NOTE_HISTORY
@@ -74,11 +68,6 @@ export class NoteHistory implements INoteHistory {
       userId,
       createdAt,
     })
-  }
-
-  createdAtString() {
-    const dt = DateTime.fromJSDate(this.createdAt.toDate())
-    return dt.toFormat('yyyy-MM-dd HH:mm')
   }
 }
 
@@ -151,10 +140,5 @@ export class NoteComment implements INoteComment {
       noteId,
       createdAt,
     })
-  }
-
-  createdAtString() {
-    const dt = DateTime.fromJSDate(this.createdAt.toDate())
-    return dt.toFormat('yyyy-MM-dd HH:mm')
   }
 }

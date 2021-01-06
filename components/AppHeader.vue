@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-navbar variant="light">
-      <b-navbar-brand to="/">秘伝のタレ</b-navbar-brand>
+    <b-navbar class="header">
+      <b-navbar-brand class="header__title" to="/">秘伝のタレ</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <template v-if="userSignedIn">
@@ -13,11 +13,11 @@
               <b-button
                 size="sm"
                 to="/notes/new"
-                variant="primary"
+                variant="light"
                 type="submit"
                 class="header__new-note-button"
               >
-                <b-icon variant="outline-primary" icon="pencil"></b-icon>
+                <b-icon variant="outline-light" icon="pencil"></b-icon>
                 新規ノート作成
               </b-button>
             </b-nav-form>
@@ -84,8 +84,20 @@ class AppHeader extends Vue {
 export default AppHeader
 </script>
 
-<style lang="scss" scoped>
-.header__new-note-button {
-  width: 150px;
-}
+<style lang="sass" scoped>
+@import '@/assets/stylesheets/_resources.sass'
+
+.header
+  height: $header-height
+
+.header__new-note-button
+  width: 150px
+
+.header
+  background-color: $brand-color
+
+.header__title
+  color: white
+  &:hover
+    color: white
 </style>

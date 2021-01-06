@@ -10,6 +10,7 @@
 import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
 import { notesStore } from '@/store'
+import { arrayToHash } from '@/utils/tags'
 
 @Component
 class NoteNew extends Vue {
@@ -20,12 +21,13 @@ class NoteNew extends Vue {
   }
 
   onSubmit(formData: any) {
+    const tagsHash = arrayToHash(formData.tags)
     notesStore
       .createNote(
         new Note({
           title: formData.title,
           content: formData.content,
-          tags: formData.tags,
+          tags: tagsHash,
         })
       )
       .then((noteId) => {

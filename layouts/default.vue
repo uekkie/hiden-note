@@ -6,6 +6,7 @@
 </template>
 
 <style lang="sass">
+@import '@/assets/stylesheets/_resources.sass'
 html
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif
   font-size: 16px
@@ -15,7 +16,8 @@ html
   -moz-osx-font-smoothing: grayscale
   -webkit-font-smoothing: antialiased
   box-sizing: border-box
-
+body
+  background-color: $app-background-color
 *,
 *::before,
 *::after

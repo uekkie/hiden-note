@@ -1,14 +1,18 @@
 <template>
-  <b-container>
-    <template v-if="userSignedIn">
-      <div class="notes__tag-index">
-        <tag-index />
+  <b-container class="container-fluid">
+    <div class="notes__columns">
+      <div class="notes__left-column mr-3">
+        <div v-if="userSignedIn" class="notes__tag-index">
+          <popular-tags-container />
+        </div>
       </div>
-      <div class="notes__note-list my-3">
-        <note-list />
+      <div class="notes__right-column">
+        <div v-if="userSignedIn">
+          <notes-container :notes="recentNotes" />
+        </div>
+        <div v-else>ログインしてください</div>
       </div>
-    </template>
-    <div v-else>ログインしてください</div>
+    </div>
   </b-container>
 </template>
 
@@ -23,6 +27,10 @@ class Index extends Vue {
     return authStore.userSignedIn
   }
 
+  get recentNotes() {
+    return notesStore.recentNotes
+  }
+
   async created() {
     await notesStore.initialize()
     await usersStore.initialize()
@@ -32,11 +40,16 @@ export default Index
 </script>
 
 <style lang="sass">
-.title
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif
-  display: block
-  font-weight: 300
-  font-size: 100px
-  color: #35495e
-  letter-spacing: 1px
+@import '@/assets/stylesheets/_resources.sass'
+.notes__columns
+  display: flex
+  height: calc(100vh - #{$header-height})
+
+.notes__left-column
+  min-width: 180px
+  height: 100%
+  overflow-y: auto
+
+.notes__right-column
+  height: 100%
 </style>
