@@ -70,7 +70,9 @@ class AppHeader extends Vue {
   }
 
   login() {
-    authStore.login()
+    authStore.login().then(() => {
+      this.$router.push('/notes')
+    })
   }
 
   logout() {

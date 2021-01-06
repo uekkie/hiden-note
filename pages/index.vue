@@ -1,10 +1,6 @@
 <template>
   <b-container>
-    <template v-if="userSignedIn">
-      <tag-index />
-      <note-list />
-    </template>
-    <div v-else>ログインしてください</div>
+    <div v-if="!userSignedIn">ログインしてください</div>
   </b-container>
 </template>
 
