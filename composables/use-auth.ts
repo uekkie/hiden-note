@@ -2,13 +2,35 @@ import { toRefs, reactive, computed } from '@nuxtjs/composition-api'
 import firebase from 'firebase'
 import 'firebase/firestore'
 
-export default function () {
+if (firebase.apps.length === 0) {
+  const firebaseConfig = {
+    apiKey: 'AIzaSyDtK7TZaHoB03Ei06sxuc1VpuVM5AxAiNM',
+    authDomain: 'hiden-note.firebaseapp.com',
+    databaseURL: 'https://hiden-note.firebaseio.com',
+    projectId: 'hiden-note',
+    storageBucket: 'hiden-note.appspot.com',
+  }
+  firebase.initializeApp(firebaseConfig)
+}
+
+export default function useAuth() {
   const state = reactive<{
-    error: null
     user: firebase.User | null
+    loading: boolean
+    error: null
   }>({
-    error: null,
     user: null,
+    loading: true,
+    error: null,
+  })
+
+  firebase.auth().onAuthStateChanged((_user) => {
+    if (_user) {
+      state.user = _user
+    } else {
+      state.user = null
+    }
+    state.loading = false
   })
 
   const isValid = computed(() => {
@@ -51,3 +73,4 @@ export default function () {
     logout,
   }
 }
+export type AuthStore = ReturnType<typeof useAuth>
