@@ -1,5 +1,5 @@
 import { Context } from '@nuxt/types'
-import useAuth from '@/use/use-auth'
+import useAuth from '@/composables/use-auth'
 const { user } = useAuth()
 
 export default function ({ route, redirect }: Context) {
