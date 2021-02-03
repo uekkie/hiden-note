@@ -8,12 +8,13 @@
         <note-list />
       </div>
     </template>
-    <div v-else>ログインしてください</div>
+    <div v-else>ログインしてくださいa</div>
+    <div v-if="$nuxt.isOffline">You are offline</div>
   </b-container>
 </template>
 
 <script lang="ts">
-import useAuth from '@/use/use-auth'
+import useAuth from '@/composables/use-auth'
 import { defineComponent } from '@nuxtjs/composition-api'
 import { notesStore, usersStore } from '@/store'
 import 'highlight.js/styles/atom-one-light.css'

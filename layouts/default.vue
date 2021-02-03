@@ -5,6 +5,18 @@
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent, provide } from '@nuxtjs/composition-api'
+import useAuth from '@/composables/use-auth'
+import AuthKey from '@/composables/use-auth-key'
+
+export default defineComponent({
+  setup() {
+    provide(AuthKey, useAuth())
+    return {}
+  },
+})
+</script>
 <style lang="sass">
 html
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif

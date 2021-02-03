@@ -5,28 +5,26 @@
       <note-list />
     </template>
     <div v-else>
-      <button :disabled="isValid" @click="login">LOGIN</button>
+      <login-button />
+      <div v-if="$nuxt.isOffline">You are offline</div>
+      <div v-else>You are online</div>
       ログインしてください
     </div>
   </b-container>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from '@nuxtjs/composition-api'
-import useAuth from '@/use/use-auth'
-import useLogin from '@/use/use-login'
+import { defineComponent, inject } from '@nuxtjs/composition-api'
+import { AuthStore } from '@/composables/use-auth'
+import AuthKey from '@/composables/use-auth-key'
 
 export default defineComponent({
   setup() {
-    const { user, loading, error } = useAuth()
-    const loginState = useLogin()
+    // provide(AuthKey, useAuth())
+    const { user, loading } = inject(AuthKey) as AuthStore
     return {
       user,
       loading,
-      error: computed(() => (loginState.error || error).value),
-      login: loginState.login,
-      logout: loginState.logout,
-      isValid: loginState.isValid,
     }
   },
 })

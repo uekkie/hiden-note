@@ -43,14 +43,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from '@nuxtjs/composition-api'
-import useAuth from '@/use/use-auth'
-import useLogin from '@/use/use-login'
+import { computed, defineComponent, inject } from '@nuxtjs/composition-api'
+import { AuthStore } from '@/composables/use-auth'
+import AuthKey from '@/composables/use-auth-key'
 
 export default defineComponent({
   setup() {
-    const { user, loading, error } = useAuth()
-    const loginState = useLogin()
+    const { user, loading, error, login, logout, isValid } = inject(
+      AuthKey
+    ) as AuthStore
 
     return {
       user,
@@ -60,10 +61,10 @@ export default defineComponent({
       photoProps: computed(() => {
         return { width: 32, height: 32, class: 'm1', src: user.value?.photoURL }
       }),
-      error: computed(() => (loginState.error || error).value),
-      login: loginState.login,
-      logout: loginState.logout,
-      isValid: loginState.isValid,
+      error: computed(() => error.value),
+      login,
+      logout,
+      isValid,
     }
   },
 })
