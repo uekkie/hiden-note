@@ -1,30 +1,39 @@
 <template>
-  <div class="tags__tag-index">
-    <tag-list :tags="tagInfos" is-note-count="true"></tag-list>
+  <div class="tags__container">
+    <tag-list-item
+      v-for="(tag, index) in tags"
+      :key="index"
+      :tag="tag"
+      :is-note-count="true"
+    />
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { DateTime } from 'luxon'
-import { notesStore } from '@/store'
+import {
+  defineComponent,
+  useAsync,
+  inject,
+  onMounted,
+} from '@nuxtjs/composition-api'
+import { TagStore } from '@/composables/use-tag'
+import TagKey from '@/composables/use-tag-key'
 
-@Component
-class TagIndex extends Vue {
-  tagInfos: { tagName: string; noteCount: number }[] = []
+export default defineComponent({
+  props: {},
 
-  async created() {
-    const tags = await notesStore.fetchTags({ limit: 5 })
-    await tags.forEach(async (tag) => {
-      this.tagInfos.push({
-        tagName: tag,
-        noteCount: await notesStore.getNotesCountByTagName(tag),
-      })
+  setup() {
+    onMounted(() => {
+      const { fetchTags } = inject(TagKey) as TagStore
+      useAsync(() => fetchTags())
     })
-  }
-
-  formatDate(date: Date): string {
-    return DateTime.fromJSDate(date).toISODate()
-  }
-}
-export default TagIndex
+    const { tags } = inject(TagKey) as TagStore
+    return {
+      tags,
+    }
+  },
+})
 </script>
+<style lang="sass" scoped>
+.tags__container
+  width: 100%
+</style>
