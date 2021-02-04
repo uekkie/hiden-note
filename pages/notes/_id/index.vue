@@ -15,7 +15,7 @@
             >
           </div>
         </div>
-        <tag-list :tags="tags(note)"></tag-list>
+        <!-- <tag-list :tags="tags(note)"></tag-list> -->
 
         <markdown-preview :content="note.content"></markdown-preview>
 
@@ -49,11 +49,11 @@
 import { Vue, Component } from 'nuxt-property-decorator'
 import { Note } from '@/models/note'
 import { notesStore } from '@/store'
-import TagList from '~/components/tags/TagList.vue'
+// import TagList from '~/components/tags/TagList.vue'
 import 'highlight.js/styles/atom-one-light.css'
 
 @Component({
-  components: { TagList },
+  // components: { TagList },
 })
 class NoteShow extends Vue {
   private note: Note | null = null

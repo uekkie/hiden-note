@@ -9,10 +9,13 @@
 import { defineComponent, provide } from '@nuxtjs/composition-api'
 import useAuth from '@/composables/use-auth'
 import AuthKey from '@/composables/use-auth-key'
+import useTag from '@/composables/use-tag'
+import TagKey from '@/composables/use-tag-key'
 
 export default defineComponent({
   setup() {
     provide(AuthKey, useAuth())
+    provide(TagKey, useTag())
     return {}
   },
 })
