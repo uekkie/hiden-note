@@ -7,31 +7,43 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import {
+  defineComponent,
+  inject,
+  SetupContext,
+  reactive,
+} from '@nuxtjs/composition-api'
 import { Note } from '@/models/note'
-import { notesStore } from '@/store'
 
-@Component
-class NoteNew extends Vue {
-  note: Note | null = null
+import { NoteStore } from '@/composables/use-note'
+import NoteKey from '@/composables/use-note-key'
+import { AuthStore } from '@/composables/use-auth'
+import AuthKey from '@/composables/use-auth-key'
+import useRoot from '@/composables/use-root'
 
-  created() {
-    this.note = new Note({})
-  }
+export default defineComponent({
+  setup(_props, context: SetupContext) {
+    const { user } = inject(AuthKey) as AuthStore
+    const { createNote } = inject(NoteKey) as NoteStore
+    const note = reactive<Note>(new Note({}))
+    const router = context.root.$router
 
-  onSubmit(formData: any) {
-    notesStore
-      .createNote(
+    const onSubmit = (formData: any) => {
+      createNote(
+        user?.value?.id!,
         new Note({
           title: formData.title,
           content: formData.content,
           tags: formData.tags,
         })
-      )
-      .then((noteId) => {
-        this.$router.replace({ path: '/notes/' + noteId })
+      ).then((noteId) => {
+        router.replace({ path: '/notes/' + noteId })
       })
-  }
-}
-export default NoteNew
+    }
+    return {
+      onSubmit,
+      note,
+    }
+  },
+})
 </script>

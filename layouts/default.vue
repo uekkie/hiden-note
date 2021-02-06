@@ -12,10 +12,14 @@ import AuthKey from '@/composables/use-auth-key'
 import useTag from '@/composables/use-tag'
 import TagKey from '@/composables/use-tag-key'
 
+import useNote from '@/composables/use-note'
+import NoteKey from '@/composables/use-note-key'
+
 export default defineComponent({
   setup() {
     provide(AuthKey, useAuth())
     provide(TagKey, useTag())
+    provide(NoteKey, useNote())
     return {}
   },
 })

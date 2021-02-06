@@ -50,37 +50,48 @@
 
 <script lang="ts">
 import { Note } from '@/models/note'
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import {
+  defineComponent,
+  computed,
+  SetupContext,
+  reactive,
+} from '@nuxtjs/composition-api'
 
-@Component({})
-class NoteForm extends Vue {
-  @Prop({ default: false })
-  submitLabel!: string
-
-  @Prop({
-    default: false,
-    required: true,
-  })
-  note!: Note
-
-  private tags: string[] = []
-
-  get canSubmit(): boolean {
-    if (!this.note) return false
-    return this.note.title.length > 0 && this.note.content.length > 0
-  }
-
-  created() {
-    this.tags = this.note.tags
-  }
-
-  submit() {
-    this.$emit('submit', {
-      title: this.note?.title,
-      content: this.note?.content,
-      tags: this.tags,
-    })
-  }
+type Props = {
+  submitLabel: string
+  note: Note
 }
-export default NoteForm
+export default defineComponent({
+  props: {
+    submitLabel: {
+      type: String,
+      required: true,
+    },
+    note: {
+      type: Note,
+      required: true,
+    },
+  },
+  setup(props: Props, context: SetupContext) {
+    const tags = reactive<string[]>([])
+
+    const canSubmit = computed((): boolean => {
+      if (!props.note) return false
+      return props.note.title.length > 0 && props.note.content.length > 0
+    })
+
+    const submit = () => {
+      context.emit('submit', {
+        title: props.note?.title,
+        content: props.note?.content,
+        tags,
+      })
+    }
+    return {
+      tags,
+      canSubmit,
+      submit,
+    }
+  },
+})
 </script>
