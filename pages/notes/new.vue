@@ -19,7 +19,6 @@ import { NoteStore } from '@/composables/use-note'
 import NoteKey from '@/composables/use-note-key'
 import { AuthStore } from '@/composables/use-auth'
 import AuthKey from '@/composables/use-auth-key'
-import useRoot from '@/composables/use-root'
 
 export default defineComponent({
   setup(_props, context: SetupContext) {
