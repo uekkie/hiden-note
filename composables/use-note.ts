@@ -10,6 +10,15 @@ export default function useNote() {
     notes: [],
   })
 
+  const getNote = async (noteId: string): Promise<Note> => {
+    console.log('get note ', noteId)
+
+    const noteRef = await db.collection('notes').doc(noteId).get()
+    return {
+      id: noteRef.id,
+      ...noteRef.data(),
+    } as Note
+  }
   const createNote = async (uid: string, note: Note): Promise<string> => {
     const noteRef = await db.collection('notes').add({
       userId: uid,
@@ -21,10 +30,33 @@ export default function useNote() {
     })
     return noteRef.id
   }
+  const updateNote = async (note: Note) => {
+    const noteRef = db.collection('notes').doc(note.id)
+    const beforeNote = await noteRef.get()
+    const beforeContent = beforeNote.get('content')
+
+    // NOTE: 内容（content）に変更がないときは履歴に残さない
+    if (beforeContent !== note.content) {
+      await noteRef.collection('histories').add({
+        content: beforeContent,
+        userId: note.userId,
+        createdAt: FieldValue.serverTimestamp(),
+      })
+    }
+
+    noteRef.update({
+      title: note.title,
+      content: note.content,
+      tags: note.tags,
+      updatedAt: FieldValue.serverTimestamp(),
+    })
+  }
 
   return {
     ...toRefs(state),
+    getNote,
     createNote,
+    updateNote,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>

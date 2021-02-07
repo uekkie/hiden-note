@@ -161,7 +161,7 @@ class Notes extends VuexModule {
     if (beforeContent !== note.content) {
       await noteRef.collection('histories').add({
         content: beforeContent,
-        userId: authStore.userId,
+        userId: note.userId,
         createdAt: FieldValue.serverTimestamp(),
       })
     }
