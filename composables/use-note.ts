@@ -1,18 +1,20 @@
-import { reactive, toRefs } from '@nuxtjs/composition-api'
+import { reactive, toRefs, inject } from '@nuxtjs/composition-api'
 import firebase, { db } from '@/plugins/firebase'
 import { Note } from '@/models/note'
+import { AuthStore } from '@/composables/use-auth'
+import AuthKey from '@/composables/use-auth-key'
 const FieldValue = firebase.firestore.FieldValue
 
 export default function useNote() {
   const state = reactive<{
     notes: Note[]
+    selectedNoteId: string | undefined
   }>({
     notes: [],
+    selectedNoteId: undefined,
   })
 
   const getNote = async (noteId: string): Promise<Note> => {
-    console.log('get note ', noteId)
-
     const noteRef = await db.collection('notes').doc(noteId).get()
     return {
       id: noteRef.id,
@@ -51,12 +53,34 @@ export default function useNote() {
       updatedAt: FieldValue.serverTimestamp(),
     })
   }
+  const createComment = ({
+    noteId,
+    content,
+  }: {
+    noteId: string
+    content: string
+  }) => {
+    const { user } = inject(AuthKey) as AuthStore
+    if (user?.value?.id === undefined) {
+      console.error('Not authorized!')
+      return
+    }
+
+    state.selectedNoteId = noteId
+    db.collection(`notes/${state.selectedNoteId}/comments`).add({
+      userId: user?.value?.id,
+      content,
+      noteId: state.selectedNoteId,
+      createdAt: FieldValue.serverTimestamp(),
+    })
+  }
 
   return {
     ...toRefs(state),
     getNote,
     createNote,
     updateNote,
+    createComment,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>

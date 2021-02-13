@@ -9,12 +9,7 @@
 
 <script lang="ts">
 // import { Vue, Component } from 'nuxt-property-decorator'
-import {
-  defineComponent,
-  reactive,
-  inject,
-  useAsync,
-} from '@nuxtjs/composition-api'
+import { defineComponent, inject, useAsync } from '@nuxtjs/composition-api'
 import { Note } from '@/models/note'
 // import { authStore, notesStore } from '@/store'
 import 'highlight.js/styles/atom-one-light.css'

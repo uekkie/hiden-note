@@ -11,27 +11,32 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
+import { defineComponent, reactive } from '@nuxtjs/composition-api'
 import { notesStore } from '@/store'
 
-@Component
-class CommentForm extends Vue {
-  @Prop({ default: false })
-  noteId!: string
-
-  private commentContent: string = ''
-
-  get content() {
-    return this.commentContent
-  }
-
-  async onSubmitComment() {
-    await notesStore.createComment({
-      noteId: this.noteId,
-      content: this.commentContent,
+export default defineComponent({
+  props: {
+    noteId: {
+      type: String,
+      require: true,
+    },
+  },
+  setup(props) {
+    const state = reactive({
+      commentContent: '',
     })
-    this.commentContent = ''
-  }
-}
-export default CommentForm
+    const content = () => {
+      return state.commentContent
+    }
+
+    const onSubmitComment = async () => {
+      await notesStore.createComment({
+        noteId: props.noteId!,
+        content: state.commentContent,
+      })
+      state.commentContent = ''
+    }
+    return { state, content, onSubmitComment }
+  },
+})
 </script>
