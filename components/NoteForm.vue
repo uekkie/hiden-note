@@ -55,6 +55,7 @@ import {
   computed,
   SetupContext,
   reactive,
+  PropType,
 } from '@nuxtjs/composition-api'
 
 type Props = {
@@ -68,7 +69,7 @@ export default defineComponent({
       required: true,
     },
     note: {
-      type: Note,
+      type: Object as PropType<Note>,
       required: true,
     },
   },

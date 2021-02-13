@@ -1,6 +1,6 @@
 import { reactive, toRefs } from '@nuxtjs/composition-api'
 import firebase, { db } from '@/plugins/firebase'
-import { Note } from '@/models/note'
+import { Note, NoteHistory } from '@/models/note'
 const FieldValue = firebase.firestore.FieldValue
 
 export default function useNote() {
@@ -68,6 +68,24 @@ export default function useNote() {
       createdAt: FieldValue.serverTimestamp(),
     })
   }
+  const getNoteHistory = async ({
+    id,
+    historyId,
+  }: {
+    id: string
+    historyId: string
+  }): Promise<NoteHistory> => {
+    const noteHistoryRef = await db
+      .collection('notes')
+      .doc(id)
+      .collection('histories')
+      .doc(historyId)
+      .get()
+    return new NoteHistory({
+      id: noteHistoryRef.id,
+      ...noteHistoryRef.data(),
+    })
+  }
 
   return {
     ...toRefs(state),
@@ -75,6 +93,7 @@ export default function useNote() {
     createNote,
     updateNote,
     createComment,
+    getNoteHistory,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>
