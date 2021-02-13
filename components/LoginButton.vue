@@ -12,12 +12,15 @@ import AuthKey from '@/composables/use-auth-key'
 
 export default defineComponent({
   setup() {
-    const { user, loading, error, login } = inject(AuthKey) as AuthStore
+    const { user, loading, error, login, isValid } = inject(
+      AuthKey
+    ) as AuthStore
     return {
       user,
       loading,
       error: computed(() => error.value),
       login,
+      isValid,
     }
   },
 })

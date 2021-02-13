@@ -1,8 +1,6 @@
-import { reactive, toRefs, inject } from '@nuxtjs/composition-api'
+import { reactive, toRefs } from '@nuxtjs/composition-api'
 import firebase, { db } from '@/plugins/firebase'
 import { Note } from '@/models/note'
-import { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
 const FieldValue = firebase.firestore.FieldValue
 
 export default function useNote() {
@@ -54,21 +52,17 @@ export default function useNote() {
     })
   }
   const createComment = ({
+    userId,
     noteId,
     content,
   }: {
+    userId: string
     noteId: string
     content: string
   }) => {
-    const { user } = inject(AuthKey) as AuthStore
-    if (user?.value?.id === undefined) {
-      console.error('Not authorized!')
-      return
-    }
-
     state.selectedNoteId = noteId
-    db.collection(`notes/${state.selectedNoteId}/comments`).add({
-      userId: user?.value?.id,
+    return db.collection(`notes/${state.selectedNoteId}/comments`).add({
+      userId,
       content,
       noteId: state.selectedNoteId,
       createdAt: FieldValue.serverTimestamp(),
