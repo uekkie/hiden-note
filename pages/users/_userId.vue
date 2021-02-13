@@ -26,8 +26,6 @@ class UserShow extends Vue {
   usersNotes: Note[] = []
 
   userId() {
-    console.warn(this.$route.params.userId)
-
     return this.$route.params.userId
   }
 
