@@ -87,6 +87,29 @@ export default function useNote() {
     })
   }
 
+  const getNotesByUserId = async (userId: string) => {
+    if (!userId) {
+      console.error('error undefined [userId] !!')
+      return []
+    }
+    const querySnapshot = await db
+      .collection('notes')
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .get()
+
+    const notes: Note[] = []
+    for (const doc of querySnapshot.docs) {
+      notes.push(
+        new Note({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return notes
+  }
+
   return {
     ...toRefs(state),
     getNote,
@@ -94,6 +117,7 @@ export default function useNote() {
     updateNote,
     createComment,
     getNoteHistory,
+    getNotesByUserId,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>
