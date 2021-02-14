@@ -56,7 +56,6 @@ import {
 import { Note } from '@/models/note'
 import { Tag } from '@/models/tag'
 import { notesStore } from '@/store'
-import TagIndex from '~/components/TagIndex.vue'
 import 'highlight.js/styles/atom-one-light.css'
 import NoteKey from '~/composables/use-note-key'
 import { NoteStore } from '~/composables/use-note'
@@ -79,29 +78,8 @@ export default defineComponent({
     })
     useAsync(async () => {
       state.note = await getNote(ctx.root.$route.params.id)
-      // console.log('note is ', state.note.tags.length)
-
-      state.tags = Object.keys(state.note.tags).map((key) => key)
+      state.tags = Object.keys(state.note.tags).map((key) => new Tag(key, 0))
     })
-
-    // const relatedNotes: Note[] = []
-
-    // if (note.tags && note.tags.length > 0) {
-    // const tagName = note.tags[0]
-    // const notes = await notesStore.getNotesByTagName(tagName)
-    // relatedNotes = notes.filter((note) => {
-    //   return note.id !== note!.id
-    // })
-    // }
-    // loading = false
-
-    // state.tags = (note: Note) => {
-    //   return note.tags
-    //     ? note.tags.map((tag) => {
-    //         return { tagName: tag, noteCount: 0 }
-    //       })
-    //     : []
-    // }
 
     const editPath = () => {
       return state.note?.id + '/edit'
