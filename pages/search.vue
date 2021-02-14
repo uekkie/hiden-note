@@ -2,10 +2,10 @@
   <b-container>
     <b-form @submit.prevent="searchNote">
       <label for="text-keyword">検索キ-ワード</label>
-      <b-form-input v-model.trim="query" type="text" />
+      <b-form-input v-model.trim="state.query" type="text" />
     </b-form>
     <div
-      v-for="note in noteList"
+      v-for="note in state.searchedNotes"
       :key="note.id"
       class="my-2 flex-column align-items-start"
     >
@@ -14,16 +14,13 @@
       </h3>
       <div>
         <small>
-          <b-img v-bind="photoProps(note.userId)" rounded="circle"></b-img>
-          <NuxtLink :to="`/users/${note.userId}`">
-            {{ userName(note.userId) }}
-          </NuxtLink>
+          <user-icon :user-id="note.userId" />
         </small>
       </div>
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="content" v-html="formattedContent(note.content)" />
       <div class="text-right">
-        <small>{{ note.updatedAt }}</small>
+        <time-label :time-stamp="note.updatedAt.toMillis()" />
       </div>
       <hr />
     </div>
@@ -31,9 +28,18 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import {
+  computed,
+  defineComponent,
+  reactive,
+  inject,
+} from '@nuxtjs/composition-api'
 import { algoliaClient } from '@/utils/algolia'
-import { usersStore } from '@/store'
+import firebase from '@/plugins/firebase'
+import { NoteStore } from '@/composables/use-note'
+import NoteKey from '@/composables/use-note-key'
+import UserIcon from '~/components/UserIcon.vue'
+
 const index = algoliaClient().initIndex('notes')
 const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   inline: true,
@@ -42,60 +48,56 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   breaks: true,
 })
 
-@Component
-class SearchIndex extends Vue {
-  private noteList: any[] = []
-  private query: string = ''
-
-  get canSubmit(): boolean {
-    if (!this.query) return false
-    return this.query.length > 0
-  }
-
-  get users() {
-    return usersStore.users
-  }
-
-  fetch() {
-    this.query = this.$route.query.q as string
-    this.queryNote()
-  }
-
-  searchNote() {
-    if (this.query.length > 0) {
-      this.$router.push({
-        path: 'search',
-        query: { q: this.query },
-      })
-      this.queryNote()
-    }
-  }
-
-  async queryNote() {
-    const searchResult = await index.search(this.query)
-    this.noteList = searchResult.hits
-  }
-
-  formattedContent(content: string): string {
-    return md.render(content)
-  }
-
-  userName(userId: string) {
-    return this.users.find((user) => user.id === userId)?.displayName
-  }
-
-  userPhotoURL(userId: string) {
-    return this.users.find((user) => user.id === userId)?.photoURL
-  }
-
-  photoProps(userId: string) {
-    return {
-      width: 32,
-      height: 32,
-      class: 'm1',
-      src: this.userPhotoURL(userId),
-    }
-  }
+type State = {
+  searchedNotes: any[]
+  query: string
 }
-export default SearchIndex
+export default defineComponent({
+  components: { UserIcon },
+  setup(_props, ctx) {
+    const state = reactive<State>({
+      searchedNotes: [],
+      query: '',
+    })
+
+    const { getNote } = inject(NoteKey) as NoteStore
+
+    const canSubmit = computed(() => {
+      const { query } = state
+      return !!query && query.length > 0
+    })
+    const queryNote = async () => {
+      const result = await index.search(state.query)
+      result.hits.forEach(async (doc: any) => {
+        const note = await getNote(doc.id)
+        if (note.content) {
+          state.searchedNotes.push(note)
+        }
+      })
+    }
+    state.query = ctx.root.$route.query.q as string
+    queryNote()
+
+    const searchNote = () => {
+      if (state.query.length > 0) {
+        ctx.root.$router.push({
+          path: 'search',
+          query: { q: state.query },
+        })
+        queryNote()
+      }
+    }
+
+    const formattedContent = (content: string): string => {
+      return md.render(content)
+    }
+
+    return {
+      state,
+      searchNote,
+      formattedContent,
+      canSubmit,
+    }
+  },
+})
 </script>
