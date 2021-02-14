@@ -24,13 +24,16 @@ export default function useNote() {
       userId: uid,
       title: note.title,
       content: note.content,
-      tags: note.tags.length > 0 ? FieldValue.arrayUnion(...note.tags) : [],
+      tags: note.tags,
+      // tags: note.tags.length > 0 ? FieldValue.arrayUnion(...note.tags) : [],
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     })
     return noteRef.id
   }
   const updateNote = async (note: Note) => {
+    console.log('update note ', note)
+
     const noteRef = db.collection('notes').doc(note.id)
     const beforeNote = await noteRef.get()
     const beforeContent = beforeNote.get('content')
@@ -110,6 +113,24 @@ export default function useNote() {
     return notes
   }
 
+  const getNotesByTagName = async (tagName: string) => {
+    const querySnapshot = await db
+      .collection('notes')
+      .where('tags', 'array-contains', tagName)
+      .get()
+
+    const notes: Note[] = []
+    for (const doc of querySnapshot.docs) {
+      notes.push(
+        new Note({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return notes
+  }
+
   return {
     ...toRefs(state),
     getNote,
@@ -118,6 +139,7 @@ export default function useNote() {
     createComment,
     getNoteHistory,
     getNotesByUserId,
+    getNotesByTagName,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>

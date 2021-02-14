@@ -2,7 +2,7 @@
   <b-container>
     <template v-if="user">
       <div class="notes__tag-index">
-        <tag-index />
+        <tag-index :tags="tags" />
       </div>
       <div class="notes__note-list my-3">
         <note-list />

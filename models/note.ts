@@ -6,7 +6,7 @@ export interface INote {
   id: string
   title: string
   content: string
-  tags: string[]
+  tags: {}
   userId: string
   createdAt: firebase.firestore.Timestamp
   updatedAt: firebase.firestore.Timestamp
@@ -15,7 +15,7 @@ export class Note implements INote {
   id: string = ''
   title: string = ''
   content: string = ''
-  tags: string[] = []
+  tags: {} = {}
   userId: string = ''
   createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
   updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
@@ -24,7 +24,7 @@ export class Note implements INote {
     id = '',
     title = '',
     content = '',
-    tags = [],
+    tags = {},
     userId = '',
     createdAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
     updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp,

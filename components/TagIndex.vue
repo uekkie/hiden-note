@@ -9,26 +9,27 @@
   </div>
 </template>
 <script lang="ts">
-import {
-  defineComponent,
-  useAsync,
-  inject,
-  onMounted,
-} from '@nuxtjs/composition-api'
-import { TagStore } from '@/composables/use-tag'
-import TagKey from '@/composables/use-tag-key'
+import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { Tag } from '@/models/tag'
 
 export default defineComponent({
-  props: {},
+  props: {
+    tags: {
+      type: Array as PropType<Tag[]>,
+    },
+  },
 
-  setup() {
-    onMounted(() => {
-      const { fetchTags } = inject(TagKey) as TagStore
-      useAsync(() => fetchTags())
-    })
-    const { tags } = inject(TagKey) as TagStore
+  setup(props) {
+    console.log(props.tags)
+
+    // onMounted(() => {
+    //   const { fetchTags } = inject(TagKey) as TagStore
+    //   useAsync(() => fetchTags())
+    // })
+    // const { tags } = inject(TagKey) as TagStore
+    // const tags = props.tags
     return {
-      tags,
+      // tags,
     }
   },
 })

@@ -56,11 +56,16 @@ import {
   SetupContext,
   reactive,
   PropType,
+  toRefs,
 } from '@nuxtjs/composition-api'
 
 type Props = {
   submitLabel: string
   note: Note
+}
+
+type State = {
+  tags: string[]
 }
 export default defineComponent({
   props: {
@@ -74,22 +79,30 @@ export default defineComponent({
     },
   },
   setup(props: Props, context: SetupContext) {
-    const tags = reactive<string[]>([])
+    const state = reactive<State>({
+      tags: Object.keys(props.note.tags).map((tag) => tag),
+    })
 
     const canSubmit = computed((): boolean => {
       if (!props.note) return false
       return props.note.title.length > 0 && props.note.content.length > 0
     })
-
+    const arrayToHash = (objArray: string[]) => {
+      const hash = objArray.reduce(
+        (hash: Object, key: string) => Object.assign(hash, { [key]: true }),
+        {}
+      )
+      return hash
+    }
     const submit = () => {
       context.emit('submit', {
         title: props.note?.title,
         content: props.note?.content,
-        tags,
+        tags: arrayToHash(state.tags),
       })
     }
     return {
-      tags,
+      ...toRefs(state),
       canSubmit,
       submit,
     }
