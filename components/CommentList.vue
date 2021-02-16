@@ -22,33 +22,45 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { User } from '@/models'
-import { usersStore, notesStore } from '@/store'
+import {
+  defineComponent,
+  inject,
+  PropType,
+  useAsync,
+  onMounted,
+} from '@nuxtjs/composition-api'
+import { CommentStore } from '@/composables/use-comment'
+import CommentKey from '@/composables/use-comment-key'
+import { UserStore } from '@/composables/use-user'
+import UserKey from '@/composables/use-user-key'
 
-@Component
-class CommentList extends Vue {
-  @Prop({ default: false })
-  noteId!: string
+export default defineComponent({
+  props: {
+    noteId: {
+      type: String as PropType<string>,
+      require: true,
+    },
+  },
+  setup(props) {
+    onMounted(() => {
+      const { fetchComments } = inject(CommentKey) as CommentStore
+      const { fetchUsers } = inject(UserKey) as UserStore
+      useAsync(() => {
+        fetchComments(props.noteId!)
+        fetchUsers()
+      })
+    })
 
-  get comments() {
-    return notesStore.storedComments
-  }
+    const { comments } = inject(CommentKey) as CommentStore
 
-  async created() {
-    usersStore.initialize()
-    notesStore.watchNoteComments(this.noteId)
-    await notesStore.storedNoteComments(this.noteId)
-  }
-
-  getUser(userId: string): User | undefined {
-    return usersStore.storedUsers.find((user) => user.id === userId)
-  }
-
-  getUserName(userId: string): string | undefined {
-    const user = this.getUser(userId)
-    return user ? user.displayName : 'no name'
-  }
-}
-export default CommentList
+    const getUserName = (userId: string) => {
+      const { getUserById } = inject(UserKey) as UserStore
+      return getUserById(userId)?.displayName
+    }
+    return {
+      comments,
+      getUserName,
+    }
+  },
+})
 </script>

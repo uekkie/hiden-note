@@ -2,7 +2,7 @@
   <b-form class="header__search" @submit.prevent="searchNote">
     <b-icon variant="secondary" icon="search" class="header__search-icon" />
     <b-form-input
-      v-model.trim="query"
+      v-model.trim="state.query"
       class="header__search-keyword"
       type="search"
       autocomplete="off"
@@ -14,23 +14,29 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import { defineComponent, reactive } from '@nuxtjs/composition-api'
 
-@Component
-class NoteSearchForm extends Vue {
-  private query: string = ''
+export default defineComponent({
+  setup(_props, ctx) {
+    const state = reactive({
+      query: '',
+    })
 
-  searchNote() {
-    if (this.query.length > 0) {
-      this.$router.push({
-        path: '/search',
-        query: { q: this.query },
-      })
-      this.query = ''
+    const searchNote = () => {
+      if (state.query.length > 0) {
+        ctx.root.$router.push({
+          path: '/search',
+          query: { q: state.query },
+        })
+        state.query = ''
+      }
     }
-  }
-}
-export default NoteSearchForm
+    return {
+      state,
+      searchNote,
+    }
+  },
+})
 </script>
 
 <style lang="scss" scoped>

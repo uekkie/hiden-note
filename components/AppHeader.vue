@@ -56,10 +56,15 @@ export default defineComponent({
     return {
       user,
       loading,
-      userId: computed(() => user.value?.uid),
-      displayName: computed(() => user.value?.displayName),
+      userId: computed(() => user!.value?.id),
+      displayName: computed(() => user!.value?.displayName),
       photoProps: computed(() => {
-        return { width: 32, height: 32, class: 'm1', src: user.value?.photoURL }
+        return {
+          width: 32,
+          height: 32,
+          class: 'm1',
+          src: user!.value?.photoURL,
+        }
       }),
       error: computed(() => error.value),
       login,
