@@ -20,7 +20,7 @@ import useNote from '@/composables/use-note'
 import NoteKey from '@/composables/use-note-key'
 import useComment from '@/composables/use-comment'
 import CommentKey from '@/composables/use-comment-key'
-import useUser from '@/composables/use-user'
+import useUser, { UserStore } from '@/composables/use-user'
 import UserKey from '@/composables/use-user-key'
 
 export default defineComponent({
@@ -31,7 +31,11 @@ export default defineComponent({
     provide(CommentKey, useComment())
     provide(UserKey, useUser())
     const { fetchTags } = inject(TagKey) as TagStore
-    useAsync(() => fetchTags())
+    const { fetchUsers } = inject(UserKey) as UserStore
+    useAsync(() => {
+      fetchTags()
+      fetchUsers()
+    })
 
     return {}
   },

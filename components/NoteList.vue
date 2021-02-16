@@ -1,10 +1,10 @@
 <template>
-  <div class="notes">
+  <div v-if="notes" class="notes">
     <h3>ノート一覧</h3>
     <p>ノート総数：{{ notes.length }}</p>
 
     <div
-      v-for="(note, index) in notes"
+      v-for="(note, index) in recentNotes"
       :key="index"
       class="flex-column align-items-start"
     >
@@ -29,9 +29,20 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import {
+  computed,
+  defineComponent,
+  inject,
+  onBeforeUnmount,
+  reactive,
+  toRefs,
+} from '@nuxtjs/composition-api'
 import { DateTime } from 'luxon'
-import { notesStore, usersStore } from '@/store'
+import NoteKey from '~/composables/use-note-key'
+import { NoteStore } from '~/composables/use-note'
+import UserKey from '~/composables/use-user-key'
+import { UserStore } from '~/composables/use-user'
+import { Note, User } from '~/models'
 
 const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   inline: true,
@@ -40,44 +51,61 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   breaks: true,
 })
 
-@Component
-class NoteList extends Vue {
-  get notes() {
-    return notesStore.recentNotes
-  }
-
-  get users() {
-    return usersStore.users
-  }
-
-  async created() {
-    await notesStore.initialize()
-  }
-
-  formattedContent(content: string): string {
-    return md.render(content)
-  }
-
-  userName(userId: string) {
-    return this.users.find((user) => user.id === userId)?.displayName
-  }
-
-  userPhotoURL(userId: string) {
-    return this.users.find((user) => user.id === userId)?.photoURL
-  }
-
-  photoProps(userId: string) {
-    return {
-      width: 32,
-      height: 32,
-      class: 'm1',
-      src: this.userPhotoURL(userId),
-    }
-  }
-
-  formatDate(date: Date): string {
-    return DateTime.fromJSDate(date).toISODate()
-  }
+type State = {
+  users: User[]
+  notes: Note[]
 }
-export default NoteList
+export default defineComponent({
+  setup() {
+    const state = reactive<State>({
+      users: [],
+      notes: [],
+    })
+    const { watchNotes, unsubscribeNotes, notes } = inject(NoteKey) as NoteStore
+    const { users } = inject(UserKey) as UserStore
+
+    state.users = reactive(users)
+    state.notes = reactive(notes)
+
+    watchNotes()
+
+    onBeforeUnmount(() => {
+      unsubscribeNotes()
+    })
+
+    const formattedContent = (content: string): string => {
+      return md.render(content)
+    }
+
+    const getUser = (userId: string) => {
+      return state.users.find((user) => user.id === userId)
+    }
+
+    const userName = (userId: string) => {
+      return getUser(userId)?.displayName
+    }
+
+    const photoProps = (userId: string) => {
+      return getUser(userId)?.photoProps()
+    }
+
+    const formatDate = (date: Date): string => {
+      return DateTime.fromJSDate(date).toISODate()
+    }
+    const recentNotes = computed(() => {
+      return state.notes.sort((note1, note2) =>
+        note1.updatedAt > note2.updatedAt ? -1 : 0
+      )
+    })
+
+    return {
+      ...toRefs(state),
+      formattedContent,
+      userName,
+      photoProps,
+      formatDate,
+      recentNotes,
+    }
+  },
+})
 </script>
