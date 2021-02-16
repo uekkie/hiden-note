@@ -27,18 +27,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { notesStore } from '@/store'
-import { Note } from '@/models'
+import {
+  defineComponent,
+  reactive,
+  inject,
+  toRefs,
+  useAsync,
+} from '@nuxtjs/composition-api'
 
-@Component
-class TagShow extends Vue {
-  tagName: string = ''
-  notes: Note[] = []
-  async created() {
-    this.tagName = this.$route.params.tagId
-    this.notes = await notesStore.getNotesByTagName(this.tagName)
-  }
+import { Note } from '@/models'
+import NoteKey from '~/composables/use-note-key'
+import { NoteStore } from '~/composables/use-note'
+
+type State = {
+  tagName: string
+  notes: Note[]
 }
-export default TagShow
+export default defineComponent({
+  setup(_props, ctx) {
+    const state = reactive<State>({
+      tagName: '',
+      notes: [],
+    })
+
+    const { getNotesByTagName } = inject(NoteKey) as NoteStore
+
+    state.tagName = ctx.root.$route.params.tagId
+    useAsync(async () => (state.notes = await getNotesByTagName(state.tagName)))
+
+    return { ...toRefs(state) }
+  },
+})
 </script>

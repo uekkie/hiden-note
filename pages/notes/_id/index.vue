@@ -15,7 +15,7 @@
             >
           </div>
         </div>
-        <!-- <tag-list :tags="tags(note)"></tag-list> -->
+        <note-tag-list :tags="tags" />
 
         <markdown-preview :content="note.content"></markdown-preview>
 
@@ -46,42 +46,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, useAsync, ref } from '@nuxtjs/composition-api'
+import {
+  defineComponent,
+  inject,
+  useAsync,
+  reactive,
+  toRefs,
+} from '@nuxtjs/composition-api'
 import { Note } from '@/models/note'
+import { Tag } from '@/models/tag'
 import { notesStore } from '@/store'
-// import TagList from '~/components/tags/TagList.vue'
 import 'highlight.js/styles/atom-one-light.css'
 import NoteKey from '~/composables/use-note-key'
 import { NoteStore } from '~/composables/use-note'
 
+type State = {
+  note?: Note
+  tags: Tag[]
+  relatedNotes: Note[]
+  modalShow: boolean
+}
 export default defineComponent({
   setup(_props, ctx) {
-    const modalShow = ref(false)
-
     const { getNote } = inject(NoteKey) as NoteStore
-    const note = useAsync(() => getNote(ctx.root.$route.params.id))
 
-    const relatedNotes: Note[] = []
-
-    // if (note.tags && note.tags.length > 0) {
-    // const tagName = note.tags[0]
-    // const notes = await notesStore.getNotesByTagName(tagName)
-    // relatedNotes = notes.filter((note) => {
-    //   return note.id !== note!.id
-    // })
-    // }
-    // loading = false
-
-    const tags = (note: Note) => {
-      return note.tags
-        ? note.tags.map((tag) => {
-            return { tagName: tag, noteCount: 0 }
-          })
-        : []
-    }
+    const state = reactive<State>({
+      note: undefined,
+      tags: [],
+      relatedNotes: [],
+      modalShow: false,
+    })
+    useAsync(async () => {
+      state.note = await getNote(ctx.root.$route.params.id)
+      state.tags = Object.keys(state.note.tags).map((key) => new Tag(key, 0))
+    })
 
     const editPath = () => {
-      return note.value!.id + '/edit'
+      return state.note?.id + '/edit'
     }
 
     const handleDeleteNote = async (bvModalEvt: any) => {
@@ -90,12 +91,9 @@ export default defineComponent({
       ctx.root.$router.push('/')
     }
     return {
-      note,
-      relatedNotes,
-      tags,
+      ...toRefs(state),
       editPath,
       handleDeleteNote,
-      modalShow,
     }
   },
 })

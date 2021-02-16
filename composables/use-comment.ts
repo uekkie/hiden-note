@@ -1,7 +1,6 @@
 import { reactive, toRefs } from '@nuxtjs/composition-api'
 import { db } from '@/plugins/firebase'
 import { NoteComment } from '@/models/comment'
-// const FieldValue = firebase.firestore.FieldValue
 
 export default function useComment() {
   const state = reactive<{

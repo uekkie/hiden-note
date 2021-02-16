@@ -1,9 +1,9 @@
 <template>
   <b-container v-if="user" style="max-width: 720px">
     <h1 class="text-center">{{ user.displayName }}</h1>
-    <h5>作成したノート: {{ usersNotes ? usersNotes.length : '' }}</h5>
+    <h5>作成したノート: {{ notes ? notes.length : '' }}</h5>
     <b-list-group>
-      <b-list-group-item v-for="note in usersNotes" :key="note.id">
+      <b-list-group-item v-for="note in notes" :key="note.id">
         <NuxtLink :to="{ name: 'notes-id', params: { id: note.id } }">
           <h5>{{ note.title }}</h5>
         </NuxtLink>
@@ -16,35 +16,42 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import {
+  defineComponent,
+  reactive,
+  toRefs,
+  inject,
+  useAsync,
+} from '@nuxtjs/composition-api'
 import { User, Note } from '@/models'
-import { usersStore, notesStore } from '@/store'
+import UserKey from '~/composables/use-user-key'
+import { UserStore } from '~/composables/use-user'
+import NoteKey from '~/composables/use-note-key'
+import { NoteStore } from '~/composables/use-note'
 
-@Component
-class UserShow extends Vue {
-  currentUser: User | undefined = undefined
-  usersNotes: Note[] = []
-
-  userId() {
-    return this.$route.params.userId
-  }
-
-  get user() {
-    return this.currentUser
-  }
-
-  async created() {
-    usersStore.initialize()
-    notesStore.initialize()
-
-    const userId = this.userId()
-    this.currentUser = usersStore.getUserById(userId)
-    this.usersNotes = await notesStore.getNotesByUserId(userId)
-  }
-
-  get id() {
-    return this.$route.params.id
-  }
+type State = {
+  user?: User
+  notes: Note[]
 }
-export default UserShow
+export default defineComponent({
+  setup(_props, ctx) {
+    const state = reactive<State>({
+      user: undefined,
+      notes: [],
+    })
+
+    const { fetchUsers, getUserById } = inject(UserKey) as UserStore
+    const { getNotesByUserId } = inject(NoteKey) as NoteStore
+    const userId = ctx.root.$route.params.userId
+    state.user = getUserById(userId)
+    useAsync(async () => {
+      await fetchUsers()
+      state.notes = await getNotesByUserId(userId)
+    })
+
+    return {
+      ...toRefs(state),
+    }
+  },
+})
 </script>
