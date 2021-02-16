@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <template v-if="user">
-      <tag-index />
+      <tag-index :tags="tags" />
       <note-list />
     </template>
     <div v-else>
@@ -14,15 +14,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from '@nuxtjs/composition-api'
+import {
+  defineComponent,
+  inject,
+  reactive,
+  toRefs,
+  useAsync,
+} from '@nuxtjs/composition-api'
 import { AuthStore } from '@/composables/use-auth'
 import AuthKey from '@/composables/use-auth-key'
+import { Tag } from '@/models/tag'
+// import { User } from '@/models/user'
+import TagKey from '~/composables/use-tag-key'
+import { TagStore } from '~/composables/use-tag'
 
+// type State = {
+//   // user?: User
+//   tags: Tag[]
+// }
 export default defineComponent({
   setup() {
-    // provide(AuthKey, useAuth())
+    // const state = reactive<State>({
+    //   // user: undefined,
+    //   // tags: [],
+    // })
+    // const { fetchTags } = inject(TagKey) as TagStore
     const { user, loading } = inject(AuthKey) as AuthStore
+    const { tags } = inject(TagKey) as TagStore
     return {
+      // ...toRefs(state),
+      tags,
       user,
       loading,
     }
