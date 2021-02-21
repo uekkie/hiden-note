@@ -49,27 +49,18 @@ import AuthKey from '@/composables/use-auth-key'
 
 export default defineComponent({
   setup() {
-    const { user, loading, error, login, logout, isValid } = inject(
-      AuthKey
-    ) as AuthStore
+    const { user, error, login, logout } = inject(AuthKey) as AuthStore
 
     return {
       user,
-      loading,
       userId: computed(() => user!.value?.id),
       displayName: computed(() => user!.value?.displayName),
       photoProps: computed(() => {
-        return {
-          width: 32,
-          height: 32,
-          class: 'm1',
-          src: user!.value?.photoURL,
-        }
+        return user!.value?.photoProps()
       }),
       error: computed(() => error.value),
       login,
       logout,
-      isValid,
     }
   },
 })

@@ -20,6 +20,9 @@
           <b-col>
             <nuxt-link :to="`/notes/${note.id}`"> {{ note.title }}</nuxt-link>
           </b-col>
+          <b-col>
+            <time-label :time-stamp="note.updatedAt.toMillis()" />
+          </b-col>
         </b-row>
       </b-list-group-item>
     </b-list-group>

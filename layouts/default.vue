@@ -9,10 +9,11 @@
 import {
   defineComponent,
   inject,
+  onMounted,
   provide,
   useAsync,
 } from '@nuxtjs/composition-api'
-import useAuth from '@/composables/use-auth'
+import useAuth, { AuthStore } from '@/composables/use-auth'
 import AuthKey from '@/composables/use-auth-key'
 import useTag, { TagStore } from '@/composables/use-tag'
 import TagKey from '@/composables/use-tag-key'
@@ -20,20 +21,36 @@ import useNote from '@/composables/use-note'
 import NoteKey from '@/composables/use-note-key'
 import useComment from '@/composables/use-comment'
 import CommentKey from '@/composables/use-comment-key'
-import useUser from '@/composables/use-user'
+import useUser, { UserStore } from '@/composables/use-user'
 import UserKey from '@/composables/use-user-key'
+import { auth } from '@/plugins/firebase'
 
 export default defineComponent({
-  setup() {
+  setup(_props, { root }) {
     provide(AuthKey, useAuth())
     provide(TagKey, useTag())
     provide(NoteKey, useNote())
     provide(CommentKey, useComment())
     provide(UserKey, useUser())
     const { fetchTags } = inject(TagKey) as TagStore
-    useAsync(() => fetchTags())
+    const { fetchUsers } = inject(UserKey) as UserStore
+    useAsync(() => {
+      fetchTags()
+      fetchUsers()
+    })
 
-    return {}
+    const { setUser } = inject(AuthKey) as AuthStore
+
+    onMounted(() => {
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          setUser(user)
+        } else {
+          setUser()
+          root.$router.push('/')
+        }
+      })
+    })
   },
 })
 </script>

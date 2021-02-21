@@ -7,10 +7,47 @@ export default function useNote() {
   const state = reactive<{
     notes: Note[]
     selectedNoteId: string | undefined
+    unsubscribe: (() => void) | undefined
   }>({
     notes: [],
     selectedNoteId: undefined,
+    unsubscribe: undefined,
   })
+
+  const watchNotes = async () => {
+    state.notes = []
+    state.unsubscribe = await db
+      .collection('notes')
+      .orderBy('updatedAt', 'desc')
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            state.notes.push(
+              new Note({ id: change.doc.id, ...change.doc.data() })
+            )
+          }
+          if (change.type === 'modified') {
+            state.notes = state.notes.filter(
+              (note) => note.id !== change.doc.id
+            )
+            state.notes.push(
+              new Note({ id: change.doc.id, ...change.doc.data() })
+            )
+          }
+          if (change.type === 'removed') {
+            state.notes = state.notes.filter(
+              (note) => note.id !== change.doc.id
+            )
+          }
+        })
+      })
+  }
+  const unsubscribeNotes = () => {
+    if (state.unsubscribe) {
+      state.unsubscribe()
+      state.unsubscribe = undefined
+    }
+  }
 
   const getNote = async (noteId: string): Promise<Note> => {
     const noteRef = await db.collection('notes').doc(noteId).get()
@@ -32,8 +69,6 @@ export default function useNote() {
     return noteRef.id
   }
   const updateNote = async (note: Note) => {
-    console.log('update note ', note)
-
     const noteRef = db.collection('notes').doc(note.id)
     const beforeNote = await noteRef.get()
     const beforeContent = beforeNote.get('content')
@@ -90,6 +125,9 @@ export default function useNote() {
     })
   }
 
+  const deleteNote = async (noteId: string) => {
+    await db.collection('notes').doc(noteId).delete()
+  }
   const getNotesByUserId = async (userId: string) => {
     if (!userId) {
       console.error('error undefined [userId] !!')
@@ -116,7 +154,7 @@ export default function useNote() {
   const getNotesByTagName = async (tagName: string) => {
     const querySnapshot = await db
       .collection('notes')
-      .where('tags', 'array-contains', tagName)
+      .where(`tags.${tagName}`, '==', true)
       .get()
 
     const notes: Note[] = []
@@ -131,6 +169,32 @@ export default function useNote() {
     return notes
   }
 
+  const recentNoteHistories = async ({
+    noteId,
+    limit = 5,
+  }: {
+    noteId: string
+    limit: number
+  }) => {
+    const querySnapshot = await db
+      .collection('notes')
+      .doc(noteId)
+      .collection('histories')
+      .orderBy('createdAt', 'desc')
+      .limit(limit)
+      .get()
+    const histories: NoteHistory[] = []
+    for (const doc of querySnapshot.docs) {
+      histories.push(
+        new NoteHistory({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return histories
+  }
+
   return {
     ...toRefs(state),
     getNote,
@@ -140,6 +204,10 @@ export default function useNote() {
     getNoteHistory,
     getNotesByUserId,
     getNotesByTagName,
+    watchNotes,
+    unsubscribeNotes,
+    recentNoteHistories,
+    deleteNote,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>

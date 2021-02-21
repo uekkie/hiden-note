@@ -18,20 +18,6 @@ export default defineComponent({
       type: Array as PropType<Tag[]>,
     },
   },
-
-  setup(props) {
-    console.log(props.tags)
-
-    // onMounted(() => {
-    //   const { fetchTags } = inject(TagKey) as TagStore
-    //   useAsync(() => fetchTags())
-    // })
-    // const { tags } = inject(TagKey) as TagStore
-    // const tags = props.tags
-    return {
-      // tags,
-    }
-  },
 })
 </script>
 <style lang="sass" scoped>

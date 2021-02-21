@@ -9,14 +9,12 @@
       </div>
     </template>
     <div v-else>ログインしてくださいa</div>
-    <div v-if="$nuxt.isOffline">You are offline</div>
   </b-container>
 </template>
 
 <script lang="ts">
 import useAuth from '@/composables/use-auth'
 import { defineComponent } from '@nuxtjs/composition-api'
-import { notesStore, usersStore } from '@/store'
 import 'highlight.js/styles/atom-one-light.css'
 
 export default defineComponent({
@@ -25,10 +23,6 @@ export default defineComponent({
     return {
       user,
     }
-  },
-  async created() {
-    await notesStore.initialize()
-    await usersStore.initialize()
   },
 })
 </script>
