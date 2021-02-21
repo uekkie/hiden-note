@@ -69,8 +69,6 @@ export default function useNote() {
     return noteRef.id
   }
   const updateNote = async (note: Note) => {
-    console.log('update note ', note)
-
     const noteRef = db.collection('notes').doc(note.id)
     const beforeNote = await noteRef.get()
     const beforeContent = beforeNote.get('content')

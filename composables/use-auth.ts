@@ -1,5 +1,5 @@
 import { toRefs, reactive, computed } from '@nuxtjs/composition-api'
-import firebase, { auth } from '@/plugins/firebase'
+import firebase from '@/plugins/firebase'
 import { User } from '@/models/user'
 
 export default function useAuth() {
@@ -11,23 +11,6 @@ export default function useAuth() {
     user: undefined,
     loading: true,
     error: null,
-  })
-
-  auth.onAuthStateChanged((_user) => {
-    if (state.user) {
-      state.user = undefined
-    }
-    if (_user) {
-      state.user = new User({
-        id: _user.uid,
-        email: _user.email!,
-        displayName: _user.displayName!,
-        photoURL: _user.photoURL!,
-      })
-    } else {
-      state.user = undefined
-    }
-    state.loading = false
   })
 
   const isValid = computed(() => {
@@ -63,11 +46,26 @@ export default function useAuth() {
       })
   }
 
+  const setUser = (user: firebase.User | undefined = undefined) => {
+    if (user) {
+      state.user = new User({
+        id: user.uid,
+        email: user.email!,
+        displayName: user.displayName!,
+        photoURL: user.photoURL!,
+      })
+    } else {
+      state.user = undefined
+    }
+    state.loading = false
+  }
+
   return {
     ...toRefs(state),
     isValid,
     login,
     logout,
+    setUser,
   }
 }
 export type AuthStore = ReturnType<typeof useAuth>
