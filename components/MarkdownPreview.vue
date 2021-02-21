@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
+import { computed, defineComponent } from '@nuxtjs/composition-api'
 
 const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   inline: true,
@@ -13,14 +13,20 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   breaks: true,
 })
 
-@Component
-class MarkdownPreview extends Vue {
-  @Prop({ default: false })
-  private content!: string
-
-  get formattedContent(): string {
-    return md.render(this.content)
-  }
-}
-export default MarkdownPreview
+export default defineComponent({
+  props: {
+    content: {
+      type: String,
+      require: true,
+    },
+  },
+  setup(props) {
+    const formattedContent = computed((): string => {
+      return md.render(props.content)
+    })
+    return {
+      formattedContent,
+    }
+  },
+})
 </script>
