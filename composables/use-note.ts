@@ -153,7 +153,7 @@ export default function useNote() {
   const getNotesByTagName = async (tagName: string) => {
     const querySnapshot = await db
       .collection('notes')
-      .where('tags', 'array-contains', tagName)
+      .where(`tags.${tagName}`, '==', true)
       .get()
 
     const notes: Note[] = []
