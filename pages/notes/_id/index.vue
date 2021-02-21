@@ -1,11 +1,11 @@
 <template>
-  <b-container v-if="note">
+  <b-container>
     <b-row>
       <b-col cols="8">
-        <note-show :note="note" />
+        <note-show :note-id="noteId" />
       </b-col>
       <b-col cols="4">
-        <note-editor-list :note-id="note.id"></note-editor-list>
+        <note-editor-list :note-id="noteId"></note-editor-list>
 
         <div class="related">
           <h3>おなじタグの付いたノート</h3>
@@ -26,43 +26,29 @@
 <script lang="ts">
 import {
   defineComponent,
-  inject,
-  useAsync,
   reactive,
   toRefs,
+  computed,
 } from '@nuxtjs/composition-api'
 import { Note } from '@/models/note'
-import { notesStore } from '@/store'
 import 'highlight.js/styles/atom-one-light.css'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
 
 type State = {
-  note?: Note
   relatedNotes: Note[]
-  modalShow: boolean
 }
 export default defineComponent({
-  setup(_props, ctx) {
-    const { getNote } = inject(NoteKey) as NoteStore
-
+  setup(_props, { root }) {
     const state = reactive<State>({
-      note: undefined,
       relatedNotes: [],
-      modalShow: false,
-    })
-    useAsync(async () => {
-      state.note = await getNote(ctx.root.$route.params.id)
     })
 
-    const handleDeleteNote = async (bvModalEvt: any) => {
-      bvModalEvt.preventDefault()
-      await notesStore.deleteNote(ctx.root.$route.params.id)
-      ctx.root.$router.push('/')
-    }
+    const noteId = computed(() => {
+      return root.$route.params.id
+    })
+
     return {
       ...toRefs(state),
-      handleDeleteNote,
+      noteId,
     }
   },
 })

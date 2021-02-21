@@ -29,6 +29,7 @@
 <script lang="ts">
 import {
   defineComponent,
+  inject,
   reactive,
   toRefs,
   useAsync,
@@ -36,31 +37,51 @@ import {
 import { Note } from '@/models/note'
 import { Tag } from '@/models/tag'
 import 'highlight.js/styles/atom-one-light.css'
+import NoteKey from '~/composables/use-note-key'
+import { NoteStore } from '~/composables/use-note'
 
 type State = {
+  note?: Note
   tags: Tag[]
+  modalShow: boolean
 }
 export default defineComponent({
   props: {
-    note: {
-      type: Note,
+    noteId: {
+      type: String,
       require: true,
     },
   },
-  setup(props) {
+  setup(props, { root }) {
     const state = reactive<State>({
+      note: undefined,
       tags: [],
+      modalShow: false,
     })
-    useAsync(() => {
-      state.tags = Object.keys(props.note!.tags).map((key) => new Tag(key, 0))
+    const { getNote } = inject(NoteKey) as NoteStore
+
+    // const state = reactive<State>({
+    //   note: undefined,
+    //   relatedNotes: [],
+    // })
+    useAsync(async () => {
+      state.note = await getNote(props.noteId!)
+      state.tags = Object.keys(state.note!.tags).map((key) => new Tag(key, 0))
     })
 
+    const { deleteNote } = inject(NoteKey) as NoteStore
     const editPath = () => {
-      return props.note!.id + '/edit'
+      return state.note!.id + '/edit'
+    }
+    const handleDeleteNote = async (bvModalEvt: any) => {
+      bvModalEvt.preventDefault()
+      await deleteNote(root.$route.params.id)
+      root.$router.push('/')
     }
     return {
       ...toRefs(state),
       editPath,
+      handleDeleteNote,
     }
   },
 })

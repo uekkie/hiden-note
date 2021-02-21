@@ -125,6 +125,9 @@ export default function useNote() {
     })
   }
 
+  const deleteNote = async (noteId: string) => {
+    await db.collection('notes').doc(noteId).delete()
+  }
   const getNotesByUserId = async (userId: string) => {
     if (!userId) {
       console.error('error undefined [userId] !!')
@@ -204,6 +207,7 @@ export default function useNote() {
     watchNotes,
     unsubscribeNotes,
     recentNoteHistories,
+    deleteNote,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>
