@@ -21,54 +21,59 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { DateTime } from 'luxon'
-import { notesStore, usersStore } from '@/store'
-import { User } from '@/models'
+import {
+  defineComponent,
+  inject,
+  reactive,
+  toRefs,
+  useAsync,
+} from '@nuxtjs/composition-api'
 import { NoteHistory } from '@/models/note'
+import NoteKey from '~/composables/use-note-key'
+import { NoteStore } from '~/composables/use-note'
+import UserKey from '~/composables/use-user-key'
+import { UserStore } from '~/composables/use-user'
 
-@Component
-class NoteEditorList extends Vue {
-  @Prop({ default: false })
-  noteId!: string
-
-  private noteHistories: NoteHistory[] = []
-  private users: User[] = []
-
-  async created() {
-    await notesStore.initialize()
-    await usersStore.initialize()
-
-    this.noteHistories = await notesStore.recentNoteHistories({
-      noteId: this.noteId,
-      limit: 5,
-    })
-    this.users = usersStore.users
-  }
-
-  userIconProps(userId: string) {
-    return {
-      width: 32,
-      height: 32,
-      class: 'm1',
-      src: this.getUser(userId)?.photoURL,
-    }
-  }
-
-  getUser(userId: string): User | undefined {
-    return this.users.find((user) => {
-      return user.id === userId
-    })
-  }
-
-  getUserName(userId: string): string {
-    const user = this.getUser(userId)
-    return user ? user.displayName : '不明'
-  }
-
-  formatDate(date: Date): string {
-    return DateTime.fromJSDate(date).toISODate()
-  }
+type State = {
+  noteHistories: NoteHistory[]
 }
-export default NoteEditorList
+
+export default defineComponent({
+  props: {
+    noteId: {
+      type: String,
+      require: true,
+    },
+  },
+  setup(props) {
+    const state = reactive<State>({
+      noteHistories: [],
+    })
+
+    const { recentNoteHistories } = inject(NoteKey) as NoteStore
+    useAsync(async () => {
+      state.noteHistories = await recentNoteHistories({
+        noteId: props.noteId!,
+        limit: 5,
+      })
+    })
+    const { getUserById } = inject(UserKey) as UserStore
+
+    const userIconProps = (userId: string) => {
+      return getUserById(userId)?.photoProps()
+    }
+
+    const getUserName = (userId: string): string => {
+      const user = getUserById(userId)
+      return user ? user.displayName : '不明'
+    }
+
+    return {
+      ...toRefs(state),
+      userIconProps,
+      getUserById,
+      getUserName,
+    }
+  },
+})
 </script>

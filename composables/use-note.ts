@@ -168,6 +168,32 @@ export default function useNote() {
     return notes
   }
 
+  const recentNoteHistories = async ({
+    noteId,
+    limit = 5,
+  }: {
+    noteId: string
+    limit: number
+  }) => {
+    const querySnapshot = await db
+      .collection('notes')
+      .doc(noteId)
+      .collection('histories')
+      .orderBy('createdAt', 'desc')
+      .limit(limit)
+      .get()
+    const histories: NoteHistory[] = []
+    for (const doc of querySnapshot.docs) {
+      histories.push(
+        new NoteHistory({
+          id: doc.id,
+          ...doc.data(),
+        })
+      )
+    }
+    return histories
+  }
+
   return {
     ...toRefs(state),
     getNote,
@@ -179,6 +205,7 @@ export default function useNote() {
     getNotesByTagName,
     watchNotes,
     unsubscribeNotes,
+    recentNoteHistories,
   }
 }
 export type NoteStore = ReturnType<typeof useNote>
