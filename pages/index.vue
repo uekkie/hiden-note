@@ -9,16 +9,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from '@nuxtjs/composition-api'
-import { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
-import TagKey from '~/composables/use-tag-key'
-import { TagStore } from '~/composables/use-tag'
+import { defineComponent } from '@nuxtjs/composition-api'
+import { useAuthStore } from '@/composables/use-auth'
+import { useTagStore } from '~/composables/use-tag'
 
 export default defineComponent({
   setup() {
-    const { user, loading } = inject(AuthKey) as AuthStore
-    const { tags } = inject(TagKey) as TagStore
+    const { user, loading } = useAuthStore()
+    const { tags } = useTagStore()
     return {
       tags,
       user,

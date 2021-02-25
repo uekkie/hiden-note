@@ -43,13 +43,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject } from '@nuxtjs/composition-api'
-import { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
+import { computed, defineComponent } from '@nuxtjs/composition-api'
+import { useAuthStore } from '@/composables/use-auth'
 
 export default defineComponent({
   setup() {
-    const { user, error, login, logout } = inject(AuthKey) as AuthStore
+    const { user, error, login, logout } = useAuthStore()
 
     return {
       user,

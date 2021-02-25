@@ -29,7 +29,6 @@
 <script lang="ts">
 import {
   defineComponent,
-  inject,
   reactive,
   toRefs,
   useAsync,
@@ -37,8 +36,7 @@ import {
 import { Note } from '@/models/note'
 import { Tag } from '@/models/tag'
 import 'highlight.js/styles/atom-one-light.css'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
+import { useNoteStore } from '~/composables/use-note'
 
 type State = {
   note?: Note
@@ -53,19 +51,19 @@ export default defineComponent({
     },
   },
   setup(props, { root }) {
+    const { getNote, deleteNote } = useNoteStore()
+
     const state = reactive<State>({
       note: undefined,
       tags: [],
       modalShow: false,
     })
-    const { getNote } = inject(NoteKey) as NoteStore
 
     useAsync(async () => {
       state.note = await getNote(props.noteId!)
       state.tags = Object.keys(state.note!.tags).map((key) => new Tag(key, 0))
     })
 
-    const { deleteNote } = inject(NoteKey) as NoteStore
     const editPath = () => {
       return state.note!.id + '/edit'
     }

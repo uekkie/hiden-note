@@ -6,40 +6,29 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  inject,
-  onMounted,
-  provide,
-  useAsync,
-} from '@nuxtjs/composition-api'
-import useAuth, { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
-import useTag, { TagStore } from '@/composables/use-tag'
-import TagKey from '@/composables/use-tag-key'
-import useNote from '@/composables/use-note'
-import NoteKey from '@/composables/use-note-key'
-import useComment from '@/composables/use-comment'
-import CommentKey from '@/composables/use-comment-key'
-import useUser, { UserStore } from '@/composables/use-user'
-import UserKey from '@/composables/use-user-key'
+import { defineComponent, onMounted, useAsync } from '@nuxtjs/composition-api'
+import { provideAuthStore, useAuthStore } from '@/composables/use-auth'
+import { provideTagStore, useTagStore } from '@/composables/use-tag'
+import { provideNoteStore } from '@/composables/use-note'
+import { provideCommentStore } from '@/composables/use-comment'
+import { useUserStore, provideUserStore } from '@/composables/use-user'
 import { auth } from '@/plugins/firebase'
 
 export default defineComponent({
   setup(_props, { root }) {
-    provide(AuthKey, useAuth())
-    provide(TagKey, useTag())
-    provide(NoteKey, useNote())
-    provide(CommentKey, useComment())
-    provide(UserKey, useUser())
-    const { fetchTags } = inject(TagKey) as TagStore
-    const { fetchUsers } = inject(UserKey) as UserStore
+    provideAuthStore()
+    provideTagStore()
+    provideNoteStore()
+    provideCommentStore()
+    provideUserStore()
+    const { fetchTags } = useTagStore()
+    const { fetchUsers } = useUserStore()
     useAsync(() => {
       fetchTags()
       fetchUsers()
     })
 
-    const { setUser } = inject(AuthKey) as AuthStore
+    const { setUser } = useAuthStore()
 
     onMounted(() => {
       auth.onAuthStateChanged((user) => {

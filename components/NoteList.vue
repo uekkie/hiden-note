@@ -32,16 +32,13 @@
 import {
   computed,
   defineComponent,
-  inject,
   onBeforeUnmount,
   reactive,
   toRefs,
 } from '@nuxtjs/composition-api'
 import { DateTime } from 'luxon'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
-import UserKey from '~/composables/use-user-key'
-import { UserStore } from '~/composables/use-user'
+import { useNoteStore } from '~/composables/use-note'
+import { useUserStore } from '~/composables/use-user'
 import { Note, User } from '~/models'
 
 const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
@@ -57,12 +54,13 @@ type State = {
 }
 export default defineComponent({
   setup() {
+    const { watchNotes, unsubscribeNotes, notes } = useNoteStore()
+    const { users } = useUserStore()
+
     const state = reactive<State>({
       users: [],
       notes: [],
     })
-    const { watchNotes, unsubscribeNotes, notes } = inject(NoteKey) as NoteStore
-    const { users } = inject(UserKey) as UserStore
 
     state.users = reactive(users)
     state.notes = reactive(notes)

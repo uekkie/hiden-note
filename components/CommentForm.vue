@@ -11,11 +11,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, inject } from '@nuxtjs/composition-api'
-import { NoteStore } from '@/composables/use-note'
-import NoteKey from '@/composables/use-note-key'
-import { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
+import { defineComponent, reactive } from '@nuxtjs/composition-api'
+import { useNoteStore } from '@/composables/use-note'
+import { useAuthStore } from '@/composables/use-auth'
 
 export default defineComponent({
   props: {
@@ -31,8 +29,8 @@ export default defineComponent({
     const content = () => {
       return state.comment
     }
-    const { createComment } = inject(NoteKey) as NoteStore
-    const { user, isValid } = inject(AuthKey) as AuthStore
+    const { createComment } = useNoteStore()
+    const { user, isValid } = useAuthStore()
 
     if (!isValid) {
       console.error('Not auth')

@@ -1,9 +1,18 @@
-import { toRefs, reactive } from '@nuxtjs/composition-api'
+import { toRefs, reactive, inject, provide } from '@nuxtjs/composition-api'
 import firebase from '@/plugins/firebase'
 import { User } from '@/models/user'
+
+import UserKey from '@/composables/use-user-key'
 export const db = firebase.firestore()
 
 const usersRef = db.collection('users')
+
+export function provideUserStore() {
+  provide(UserKey, useUser())
+}
+export function useUserStore() {
+  return inject(UserKey) as UserStore
+}
 
 export default function useUser() {
   const state = reactive<{

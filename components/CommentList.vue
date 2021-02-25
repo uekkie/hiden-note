@@ -24,15 +24,12 @@
 <script lang="ts">
 import {
   defineComponent,
-  inject,
   PropType,
   useAsync,
   onMounted,
 } from '@nuxtjs/composition-api'
-import { CommentStore } from '@/composables/use-comment'
-import CommentKey from '@/composables/use-comment-key'
-import { UserStore } from '@/composables/use-user'
-import UserKey from '@/composables/use-user-key'
+import { useCommentStore } from '@/composables/use-comment'
+import { useUserStore } from '@/composables/use-user'
 
 export default defineComponent({
   props: {
@@ -42,19 +39,15 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { fetchComments, comments } = useCommentStore()
+    const { fetchUsers, getUserById } = useUserStore()
     onMounted(() => {
-      const { fetchComments } = inject(CommentKey) as CommentStore
-      const { fetchUsers } = inject(UserKey) as UserStore
       useAsync(() => {
         fetchComments(props.noteId!)
         fetchUsers()
       })
     })
-
-    const { comments } = inject(CommentKey) as CommentStore
-
     const getUserName = (userId: string) => {
-      const { getUserById } = inject(UserKey) as UserStore
       return getUserById(userId)?.displayName
     }
     return {

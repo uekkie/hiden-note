@@ -33,14 +33,12 @@
 import {
   defineComponent,
   reactive,
-  inject,
   toRefs,
   useAsync,
 } from '@nuxtjs/composition-api'
 
 import { Note } from '@/models'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
+import { useNoteStore } from '~/composables/use-note'
 
 type State = {
   tagName: string
@@ -48,12 +46,12 @@ type State = {
 }
 export default defineComponent({
   setup(_props, ctx) {
+    const { getNotesByTagName } = useNoteStore()
+
     const state = reactive<State>({
       tagName: '',
       notes: [],
     })
-
-    const { getNotesByTagName } = inject(NoteKey) as NoteStore
 
     state.tagName = ctx.root.$route.params.tagId
     useAsync(async () => (state.notes = await getNotesByTagName(state.tagName)))

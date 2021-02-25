@@ -20,13 +20,11 @@
 import {
   defineComponent,
   reactive,
-  inject,
   useAsync,
   computed,
 } from '@nuxtjs/composition-api'
 
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
+import { useNoteStore } from '~/composables/use-note'
 const Diff = require('diff')
 
 export default defineComponent({
@@ -40,7 +38,7 @@ export default defineComponent({
     const diffContent = computed(() => {
       return Diff.diffLines(state.prevNoteContent, state.currentNoteContent)
     })
-    const { getNote, getNoteHistory } = inject(NoteKey) as NoteStore
+    const { getNote, getNoteHistory } = useNoteStore()
 
     useAsync(async () => {
       const noteId = ctx.root.$route.params.id

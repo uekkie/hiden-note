@@ -1,7 +1,15 @@
-import { reactive, toRefs } from '@nuxtjs/composition-api'
+import { reactive, toRefs, provide, inject } from '@nuxtjs/composition-api'
 import { db } from '@/plugins/firebase'
 import { NoteComment } from '@/models/comment'
 
+import CommentKey from '@/composables/use-comment-key'
+
+export function provideCommentStore() {
+  provide(CommentKey, useComment())
+}
+export function useCommentStore() {
+  return inject(CommentKey) as CommentStore
+}
 export default function useComment() {
   const state = reactive<{
     comments: NoteComment[]

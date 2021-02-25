@@ -8,18 +8,11 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  inject,
-  onMounted,
-  reactive,
-} from '@nuxtjs/composition-api'
+import { defineComponent, onMounted, reactive } from '@nuxtjs/composition-api'
 import { Note } from '@/models/note'
 import 'highlight.js/styles/atom-one-light.css'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
-import AuthKey from '~/composables/use-auth-key'
-import { AuthStore } from '~/composables/use-auth'
+import { useNoteStore } from '~/composables/use-note'
+import { useAuthStore } from '~/composables/use-auth'
 
 type State = {
   note: Note | undefined
@@ -27,8 +20,8 @@ type State = {
 
 export default defineComponent({
   setup(_props, ctx) {
-    const { getNote, updateNote } = inject(NoteKey) as NoteStore
-    const { user } = inject(AuthKey) as AuthStore
+    const { getNote, updateNote } = useNoteStore()
+    const { user } = useAuthStore()
     const state = reactive<State>({
       note: undefined,
     })
