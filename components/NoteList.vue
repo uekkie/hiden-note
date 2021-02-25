@@ -1,31 +1,29 @@
 <template>
   <div v-if="notes" class="notes">
-    <h3>ノート一覧</h3>
-    <p>ノート総数：{{ notes.length }}</p>
-
-    <div
+    <article
       v-for="(note, index) in recentNotes"
       :key="index"
-      class="flex-column align-items-start"
+      class="note-list__item mb-3"
     >
       <h3>
         <nuxt-link :to="`/notes/${note.id}`">{{ note.title }}</nuxt-link>
       </h3>
-      <div>
+      <div class="note-list__meta">
         <small>
-          <b-img v-bind="photoProps(note.userId)" rounded="circle"></b-img>
+          <b-img
+            thumbnail
+            v-bind="photoProps(note.userId)"
+            rounded="circle"
+          ></b-img>
           <NuxtLink :to="`/users/${note.userId}`">
             {{ userName(note.userId) }}
           </NuxtLink>
+          <time-label :time-stamp="note.updatedAt.toMillis()" />
         </small>
       </div>
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="content" v-html="formattedContent(note.content)" />
-      <div class="text-right">
-        <small>{{ formatDate(note.updatedAt.toDate()) }}</small>
-      </div>
-      <hr />
-    </div>
+      <div class="note-list__content" v-html="formattedContent(note.content)" />
+    </article>
   </div>
 </template>
 <script lang="ts">
@@ -37,6 +35,7 @@ import {
   toRefs,
 } from '@nuxtjs/composition-api'
 import { DateTime } from 'luxon'
+import TimeLabel from './TimeLabel.vue'
 import { useNoteStore } from '~/composables/use-note'
 import { useUserStore } from '~/composables/use-user'
 import { Note, User } from '~/models'
@@ -53,6 +52,7 @@ type State = {
   notes: Note[]
 }
 export default defineComponent({
+  components: { TimeLabel },
   setup() {
     const { watchNotes, unsubscribeNotes, notes } = useNoteStore()
     const { users } = useUserStore()
@@ -107,3 +107,19 @@ export default defineComponent({
   },
 })
 </script>
+<style lang="scss">
+.note-list__item {
+  background-color: white;
+  border-radius: 9px;
+  min-width: 0;
+  box-shadow: 0 0 0 1px gray;
+  padding: 14px 12px;
+  .note-list__meta {
+    width: 100%;
+    padding-left: 20px;
+  }
+  .note-list__content {
+    padding-left: 20px;
+  }
+}
+</style>

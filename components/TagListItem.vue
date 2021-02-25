@@ -38,5 +38,6 @@ export default defineComponent({
 </script>
 <style lang="sass" scoped>
 .tag-list-item
-  display: inline-block
+  // display: inline-block
+  width: 100%
 </style>

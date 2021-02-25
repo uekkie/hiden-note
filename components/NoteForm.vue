@@ -1,5 +1,5 @@
 <template>
-  <b-container v-if="note">
+  <div v-if="note">
     <form @submit.prevent="submit">
       <b-row class="mb-2" align-v="start">
         <b-col>
@@ -45,7 +45,7 @@
         </b-col>
       </b-row>
     </form>
-  </b-container>
+  </div>
 </template>
 
 <script lang="ts">

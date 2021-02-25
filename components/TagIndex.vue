@@ -23,4 +23,5 @@ export default defineComponent({
 <style lang="sass" scoped>
 .tags__container
   width: 100%
+  min-width: 320px
 </style>

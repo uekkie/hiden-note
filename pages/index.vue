@@ -1,8 +1,17 @@
 <template>
   <b-container>
     <template v-if="user">
-      <tag-index :tags="tags" />
-      <note-list />
+      <b-row>
+        <b-col cols="2">
+          <div class="tags_wrapper">
+            <h2 class="h4">人気のタグ</h2>
+            <tag-index :tags="tags" />
+          </div>
+        </b-col>
+        <b-col>
+          <note-list />
+        </b-col>
+      </b-row>
     </template>
     <div v-else>ログインしてください</div>
   </b-container>
@@ -34,4 +43,5 @@ export default defineComponent({
   font-size: 100px
   color: #35495e
   letter-spacing: 1px
+.tags_wrapper
 </style>

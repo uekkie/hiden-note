@@ -54,6 +54,8 @@ html
   -webkit-font-smoothing: antialiased
   box-sizing: border-box
 
+body
+  background-color: #f8f9fa
 *,
 *::before,
 *::after

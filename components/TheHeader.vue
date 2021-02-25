@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar variant="light">
+    <b-navbar variant="light" class="header">
       <b-navbar-brand to="/">秘伝のタレ</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -66,6 +66,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.header {
+  border-bottom: #eee 1px solid;
+}
 .header__new-note-button {
   width: 150px;
 }
