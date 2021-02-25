@@ -1,4 +1,3 @@
-// import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import { algoliaClient } from './algolia/client'
 import { INoteRecord } from './types/algolia'

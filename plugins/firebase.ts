@@ -15,6 +15,5 @@ if (firebase.apps.length === 0) {
 }
 export default firebase
 export const auth = firebase.auth()
-// export const functions = firebase.app().functions('asia-northeast1')
 export const db = firebase.firestore()
 export const timestamp = () => firebase.firestore.FieldValue.serverTimestamp()

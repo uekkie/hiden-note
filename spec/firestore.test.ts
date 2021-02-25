@@ -5,7 +5,6 @@ process.env.FIRESTORE_EMULATOR_HOST = 'localhost:58080'
 
 import * as fs from 'fs'
 import * as firebase from '@firebase/testing'
-// const Timestamp = firebase.firestore.Timestamp
 
 const PROJECT_ID = 'hiden-note'
 // 管理者権限で操作できるFreistore appを作成する
@@ -82,10 +81,10 @@ describe('noteのCRUD', () => {
   describe('アクセス権限のないユーザーのとき', ()=> {
     test('追加の失敗', async()=> {
       const db = getFirestoreWithAuth(incorrectUser)
-      const doc = db.collection('notes') 
+      const doc = db.collection('notes')
       await firebase.assertFails(doc.add({userId: incorrectUser.uid, title: '追加できないノート', content: '保存しないでね'}))
     })
-  }) 
+  })
   describe('noteの作成', () => {
     test('titleがないと保存できない', async () => {
       const db = getFirestoreWithAuth(correctUser)
@@ -95,7 +94,7 @@ describe('noteのCRUD', () => {
     test('titleは100文字以内であること', async () => {
       const db = getFirestoreWithAuth(correctUser)
       const doc = db.collection('notes')
-      const too_long_title = "a".repeat(101) 
+      const too_long_title = "a".repeat(101)
       await firebase.assertFails(doc.add({ userId: correctUser.uid, title: too_long_title, content: 'コンテンツ' }))
     })
     test('contentがないと保存できない', async () => {
@@ -114,7 +113,7 @@ describe('noteのCRUD', () => {
     .collection("notes")
     .doc("memo")
     .set(correctNoteData);
-    
+
     test('作成したユーザーは更新できる', async () => {
       const db = getFirestoreWithAuth(correctUser)
       const docRef = db.collection('notes').doc('memo')
@@ -131,7 +130,7 @@ describe('noteのCRUD', () => {
       .collection("notes")
       .doc("memo")
       .set(correctNoteData);
-      
+
     test('作成したユーザーは削除できる', async () => {
       const db = getFirestoreWithAuth(correctUser)
       const docRef = db.collection('notes').doc('memo')

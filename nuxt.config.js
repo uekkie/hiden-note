@@ -24,7 +24,4 @@ export default {
       compact: false,
     },
   },
-  router: {
-    // middleware: 'auth',
-  },
 }
