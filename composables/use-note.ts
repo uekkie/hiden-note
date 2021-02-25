@@ -13,7 +13,7 @@ export function useNoteStore() {
   return inject(NoteKey) as NoteStore
 }
 
-export default function useNote() {
+function useNote() {
   const state = reactive<{
     notes: Note[]
     selectedNoteId: string | undefined

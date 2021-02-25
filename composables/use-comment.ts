@@ -8,10 +8,12 @@ const CommentKey: InjectionKey<CommentStore> = Symbol('CommentStore')
 export function provideCommentStore() {
   provide(CommentKey, useComment())
 }
+
 export function useCommentStore() {
   return inject(CommentKey) as CommentStore
 }
-export default function useComment() {
+
+function useComment() {
   const state = reactive<{
     comments: NoteComment[]
   }>({

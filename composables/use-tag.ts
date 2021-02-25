@@ -12,7 +12,7 @@ export function useTagStore() {
   return inject(TagKey) as TagStore
 }
 
-export default function useTag() {
+function useTag() {
   const state = reactive<{
     tags: Tag[]
   }>({

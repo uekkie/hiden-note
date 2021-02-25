@@ -13,13 +13,13 @@
 </template>
 
 <script lang="ts">
-import useAuth from '@/composables/use-auth'
+import { useAuthStore } from '@/composables/use-auth'
 import { defineComponent } from '@nuxtjs/composition-api'
 import 'highlight.js/styles/atom-one-light.css'
 
 export default defineComponent({
   setup() {
-    const { user } = useAuth()
+    const { user } = useAuthStore()
     return {
       user,
     }

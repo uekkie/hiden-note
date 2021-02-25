@@ -16,7 +16,7 @@ export function useUserStore() {
   return inject(UserKey) as UserStore
 }
 
-export default function useUser() {
+function useUser() {
   const state = reactive<{
     users: User[]
   }>({

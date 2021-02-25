@@ -18,7 +18,7 @@ export function useAuthStore() {
   return inject(AuthKey) as AuthStore
 }
 
-export default function useAuth() {
+function useAuth() {
   const state = reactive<{
     user?: User
     loading: boolean
