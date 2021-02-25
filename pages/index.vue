@@ -1,24 +1,31 @@
 <template>
   <b-container>
     <template v-if="user">
-      <tag-index :tags="tags" />
-      <note-list />
+      <b-row>
+        <b-col cols="2">
+          <div class="tags_wrapper">
+            <h2 class="h4">人気のタグ</h2>
+            <tag-index :tags="tags" />
+          </div>
+        </b-col>
+        <b-col>
+          <note-list />
+        </b-col>
+      </b-row>
     </template>
     <div v-else>ログインしてください</div>
   </b-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from '@nuxtjs/composition-api'
-import { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
-import TagKey from '~/composables/use-tag-key'
-import { TagStore } from '~/composables/use-tag'
+import { defineComponent } from '@nuxtjs/composition-api'
+import { useAuthStore } from '@/composables/use-auth'
+import { useTagStore } from '~/composables/use-tag'
 
 export default defineComponent({
   setup() {
-    const { user, loading } = inject(AuthKey) as AuthStore
-    const { tags } = inject(TagKey) as TagStore
+    const { user, loading } = useAuthStore()
+    const { tags } = useTagStore()
     return {
       tags,
       user,
@@ -36,4 +43,5 @@ export default defineComponent({
   font-size: 100px
   color: #35495e
   letter-spacing: 1px
+.tags_wrapper
 </style>

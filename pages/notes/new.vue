@@ -9,21 +9,17 @@
 <script lang="ts">
 import {
   defineComponent,
-  inject,
   SetupContext,
   reactive,
 } from '@nuxtjs/composition-api'
 import { Note } from '@/models/note'
-
-import { NoteStore } from '@/composables/use-note'
-import NoteKey from '@/composables/use-note-key'
-import { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
+import { useNoteStore } from '@/composables/use-note'
+import { useAuthStore } from '@/composables/use-auth'
 
 export default defineComponent({
   setup(_props, context: SetupContext) {
-    const { user } = inject(AuthKey) as AuthStore
-    const { createNote } = inject(NoteKey) as NoteStore
+    const { user } = useAuthStore()
+    const { createNote } = useNoteStore()
     const note = reactive<Note>(new Note({}))
     const router = context.root.$router
 

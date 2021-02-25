@@ -23,16 +23,13 @@
 <script lang="ts">
 import {
   defineComponent,
-  inject,
   reactive,
   toRefs,
   useAsync,
 } from '@nuxtjs/composition-api'
 import { NoteHistory } from '@/models/note'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
-import UserKey from '~/composables/use-user-key'
-import { UserStore } from '~/composables/use-user'
+import { useNoteStore } from '~/composables/use-note'
+import { useUserStore } from '~/composables/use-user'
 
 type State = {
   noteHistories: NoteHistory[]
@@ -46,18 +43,19 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { getUserById } = useUserStore()
+    const { recentNoteHistories } = useNoteStore()
+
     const state = reactive<State>({
       noteHistories: [],
     })
 
-    const { recentNoteHistories } = inject(NoteKey) as NoteStore
     useAsync(async () => {
       state.noteHistories = await recentNoteHistories({
         noteId: props.noteId!,
         limit: 5,
       })
     })
-    const { getUserById } = inject(UserKey) as UserStore
 
     const userIconProps = (userId: string) => {
       return getUserById(userId)?.photoProps()

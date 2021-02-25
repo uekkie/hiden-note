@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar variant="light">
+    <b-navbar variant="light" class="header">
       <b-navbar-brand to="/">秘伝のタレ</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -43,13 +43,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject } from '@nuxtjs/composition-api'
-import { AuthStore } from '@/composables/use-auth'
-import AuthKey from '@/composables/use-auth-key'
+import { computed, defineComponent } from '@nuxtjs/composition-api'
+import { useAuthStore } from '@/composables/use-auth'
 
 export default defineComponent({
   setup() {
-    const { user, error, login, logout } = inject(AuthKey) as AuthStore
+    const { user, error, login, logout } = useAuthStore()
 
     return {
       user,
@@ -67,6 +66,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.header {
+  border-bottom: #eee 1px solid;
+}
 .header__new-note-button {
   width: 150px;
 }

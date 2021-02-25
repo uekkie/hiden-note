@@ -1,35 +1,35 @@
 <template>
-  <b-container v-if="note">
-    <h1>{{ note.title }}</h1>
-    <div class="d-flex justify-content-end">
-      <div class="edit">
-        <b-icon variant="secondary" icon="pencil"></b-icon>
-        <b-link class="text-secondary" :to="editPath()">編集する</b-link>
+  <div v-if="note" class="mx-3 p-4">
+    <div class="note p-4 mb-5">
+      <h1>{{ note.title }}</h1>
+      <div class="d-flex justify-content-end">
+        <div class="edit">
+          <b-icon variant="secondary" icon="pencil"></b-icon>
+          <b-link class="text-secondary" :to="editPath()">編集する</b-link>
+        </div>
+        <div class="delete">
+          <b-icon variant="danger" icon="trash"></b-icon>
+          <b-link class="text-danger" @click="modalShow = !modalShow"
+            >削除する</b-link
+          >
+        </div>
       </div>
-      <div class="delete">
-        <b-icon variant="danger" icon="trash"></b-icon>
-        <b-link class="text-danger" @click="modalShow = !modalShow"
-          >削除する</b-link
-        >
-      </div>
+      <note-tag-list :tags="tags" />
+
+      <markdown-preview :content="note.content"></markdown-preview>
     </div>
-    <note-tag-list :tags="tags" />
-
-    <markdown-preview :content="note.content"></markdown-preview>
-
-    <comment-list :note-id="note.id"></comment-list>
+    <comment-list class="mb-5" :note-id="note.id"></comment-list>
     <comment-form :note-id="note.id"></comment-form>
 
     <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
       >削除してよろしいですか？</b-modal
     >
-  </b-container>
+  </div>
 </template>
 
 <script lang="ts">
 import {
   defineComponent,
-  inject,
   reactive,
   toRefs,
   useAsync,
@@ -37,8 +37,7 @@ import {
 import { Note } from '@/models/note'
 import { Tag } from '@/models/tag'
 import 'highlight.js/styles/atom-one-light.css'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
+import { useNoteStore } from '~/composables/use-note'
 
 type State = {
   note?: Note
@@ -53,23 +52,19 @@ export default defineComponent({
     },
   },
   setup(props, { root }) {
+    const { getNote, deleteNote } = useNoteStore()
+
     const state = reactive<State>({
       note: undefined,
       tags: [],
       modalShow: false,
     })
-    const { getNote } = inject(NoteKey) as NoteStore
 
-    // const state = reactive<State>({
-    //   note: undefined,
-    //   relatedNotes: [],
-    // })
     useAsync(async () => {
       state.note = await getNote(props.noteId!)
       state.tags = Object.keys(state.note!.tags).map((key) => new Tag(key, 0))
     })
 
-    const { deleteNote } = inject(NoteKey) as NoteStore
     const editPath = () => {
       return state.note!.id + '/edit'
     }
@@ -86,3 +81,10 @@ export default defineComponent({
   },
 })
 </script>
+<style lang="scss">
+.note {
+  background-color: white;
+  border-radius: 9px;
+  box-shadow: 0 0 0 1px gray;
+}
+</style>

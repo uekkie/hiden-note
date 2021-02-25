@@ -1,8 +1,24 @@
-import { toRefs, reactive, computed } from '@nuxtjs/composition-api'
+import {
+  toRefs,
+  reactive,
+  computed,
+  provide,
+  inject,
+} from '@nuxtjs/composition-api'
 import firebase from '@/plugins/firebase'
 import { User } from '@/models/user'
+import { InjectionKey } from '@vue/composition-api'
 
-export default function useAuth() {
+const AuthKey: InjectionKey<AuthStore> = Symbol('AuthStore')
+
+export function provideAuthStore() {
+  provide(AuthKey, useAuth())
+}
+export function useAuthStore() {
+  return inject(AuthKey) as AuthStore
+}
+
+function useAuth() {
   const state = reactive<{
     user?: User
     loading: boolean

@@ -28,16 +28,9 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  reactive,
-  inject,
-} from '@nuxtjs/composition-api'
+import { computed, defineComponent, reactive } from '@nuxtjs/composition-api'
 import { algoliaClient } from '@/utils/algolia'
-import firebase from '@/plugins/firebase'
-import { NoteStore } from '@/composables/use-note'
-import NoteKey from '@/composables/use-note-key'
+import { useNoteStore } from '@/composables/use-note'
 import UserIcon from '~/components/UserIcon.vue'
 
 const index = algoliaClient().initIndex('notes')
@@ -55,12 +48,12 @@ type State = {
 export default defineComponent({
   components: { UserIcon },
   setup(_props, ctx) {
+    const { getNote } = useNoteStore()
+
     const state = reactive<State>({
       searchedNotes: [],
       query: '',
     })
-
-    const { getNote } = inject(NoteKey) as NoteStore
 
     const canSubmit = computed(() => {
       const { query } = state

@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <div>
     <b-row>
       <b-col cols="8">
         <note-show :note-id="noteId" />
@@ -20,7 +20,7 @@
         </div>
       </b-col>
     </b-row>
-  </b-container>
+  </div>
 </template>
 
 <script lang="ts">

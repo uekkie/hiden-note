@@ -20,14 +20,11 @@ import {
   defineComponent,
   reactive,
   toRefs,
-  inject,
   useAsync,
 } from '@nuxtjs/composition-api'
 import { User, Note } from '@/models'
-import UserKey from '~/composables/use-user-key'
-import { UserStore } from '~/composables/use-user'
-import NoteKey from '~/composables/use-note-key'
-import { NoteStore } from '~/composables/use-note'
+import { useUserStore } from '~/composables/use-user'
+import { useNoteStore } from '~/composables/use-note'
 
 type State = {
   user?: User
@@ -35,13 +32,14 @@ type State = {
 }
 export default defineComponent({
   setup(_props, ctx) {
+    const { fetchUsers, getUserById } = useUserStore()
+    const { getNotesByUserId } = useNoteStore()
+
     const state = reactive<State>({
       user: undefined,
       notes: [],
     })
 
-    const { fetchUsers, getUserById } = inject(UserKey) as UserStore
-    const { getNotesByUserId } = inject(NoteKey) as NoteStore
     const userId = ctx.root.$route.params.userId
     state.user = getUserById(userId)
     useAsync(async () => {
