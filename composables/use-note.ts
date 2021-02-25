@@ -1,8 +1,10 @@
 import { reactive, toRefs, provide, inject } from '@nuxtjs/composition-api'
 import firebase, { db } from '@/plugins/firebase'
 import { Note, NoteHistory } from '@/models/note'
-import NoteKey from '@/composables/use-note-key'
+import { InjectionKey } from '@vue/composition-api'
+
 const FieldValue = firebase.firestore.FieldValue
+const NoteKey: InjectionKey<NoteStore> = Symbol('NoteStore')
 
 export function provideNoteStore() {
   provide(NoteKey, useNote())

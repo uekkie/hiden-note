@@ -1,7 +1,9 @@
 import { reactive, toRefs, inject, provide } from '@nuxtjs/composition-api'
 import { db } from '@/plugins/firebase'
 import { Tag } from '@/models/tag'
-import TagKey from '@/composables/use-tag-key'
+import { InjectionKey } from '@vue/composition-api'
+
+const TagKey: InjectionKey<TagStore> = Symbol('TagStore')
 
 export function provideTagStore() {
   provide(TagKey, useTag())

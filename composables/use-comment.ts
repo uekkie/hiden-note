@@ -1,8 +1,9 @@
 import { reactive, toRefs, provide, inject } from '@nuxtjs/composition-api'
 import { db } from '@/plugins/firebase'
 import { NoteComment } from '@/models/comment'
+import { InjectionKey } from '@vue/composition-api'
 
-import CommentKey from '@/composables/use-comment-key'
+const CommentKey: InjectionKey<CommentStore> = Symbol('CommentStore')
 
 export function provideCommentStore() {
   provide(CommentKey, useComment())

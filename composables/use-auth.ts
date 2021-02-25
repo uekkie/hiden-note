@@ -7,7 +7,9 @@ import {
 } from '@nuxtjs/composition-api'
 import firebase from '@/plugins/firebase'
 import { User } from '@/models/user'
-import AuthKey from '@/composables/use-auth-key'
+import { InjectionKey } from '@vue/composition-api'
+
+const AuthKey: InjectionKey<AuthStore> = Symbol('AuthStore')
 
 export function provideAuthStore() {
   provide(AuthKey, useAuth())

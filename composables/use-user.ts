@@ -1,8 +1,10 @@
 import { toRefs, reactive, inject, provide } from '@nuxtjs/composition-api'
 import firebase from '@/plugins/firebase'
 import { User } from '@/models/user'
+import { InjectionKey } from '@vue/composition-api'
 
-import UserKey from '@/composables/use-user-key'
+const UserKey: InjectionKey<UserStore> = Symbol('UserStore')
+
 export const db = firebase.firestore()
 
 const usersRef = db.collection('users')
