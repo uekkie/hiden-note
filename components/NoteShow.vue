@@ -60,10 +60,6 @@ export default defineComponent({
     })
     const { getNote } = inject(NoteKey) as NoteStore
 
-    // const state = reactive<State>({
-    //   note: undefined,
-    //   relatedNotes: [],
-    // })
     useAsync(async () => {
       state.note = await getNote(props.noteId!)
       state.tags = Object.keys(state.note!.tags).map((key) => new Tag(key, 0))
