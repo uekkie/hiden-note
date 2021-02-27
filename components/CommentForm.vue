@@ -26,9 +26,6 @@ export default defineComponent({
     const state = reactive({
       comment: '',
     })
-    const content = () => {
-      return state.comment
-    }
     const { createComment } = useNoteStore()
     const { user, isValid } = useAuthStore()
 
@@ -45,7 +42,7 @@ export default defineComponent({
       })
       state.comment = ''
     }
-    return { state, content, onSubmitComment }
+    return { state, onSubmitComment }
   },
 })
 </script>
