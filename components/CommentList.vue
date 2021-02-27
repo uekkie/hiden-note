@@ -22,23 +22,22 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  PropType,
-  useAsync,
-  onMounted,
-} from '@nuxtjs/composition-api'
+import { defineComponent, useAsync, onMounted } from '@nuxtjs/composition-api'
 import { useCommentStore } from '@/composables/use-comment'
 import { useUserStore } from '@/composables/use-user'
+
+type Props = {
+  noteId: string
+}
 
 export default defineComponent({
   props: {
     noteId: {
-      type: String as PropType<string>,
+      type: String,
       require: true,
     },
   },
-  setup(props) {
+  setup(props: Props) {
     const { fetchComments, comments } = useCommentStore()
     const { fetchUsers, getUserById } = useUserStore()
     onMounted(() => {
