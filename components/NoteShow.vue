@@ -44,6 +44,10 @@ type State = {
   tags: Tag[]
   modalShow: boolean
 }
+
+type Props = {
+  noteId: string
+}
 export default defineComponent({
   props: {
     noteId: {
@@ -51,7 +55,7 @@ export default defineComponent({
       require: true,
     },
   },
-  setup(props, { root }) {
+  setup(props: Props, { root }) {
     const { getNote, deleteNote } = useNoteStore()
 
     const state = reactive<State>({
