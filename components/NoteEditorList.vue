@@ -35,6 +35,9 @@ type State = {
   noteHistories: NoteHistory[]
 }
 
+type Props = {
+  noteId: string
+}
 export default defineComponent({
   props: {
     noteId: {
@@ -42,7 +45,7 @@ export default defineComponent({
       require: true,
     },
   },
-  setup(props) {
+  setup(props: Props) {
     const { getUserById } = useUserStore()
     const { recentNoteHistories } = useNoteStore()
 
