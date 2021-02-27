@@ -13,6 +13,10 @@ const md = require('markdown-it')().use(require('markdown-it-highlightjs'), {
   breaks: true,
 })
 
+type Props = {
+  content: string
+}
+
 export default defineComponent({
   props: {
     content: {
@@ -20,7 +24,7 @@ export default defineComponent({
       require: true,
     },
   },
-  setup(props) {
+  setup(props: Props) {
     const formattedContent = computed((): string => {
       return md.render(props.content)
     })
