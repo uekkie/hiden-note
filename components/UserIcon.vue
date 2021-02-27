@@ -19,6 +19,9 @@ import { useUserStore } from '~/composables/use-user'
 type State = {
   user?: User
 }
+type Props = {
+  userId: string
+}
 export default defineComponent({
   props: {
     userId: {
@@ -26,7 +29,7 @@ export default defineComponent({
       require: true,
     },
   },
-  setup(props) {
+  setup(props: Props) {
     const { fetchUsers, getUserById } = useUserStore()
 
     const state = reactive<State>({
