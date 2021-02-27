@@ -7,6 +7,10 @@
 import { defineComponent } from '@nuxtjs/composition-api'
 import { DateTime } from 'luxon'
 
+type Props = {
+  timeStamp: number
+}
+
 export default defineComponent({
   props: {
     timeStamp: {
@@ -14,7 +18,7 @@ export default defineComponent({
       require: true,
     },
   },
-  setup(props) {
+  setup(props: Props) {
     const ts = props.timeStamp!
     const dt = DateTime.fromMillis(ts)
     const time = dt.toFormat('yyyy-MM-dd HH:mm')
