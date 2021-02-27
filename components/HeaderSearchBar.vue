@@ -16,9 +16,12 @@
 <script lang="ts">
 import { defineComponent, reactive } from '@nuxtjs/composition-api'
 
+type State = {
+  query: string
+}
 export default defineComponent({
   setup(_props, ctx) {
-    const state = reactive({
+    const state = reactive<State>({
       query: '',
     })
 
