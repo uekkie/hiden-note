@@ -15,6 +15,12 @@ import { defineComponent, reactive } from '@nuxtjs/composition-api'
 import { useNoteStore } from '@/composables/use-note'
 import { useAuthStore } from '@/composables/use-auth'
 
+type Props = {
+  noteId: string
+}
+type State = {
+  comment: string
+}
 export default defineComponent({
   props: {
     noteId: {
@@ -22,8 +28,8 @@ export default defineComponent({
       require: true,
     },
   },
-  setup(props) {
-    const state = reactive({
+  setup(props: Props) {
+    const state = reactive<State>({
       comment: '',
     })
     const { createComment } = useNoteStore()
