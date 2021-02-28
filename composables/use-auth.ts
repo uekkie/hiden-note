@@ -18,12 +18,14 @@ export function useAuthStore() {
   return inject(AuthKey) as AuthStore
 }
 
+type State = {
+  user?: User
+  loading: boolean
+  error: null
+}
+
 function useAuth() {
-  const state = reactive<{
-    user?: User
-    loading: boolean
-    error: null
-  }>({
+  const state = reactive<State>({
     user: undefined,
     loading: true,
     error: null,
