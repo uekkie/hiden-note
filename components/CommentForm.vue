@@ -33,12 +33,7 @@ export default defineComponent({
       comment: '',
     })
     const { createComment } = useNoteStore()
-    const { user, isValid } = useAuthStore()
-
-    if (!isValid) {
-      console.error('Not auth')
-      return
-    }
+    const { user } = useAuthStore()
 
     const onSubmitComment = async () => {
       await createComment({
