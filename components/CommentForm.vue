@@ -33,9 +33,12 @@ export default defineComponent({
       comment: '',
     })
     const { createComment } = useNoteStore()
-    const { user } = useAuthStore()
+    const { user, isValid } = useAuthStore()
 
     const onSubmitComment = async () => {
+      if(!isValid){
+        return
+      }
       await createComment({
         userId: user?.value?.id!,
         noteId: props.noteId!,
