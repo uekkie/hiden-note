@@ -41,10 +41,8 @@ export default defineComponent({
     const { fetchComments, comments } = useCommentStore()
     const { fetchUsers, getUserById } = useUserStore()
     onMounted(() => {
-      useAsync(() => {
-        fetchComments(props.noteId!)
-        fetchUsers()
-      })
+      fetchComments(props.noteId!)
+      fetchUsers()
     })
     const getUserName = (userId: string) => {
       return getUserById(userId)?.displayName
