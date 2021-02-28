@@ -15,11 +15,13 @@ export function useCommentStore() {
 
 type State = {
   comments: NoteComment[]
+  unsubscribe: (() => void) | undefined
 }
 
 function useComment() {
   const state = reactive<State>({
     comments: [],
+    unsubscribe: undefined,
   })
 
   const clear = () => {
@@ -43,9 +45,41 @@ function useComment() {
     }
   }
 
+  const watchComments = async (noteId: string) => {
+    state.comments = []
+    state.unsubscribe = await db
+      .collection('notes')
+      .doc(noteId)
+      .collection('comments')
+      .orderBy('createdAt', 'asc')
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            state.comments.push(
+              new NoteComment({ id: change.doc.id, ...change.doc.data() })
+            )
+          }
+          if (change.type === 'modified') {
+            state.comments = state.comments.filter(
+              (comment) => comment.id !== change.doc.id
+            )
+            state.comments.push(
+              new NoteComment({ id: change.doc.id, ...change.doc.data() })
+            )
+          }
+          if (change.type === 'removed') {
+            state.comments = state.comments.filter(
+              (comment) => comment.id !== change.doc.id
+            )
+          }
+        })
+      })
+  }
+
   return {
     ...toRefs(state),
     fetchComments,
+    watchComments,
   }
 }
 export type CommentStore = ReturnType<typeof useComment>

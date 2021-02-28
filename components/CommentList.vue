@@ -40,10 +40,10 @@ export default defineComponent({
     },
   },
   setup(props: Props) {
-    const { fetchComments, comments } = useCommentStore()
+    const { watchComments, comments } = useCommentStore()
     const { getUserById } = useUserStore()
     onMounted(() => {
-      fetchComments(props.noteId!)
+      watchComments(props.noteId!)
     })
     const getUserName = (userId: string) => {
       return getUserById(userId)?.displayName
