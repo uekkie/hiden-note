@@ -1,6 +1,6 @@
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div v-html="formattedContent"></div>
+  <div v-html="formattedContent" />
 </template>
 
 <script lang="ts">
@@ -21,7 +21,7 @@ export default defineComponent({
   props: {
     content: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   setup(props: Props) {

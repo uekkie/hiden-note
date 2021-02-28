@@ -4,26 +4,26 @@
       <h1>{{ note.title }}</h1>
       <div class="d-flex justify-content-end">
         <div class="edit">
-          <b-icon variant="secondary" icon="pencil"></b-icon>
+          <b-icon variant="secondary" icon="pencil" />
           <b-link class="text-secondary" :to="editPath()">編集する</b-link>
         </div>
         <div class="delete">
-          <b-icon variant="danger" icon="trash"></b-icon>
-          <b-link class="text-danger" @click="modalShow = !modalShow"
-            >削除する</b-link
-          >
+          <b-icon variant="danger" icon="trash" />
+          <b-link class="text-danger" @click="modalShow = !modalShow">
+            削除する
+          </b-link>
         </div>
       </div>
       <note-tag-list :tags="tags" />
 
-      <markdown-preview :content="note.content"></markdown-preview>
+      <markdown-preview :content="note.content" />
     </div>
-    <comment-list class="mb-5" :note-id="note.id"></comment-list>
-    <comment-form :note-id="note.id"></comment-form>
+    <comment-list class="mb-5" :note-id="note.id" />
+    <comment-form :note-id="note.id" />
 
-    <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote"
-      >削除してよろしいですか？</b-modal
-    >
+    <b-modal v-model="modalShow" title="ノートの削除" @ok="handleDeleteNote">
+      削除してよろしいですか？
+    </b-modal>
   </div>
 </template>
 
@@ -52,7 +52,7 @@ export default defineComponent({
   props: {
     noteId: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   setup(props: Props, { root }) {

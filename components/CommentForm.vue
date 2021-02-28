@@ -25,7 +25,7 @@ export default defineComponent({
   props: {
     noteId: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   setup(props: Props) {
@@ -36,7 +36,7 @@ export default defineComponent({
     const { user, isValid } = useAuthStore()
 
     const onSubmitComment = async () => {
-      if(!isValid){
+      if (!isValid) {
         return
       }
       await createComment({

@@ -4,13 +4,10 @@
     <b-list-group-item v-for="(history, index) in noteHistories" :key="index">
       <b-row>
         <b-col cols="3">
-          <b-img
-            v-bind="userIconProps(history.userId)"
-            rounded="circle"
-          ></b-img>
+          <b-img v-bind="userIconProps(history.userId)" rounded="circle" />
         </b-col>
-        <b-col
-          ><nuxt-link :to="`${noteId}/diff/${history.id}`">
+        <b-col>
+          <nuxt-link :to="`${noteId}/diff/${history.id}`">
             {{ getUserName(history.userId) }}
           </nuxt-link>
           <br />
@@ -42,7 +39,7 @@ export default defineComponent({
   props: {
     noteId: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   setup(props: Props) {

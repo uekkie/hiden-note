@@ -15,7 +15,7 @@ export default defineComponent({
   props: {
     timeStamp: {
       type: Number,
-      require: true,
+      required: true,
     },
   },
   setup(props: Props) {

@@ -1,6 +1,6 @@
 <template>
   <div v-if="user" class="user-icon">
-    <b-img v-bind="user.photoProps()" rounded="circle"></b-img>
+    <b-img v-bind="user.photoProps()" rounded="circle" />
     <NuxtLink :to="`/users/${user.id}`">
       {{ user.displayName }}
     </NuxtLink>
@@ -26,7 +26,7 @@ export default defineComponent({
   props: {
     userId: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   setup(props: Props) {
