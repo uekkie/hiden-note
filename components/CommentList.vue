@@ -14,7 +14,9 @@
               {{ comment.createdAt ? comment.createdAtString() : '' }}
             </span>
           </div>
-          <div style="white-space: pre-line">{{ comment.content }}</div>
+          <div style="white-space: pre-line">
+            {{ comment.content }}
+          </div>
         </div>
       </b-list-group-item>
     </b-list-group>
@@ -22,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useAsync, onMounted } from '@nuxtjs/composition-api'
+import { defineComponent, onMounted } from '@nuxtjs/composition-api'
 import { useCommentStore } from '@/composables/use-comment'
 import { useUserStore } from '@/composables/use-user'
 
@@ -34,15 +36,14 @@ export default defineComponent({
   props: {
     noteId: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   setup(props: Props) {
     const { fetchComments, comments } = useCommentStore()
-    const { fetchUsers, getUserById } = useUserStore()
+    const { getUserById } = useUserStore()
     onMounted(() => {
       fetchComments(props.noteId!)
-      fetchUsers()
     })
     const getUserName = (userId: string) => {
       return getUserById(userId)?.displayName
