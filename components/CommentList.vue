@@ -24,8 +24,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from '@nuxtjs/composition-api'
-import { useCommentStore } from '@/composables/use-comment'
+import { defineComponent, toRef } from '@nuxtjs/composition-api'
+import { useNoteComment } from '@/composables/use-comment'
 import { useUserStore } from '@/composables/use-user'
 
 type Props = {
@@ -40,11 +40,8 @@ export default defineComponent({
     },
   },
   setup(props: Props) {
-    const { watchComments, comments } = useCommentStore()
     const { getUserById } = useUserStore()
-    onMounted(() => {
-      watchComments(props.noteId!)
-    })
+    const { comments } = useNoteComment(toRef(props, 'noteId').value)
     const getUserName = (userId: string) => {
       return getUserById(userId)?.displayName
     }

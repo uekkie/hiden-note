@@ -10,7 +10,6 @@ import { defineComponent, onMounted, useAsync } from '@nuxtjs/composition-api'
 import { provideAuthStore, useAuthStore } from '@/composables/use-auth'
 import { provideTagStore, useTagStore } from '@/composables/use-tag'
 import { provideNoteStore } from '@/composables/use-note'
-import { provideCommentStore } from '@/composables/use-comment'
 import { useUserStore, provideUserStore } from '@/composables/use-user'
 import { auth } from '@/plugins/firebase'
 
@@ -19,7 +18,6 @@ export default defineComponent({
     provideAuthStore()
     provideTagStore()
     provideNoteStore()
-    provideCommentStore()
     provideUserStore()
     const { fetchTags } = useTagStore()
     const { fetchUsers } = useUserStore()

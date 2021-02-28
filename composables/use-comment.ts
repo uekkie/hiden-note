@@ -1,53 +1,22 @@
-import { reactive, toRefs, provide, inject } from '@nuxtjs/composition-api'
+import { reactive, toRefs } from '@nuxtjs/composition-api'
 import { db } from '@/plugins/firebase'
 import { NoteComment } from '@/models/comment'
-import { InjectionKey } from '@vue/composition-api'
-
-export type CommentStore = ReturnType<typeof useComment>
-
-const CommentKey: InjectionKey<CommentStore> = Symbol('CommentStore')
-
-export function provideCommentStore() {
-  provide(CommentKey, useComment())
-}
-
-export function useCommentStore() {
-  return inject(CommentKey) as CommentStore
-}
 
 type State = {
   comments: NoteComment[]
   unsubscribe: (() => void) | undefined
 }
 
-function useComment() {
+export function useNoteComment(noteId: string) {
   const state = reactive<State>({
     comments: [],
     unsubscribe: undefined,
   })
 
-  const clear = () => {
-    state.comments = []
-  }
-
-  const fetchComments = async (noteId: string) => {
-    clear()
-
-    const querySnapshot = await db
-      .collection('notes')
-      .doc(noteId)
-      .collection('comments')
-      .orderBy('createdAt', 'asc')
-      .get()
-
-    for (const comment of querySnapshot.docs) {
-      state.comments.push(
-        new NoteComment(Object.assign({ id: comment.id }, comment.data()))
-      )
-    }
-  }
-
   const watchComments = (noteId: string) => {
+    if (state.unsubscribe) {
+      return
+    }
     state.comments = []
     state.unsubscribe = db
       .collection('notes')
@@ -77,10 +46,9 @@ function useComment() {
         })
       })
   }
+  watchComments(noteId)
 
   return {
     ...toRefs(state),
-    fetchComments,
-    watchComments,
   }
 }
