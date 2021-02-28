@@ -16,10 +16,12 @@ export function useUserStore() {
   return inject(UserKey) as UserStore
 }
 
+type State = {
+  users: User[]
+}
+
 function useUser() {
-  const state = reactive<{
-    users: User[]
-  }>({
+  const state = reactive<State>({
     users: [],
   })
 

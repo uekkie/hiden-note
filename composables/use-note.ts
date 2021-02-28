@@ -13,12 +13,14 @@ export function useNoteStore() {
   return inject(NoteKey) as NoteStore
 }
 
+type State = {
+  notes: Note[]
+  selectedNoteId: string | undefined
+  unsubscribe: (() => void) | undefined
+}
+
 function useNote() {
-  const state = reactive<{
-    notes: Note[]
-    selectedNoteId: string | undefined
-    unsubscribe: (() => void) | undefined
-  }>({
+  const state = reactive<State>({
     notes: [],
     selectedNoteId: undefined,
     unsubscribe: undefined,

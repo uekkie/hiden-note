@@ -13,10 +13,12 @@ export function useCommentStore() {
   return inject(CommentKey) as CommentStore
 }
 
+type State = {
+  comments: NoteComment[]
+}
+
 function useComment() {
-  const state = reactive<{
-    comments: NoteComment[]
-  }>({
+  const state = reactive<State>({
     comments: [],
   })
 

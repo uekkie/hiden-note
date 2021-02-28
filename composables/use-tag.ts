@@ -12,10 +12,12 @@ export function useTagStore() {
   return inject(TagKey) as TagStore
 }
 
+type State = {
+  tags: Tag[]
+}
+
 function useTag() {
-  const state = reactive<{
-    tags: Tag[]
-  }>({
+  const state = reactive<State>({
     tags: [],
   })
   const clear = () => {
