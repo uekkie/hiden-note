@@ -3,6 +3,8 @@ import firebase, { db } from '@/plugins/firebase'
 import { Note, NoteHistory } from '@/models/note'
 import { InjectionKey } from '@vue/composition-api'
 
+export type NoteStore = ReturnType<typeof useNote>
+
 const FieldValue = firebase.firestore.FieldValue
 const NoteKey: InjectionKey<NoteStore> = Symbol('NoteStore')
 
@@ -221,4 +223,3 @@ function useNote() {
     deleteNote,
   }
 }
-export type NoteStore = ReturnType<typeof useNote>

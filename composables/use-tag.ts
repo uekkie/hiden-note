@@ -3,6 +3,8 @@ import { db } from '@/plugins/firebase'
 import { Tag } from '@/models/tag'
 import { InjectionKey } from '@vue/composition-api'
 
+export type TagStore = ReturnType<typeof useTag>
+
 const TagKey: InjectionKey<TagStore> = Symbol('TagStore')
 
 export function provideTagStore() {
@@ -41,4 +43,3 @@ function useTag() {
     fetchTags,
   }
 }
-export type TagStore = ReturnType<typeof useTag>

@@ -3,6 +3,8 @@ import { db } from '@/plugins/firebase'
 import { NoteComment } from '@/models/comment'
 import { InjectionKey } from '@vue/composition-api'
 
+export type CommentStore = ReturnType<typeof useComment>
+
 const CommentKey: InjectionKey<CommentStore> = Symbol('CommentStore')
 
 export function provideCommentStore() {
@@ -45,9 +47,9 @@ function useComment() {
     }
   }
 
-  const watchComments = async (noteId: string) => {
+  const watchComments = (noteId: string) => {
     state.comments = []
-    state.unsubscribe = await db
+    state.unsubscribe = db
       .collection('notes')
       .doc(noteId)
       .collection('comments')
@@ -82,4 +84,3 @@ function useComment() {
     watchComments,
   }
 }
-export type CommentStore = ReturnType<typeof useComment>

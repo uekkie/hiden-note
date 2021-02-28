@@ -9,6 +9,8 @@ import firebase from '@/plugins/firebase'
 import { User } from '@/models/user'
 import { InjectionKey } from '@vue/composition-api'
 
+export type AuthStore = ReturnType<typeof useAuth>
+
 const AuthKey: InjectionKey<AuthStore> = Symbol('AuthStore')
 
 export function provideAuthStore() {
@@ -86,4 +88,3 @@ function useAuth() {
     setUser,
   }
 }
-export type AuthStore = ReturnType<typeof useAuth>

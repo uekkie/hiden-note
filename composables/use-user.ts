@@ -3,6 +3,8 @@ import firebase from '@/plugins/firebase'
 import { User } from '@/models/user'
 import { InjectionKey } from '@vue/composition-api'
 
+export type UserStore = ReturnType<typeof useUser>
+
 const UserKey: InjectionKey<UserStore> = Symbol('UserStore')
 
 export const db = firebase.firestore()
@@ -48,4 +50,3 @@ function useUser() {
     fetchUsers,
   }
 }
-export type UserStore = ReturnType<typeof useUser>
